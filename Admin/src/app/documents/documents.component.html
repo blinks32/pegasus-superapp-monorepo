@@ -1,0 +1,69 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode ? 'Edit Document' : 'Add Document' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked">Name</ion-label>
+        <ion-input formControlName="name" placeholder="Document Name"></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="form.get('name').touched && form.get('name').hasError('required')">
+        <p class="ion-padding-start">Name is required</p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked">Type</ion-label>
+        <ion-select formControlName="type" (ionChange)="onTypeChange()">
+          <ion-select-option value="text">Text</ion-select-option>
+          <ion-select-option value="image">Image</ion-select-option>
+          <ion-select-option value="pdf">PDF</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Text Content -->
+      <ion-item *ngIf="form.get('type').value === 'text'">
+        <ion-label position="stacked">Content</ion-label>
+        <ion-textarea formControlName="content" rows="6" placeholder="Enter text content"></ion-textarea>
+      </ion-item>
+      <ion-text color="danger" *ngIf="form.get('type').value === 'text' && form.get('content').touched && form.get('content').hasError('required')">
+        <p class="ion-padding-start">Content is required</p>
+      </ion-text>
+
+      <!-- File Upload (Image/PDF) -->
+      <div *ngIf="form.get('type').value !== 'text'" class="ion-padding">
+        <ion-label position="stacked">Upload File ({{ form.get('type').value | titlecase }})</ion-label>
+        
+        <div class="file-upload-container ion-margin-top">
+          <input type="file" (change)="onFileSelected($event)" [accept]="form.get('type').value === 'image' ? 'image/*' : 'application/pdf'">
+          <p *ngIf="selectedFileName" class="ion-margin-top">Selected: <strong>{{ selectedFileName }}</strong></p>
+        </div>
+        
+        <ion-note *ngIf="isEditMode && !selectedFile" color="medium" class="ion-margin-top d-block">
+          Current file will be kept if no new file is selected.
+        </ion-note>
+      </div>
+
+      <ion-item>
+        <ion-label position="stacked">Description</ion-label>
+        <ion-textarea formControlName="description" rows="3" placeholder="Optional description"></ion-textarea>
+      </ion-item>
+
+    </ion-list>
+
+    <div class="ion-padding">
+      <ion-button expand="block" type="submit">
+        <ion-icon [name]="isEditMode ? 'save-outline' : 'add-outline'" slot="start"></ion-icon>
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

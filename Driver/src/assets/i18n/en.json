@@ -1,0 +1,240 @@
+{
+  "LOGIN": {
+    "TITLE": "PEGASUS DRIVER",
+    "SUBTITLE": "Drive and earn With Confidence and integrity",
+    "MOBILE_PLACEHOLDER": "Mobile Number",
+    "CONTINUE": "Continue",
+    "SELECT_COUNTRY": "Select Country",
+    "VALIDATION": {
+      "REQUIRED": "Please enter the Mobile Number",
+      "INVALID": "Please enter a valid Mobile Number"
+    },
+    "EXIT": {
+      "HEADER": "Exit App",
+      "MESSAGE": "Are you sure you want to exit the app?",
+      "CANCEL": "Cancel",
+      "CONFIRM": "Exit"
+    }
+  },
+  "TABS": {
+    "HOME": "Home",
+    "TRIPS": "My Trips",
+    "WALLET": "Wallet",
+    "PROFILE": "Profile"
+  },
+  "DETAILS": {
+    "TITLE": "Complete Your Profile",
+    "PERSONAL_INFO": {
+      "TITLE": "Personal Information",
+      "FIRST_NAME": "First Name",
+      "LAST_NAME": "Last Name",
+      "EMAIL": "Email"
+    },
+    "VEHICLE_INFO": {
+      "TITLE": "Vehicle Information",
+      "PLATE_NUMBER": "Plate Number",
+      "CAR_TYPE": "Car Type",
+      "CAR_NAME": "Car Name",
+      "MILEAGE": "Mileage"
+    },
+    "LICENSE_INFO": {
+      "TITLE": "License Information",
+      "NUMBER": "Driver License Number",
+      "UPLOAD": "Upload License Image",
+      "UPLOAD_PHOTO": "Upload Profile Photo",
+      "TAP_TO_UPLOAD": "Tap to upload license image"
+    },
+    "DOCUMENTS": {
+      "TITLE": "Required Documents",
+      "UPLOAD": "Upload",
+      "EDIT": "Edit",
+      "VIEW": "View",
+      "NO_DOCUMENTS": "No documents required",
+      "MISSING_REQUIREMENTS": "Please complete the following:",
+      "FORM_INCOMPLETE": "Form fields incomplete",
+      "PROFILE_PHOTO_REQUIRED": "Profile photo required",
+      "LICENSE_PHOTO_REQUIRED": "License photo required",
+      "STATUS": {
+        "NOT_SUBMITTED": "Not Submitted",
+        "PENDING": "Pending Review",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      }
+    },
+    "BUTTONS": {
+      "SUBMIT": "Submit",
+      "CAMERA": "Camera",
+      "GALLERY": "Gallery",
+      "FILE": "File",
+      "CANCEL": "Cancel"
+    },
+    "ALERTS": {
+      "UPLOAD_SUCCESS": "Upload Successful",
+      "UPLOAD_FAILED": "Upload Failed",
+      "EXIT": {
+        "HEADER": "Exit App",
+        "MESSAGE": "Are you sure you want to exit the app?",
+        "CANCEL": "Cancel",
+        "CONFIRM": "Exit"
+      },
+      "EMAIL_VERIFICATION": "Email Verification Required",
+      "EMAIL_VERIFICATION_MESSAGE": "A verification email has been sent to your new email address. Please verify your email before continuing."
+    },
+    "UPLOAD_STATUS": {
+      "UPLOADING": "Uploading..."
+    }
+  },
+  "HOME": {
+    "EARNINGS": "MYR",
+    "TIME_LEFT": "Time Left",
+    "SECONDS": "sec(s)",
+    "ACCEPT": "Accept",
+    "ARRIVAL_IN": "Arrival in",
+    "YOUR_RIDER_IS": "Your Rider is",
+    "DESTINATION": "Destination",
+    "PICK_UP": "Pick Up",
+    "DROP_OFF": "Drop Off",
+    "NAVIGATE": "Navigate",
+    "CANCEL_RIDE": {
+      "HEADER": "Cancel Ride",
+      "CHANGED_MIND": "Changed my mind",
+      "TOOK_TOO_LONG": "Driver took too long",
+      "FOUND_ANOTHER": "Found another ride",
+      "OTHER": "Other"
+    },
+    "SHARED_RIDE": {
+      "PASSENGERS": "Passengers",
+      "PICK_UP_PASSENGER": "Pick Up",
+      "DROP_OFF_PASSENGER": "Drop Off",
+      "PASSENGERS_GOING_YOUR_WAY": "Passengers Going Your Way",
+      "MATCH_PERCENT": "match",
+      "DETOUR": "detour",
+      "YOUR_EARNINGS": "Your Earnings",
+      "PASSENGER_ADDED": "added to your ride!",
+      "PASSENGER_REMOVED": "Passenger removed from ride",
+      "ADDING_PASSENGER": "Adding passenger..."
+    }
+  },
+  "COMMON": {
+    "CANCEL": "Cancel",
+    "OK": "OK",
+    "PLEASE_WAIT": "Please wait...",
+    "SUCCESS": "Success",
+    "ERROR": "Error"
+  },
+  "PROFILE": {
+    "TITLE": "Driver Profile",
+    "SELECT_AVATAR": "Select avatar",
+    "MORE_FEATURES": "More Features to be added",
+    "LOGOUT": "Logout",
+    "TOTAL_EARNINGS": "Total Earnings",
+    "Earnings": "Earnings",
+    "TOTAL_RIDES": "Total Rides",
+    "VEHICLE_INFO": "Vehicle Information",
+    "CAR_MODEL": "Car Model",
+    "PLATE_NUMBER": "Plate Number",
+    "CONTACT_INFO": "Contact Information",
+    "PHONE": "Phone Number",
+    "EMAIL": "Email Address",
+    "LANGUAGE": "Language",
+    "RIDE_SHARING": {
+      "TITLE": "Ride Sharing",
+      "ENABLE": "Enable Ride Sharing",
+      "ENABLE_DESC": "Accept multiple passengers on similar routes",
+      "MAX_PASSENGERS": "Max Passengers",
+      "MAX_PASSENGERS_DESC": "Maximum passengers per shared ride",
+      "MAX_DETOUR": "Max Detour",
+      "MAX_DETOUR_DESC": "Maximum extra distance allowed",
+      "INFO": "When enabled, you may receive requests from passengers going the same direction. Each passenger gets a discount and you earn more per trip!",
+      "SETTINGS_SAVED": "Ride sharing settings saved"
+    }
+  },
+  "ABOUT": {
+    "TITLE": "About",
+    "HEADING": "We Are the Best",
+    "COPYRIGHT": "© 2022 Pana, Inc."
+  },
+  "SUPPORT": {
+    "TITLE": "Support",
+    "NO_DATA_HEADING": "We Respond Immediately",
+    "NO_DATA_TEXT": "Tell Us How We can Help You.",
+    "INPUT_PLACEHOLDER": "Start Typing.."
+  },
+  "PAYMENT": {
+    "TITLE": "Payment",
+    "ADD_CARD": "Add New Card",
+    "PROCEED": "Proceed",
+    "PAYMENT_METHODS": "Payment Methods",
+    "TEST_CARD": "Test Card"
+  },
+  "HISTORY": {
+    "TITLE": "History",
+    "TOTAL_TRIPS": "Total Trips",
+    "AVG_RATING": "Average Rating",
+    "TOTAL_EARNINGS": "Total Earnings",
+    "TODAY": "Today",
+    "THIS_WEEK": "This Week",
+    "THIS_MONTH": "This Month",
+    "NO_DATA": "No Data",
+    "BOOK_RIDE": "Book a ride to see History"
+  },
+  "NETWORK": {
+    "TITLE": "Network Status",
+    "ERROR": "Network Error",
+    "TRY_AGAIN": "Try Again"
+  },
+  "CHAT": {
+    "TITLE": "Chat",
+    "NO_DATA_HEADING": "We Respond Immediately",
+    "NO_DATA_TEXT": "Tell Us How We can Help You.",
+    "START_TYPING": "Start Typing.."
+  },
+  "OTP": {
+    "VERIFY": "Verify OTP",
+    "ENTER_CODE": "Enter Verification Code",
+    "SECONDS_REMAINING": "seconds remaining",
+    "RESEND": "Resend OTP",
+    "CONTINUE": "Continue",
+    "INCORRECT_OTP": "Incorrect OTP. Please try again."
+  },
+  "APP_NAME": "Your App Name",
+  "APP_TAGLINE": "Your App Tagline",
+  "MOBILE_NUMBER": "Mobile Number",
+  "MOBILE_REQUIRED": "* Please enter the Mobile Number",
+  "MOBILE_INVALID": "* Please enter a valid Mobile Number",
+  "ALERTS": {
+    "RIDER_ACCOUNT": {
+      "HEADER": "Rider Account Detected",
+      "MESSAGE": "This section is for drivers only. Please use a different phone number to register as a driver."
+    }
+  },
+  "WAITING": {
+    "TITLE": "Application Under Review",
+    "MESSAGE": "Thank you for submitting your application. Our team is reviewing your details and documents.",
+    "STATUS": "Pending Approval"
+  },
+  "WALLET": {
+    "TITLE": "My Wallet",
+    "BALANCE": "Available Balance",
+    "VERIFIED": "Verified",
+    "ADD_MONEY": "Add Money",
+    "WITHDRAW": "Withdraw",
+    "RECENT_TRANSACTIONS": "Recent Transactions",
+    "ENTER_AMOUNT": "Enter amount",
+    "MONEY_ADDED": "Money Added",
+    "MONEY_ADDED_SUCCESS": "Money added successfully",
+    "WITHDRAWAL": "Withdrawal",
+    "WITHDRAWAL_SUCCESS": "Withdrawal successful",
+    "ERROR": "Error",
+    "INSUFFICIENT_BALANCE": "Insufficient balance"
+  },
+  "EXISTING_USER": "Existing User",
+  "EXISTING_USER_MESSAGE": "This phone number is already registered. SMS verification is only available for new driver registrations. Please contact support if you need to access your existing account.",
+  "OR": "or",
+  "CONTINUE_WITH_GOOGLE": "Continue with Google",
+  "GOOGLE_SIGNIN_ERROR": "Failed to sign in with Google. Please try again.",
+  "SIGNIN_CANCELLED": "Sign in was cancelled.",
+  "NETWORK_ERROR": "Network error. Please check your connection.",
+  "ERROR": "Error",
+  "CONTINUE": "Continue"
+} 

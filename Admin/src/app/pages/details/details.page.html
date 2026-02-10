@@ -1,0 +1,57 @@
+<ion-content class="ion-padding">
+  <form [formGroup]="form" (ngSubmit)="signIn()">
+    <h1 class="ion-text-center">Personal Information</h1>
+
+    <ion-item>
+      <ion-label position="floating">First Name</ion-label>
+      <ion-input formControlName="fullname" type="text" minlength="1" maxlength="200"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Last Name</ion-label>
+      <ion-input formControlName="lastname" type="text" minlength="1" maxlength="200"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Your Email</ion-label>
+      <ion-input formControlName="email" type="email" minlength="1" maxlength="200"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="isGoogleUser">
+      <ion-label position="floating">Phone Number</ion-label>
+      <ion-input formControlName="phone" type="tel" placeholder="+60123456789"></ion-input>
+    </ion-item>
+    <ion-text class="error" *ngIf="isGoogleUser && !form.get('phone').valid && form.get('phone').touched">
+      <p>Please enter a valid phone number</p>
+    </ion-text>
+
+    <ion-item>
+      <ion-label position="floating">Role</ion-label>
+      <ion-select [value]="selected" (ionChange)="chooseCarType($event)">
+        <ion-select-option *ngFor="let role of roletypes" [value]="role">{{role.name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <div class="profile-image-container">
+      <ion-avatar (click)="presentImageSourceChoice()">
+        <img *ngIf="profileImage; else placeholder_avatar;" [src]="profileImage" alt="Profile Picture" />
+        <ng-template #placeholder_avatar>
+          <div class="fallback">
+            <ion-icon name="person"></ion-icon>
+          </div>
+        </ng-template>
+      </ion-avatar>
+      <p>Tap to change profile picture</p>
+    </div>
+
+    <ion-button expand="block" type="submit" [disabled]="!form.valid">
+      <ng-container *ngIf="!approve2; else loadingState">
+        Continue
+        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+      </ng-container>
+      <ng-template #loadingState>
+        <ion-spinner name="crescent"></ion-spinner>
+      </ng-template>
+    </ion-button>
+  </form>
+</ion-content>

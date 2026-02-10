@@ -1,0 +1,143 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ 'SHARED_RIDE.NEARBY_RIDES' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onDismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Header Info -->
+  <div class="header-info">
+    <ion-icon name="people" color="primary"></ion-icon>
+    <p>{{ 'SHARED_RIDE.RIDERS_GOING_YOUR_WAY' | translate }}</p>
+    <span class="savings-badge">{{ 'SHARED_RIDE.SAVE_UP_TO' | translate }} 40%</span>
+  </div>
+
+  <!-- No opportunities message -->
+  <div *ngIf="opportunities.length === 0" class="no-opportunities">
+    <ion-icon name="car-outline" color="medium"></ion-icon>
+    <p>{{ 'SHARED_RIDE.NO_RIDES_AVAILABLE' | translate }}</p>
+    <ion-text color="medium">{{ 'SHARED_RIDE.CHECK_BACK_LATER' | translate }}</ion-text>
+  </div>
+
+  <!-- Opportunities List -->
+  <div class="opportunities-list">
+    <ion-card 
+      *ngFor="let opportunity of opportunities; trackBy: trackByOpportunityId"
+      [class.urgent]="isUrgent(opportunity.opportunityId)"
+      [class.expanded]="expandedOpportunityId === opportunity.opportunityId">
+      
+      <!-- Card Header -->
+      <ion-card-header (click)="toggleExpand(opportunity.opportunityId)">
+        <div class="card-header-content">
+          <div class="rider-info">
+            <ion-avatar>
+              <ion-icon name="person-circle" color="primary"></ion-icon>
+            </ion-avatar>
+            <div class="rider-details">
+              <ion-card-title>{{ opportunity.initiatorName }}</ion-card-title>
+              <ion-card-subtitle>{{ getDistanceToOrigin(opportunity) }}</ion-card-subtitle>
+            </div>
+          </div>
+          
+          <div class="discount-badge">
+            <span class="discount-value">-{{ opportunity.potentialDiscount }}%</span>
+          </div>
+        </div>
+
+        <!-- Timer -->
+        <div class="timer" [class.urgent]="isUrgent(opportunity.opportunityId)">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ formatTimeRemaining(opportunity.opportunityId) }}</span>
+        </div>
+      </ion-card-header>
+
+      <!-- Card Content -->
+      <ion-card-content>
+        <!-- Route Info -->
+        <div class="route-info">
+          <div class="route-point">
+            <div class="point-marker origin"></div>
+            <div class="point-text">
+              <span class="label">{{ 'SHARED_RIDE.FROM' | translate }}</span>
+              <span class="address">{{ opportunity.originAddress }}</span>
+            </div>
+          </div>
+          
+          <div class="route-line"></div>
+          
+          <div class="route-point">
+            <div class="point-marker destination"></div>
+            <div class="point-text">
+              <span class="label">{{ 'SHARED_RIDE.TO' | translate }}</span>
+              <span class="address">{{ opportunity.destinationAddress }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expanded Details -->
+        <div class="expanded-details" *ngIf="expandedOpportunityId === opportunity.opportunityId">
+          <ion-list lines="none">
+            <ion-item>
+              <ion-icon name="people-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>
+                <p>{{ 'SHARED_RIDE.PASSENGERS' | translate }}</p>
+                <h3>{{ getPassengerCount(opportunity) }} / {{ opportunity.maxPassengers }}</h3>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="car-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>
+                <p>{{ 'SHARED_RIDE.SEATS_AVAILABLE' | translate }}</p>
+                <h3>{{ getAvailableSeats(opportunity) }}</h3>
+              </ion-label>
+            </ion-item>
+            
+            <ion-item>
+              <ion-icon name="cash-outline" slot="start" color="success"></ion-icon>
+              <ion-label>
+                <p>{{ 'SHARED_RIDE.YOUR_SAVINGS' | translate }}</p>
+                <h3 class="savings-amount">{{ getSavingsText(opportunity) }}</h3>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <ion-button 
+            expand="block" 
+            (click)="onAccept(opportunity)"
+            [disabled]="getAvailableSeats(opportunity) <= 0">
+            <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+            {{ 'SHARED_RIDE.JOIN_RIDE' | translate }}
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Bottom Info -->
+  <div class="bottom-info">
+    <ion-text color="medium">
+      <p>
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        {{ 'SHARED_RIDE.PRIVACY_NOTE' | translate }}
+      </p>
+    </ion-text>
+  </div>
+</ion-content>
+
+<!-- Footer -->
+<ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block" fill="clear" (click)="onDismiss()">
+      {{ 'SHARED_RIDE.NO_THANKS' | translate }}
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

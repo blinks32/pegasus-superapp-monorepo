@@ -1,0 +1,130 @@
+   <!--menu button-->
+   <ion-header class="ion-no-border" [translucent]="true">
+    <ion-toolbar >
+      <ion-buttons slot="start">
+        <ion-menu-button color="primary"></ion-menu-button>
+      </ion-buttons>
+      <ion-title>
+        <strong>Dashboard</strong>
+      </ion-title>
+      
+    </ion-toolbar>
+  </ion-header>
+
+
+<!--Capacitor Google Map-->
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Map toggle button for mobile -->
+  <ion-button expand="block" class="map-toggle" (click)="toggleMap()" *ngIf="isMobile">
+    {{ showMap ? 'Hide Map' : 'Show Map' }}
+    <ion-icon [name]="showMap ? 'chevron-up-outline' : 'chevron-down-outline'" slot="end"></ion-icon>
+  </ion-button>
+
+  <div class="dashboard-container" [class.map-visible]="showMap">
+    <!-- Map Section -->
+    <div class="dashboard-map" [class.mobile-map]="isMobile" *ngIf="showMap || !isMobile">
+      <ion-card class="map-card">
+        <ion-card-header>
+          <ion-card-subtitle>
+            <ion-text color="dark">
+              <ion-icon name="location-outline"></ion-icon>
+              Live Tracking
+            </ion-text>
+          </ion-card-subtitle>
+          <ion-button fill="clear" slot="end" size="small">
+            <ion-icon name="expand-outline"></ion-icon>
+          </ion-button>
+        </ion-card-header>
+        <ion-card-content>
+          <capacitor-google-maps #map></capacitor-google-maps>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="dashboard-stats">
+      <ion-card class="dashboard-card earnings-card">
+        <ion-card-header>
+          <ion-card-subtitle>
+            <ion-text color="dark">
+              <ion-icon name="trending-up-outline"></ion-icon>
+              Total Earnings
+            </ion-text>
+          </ion-card-subtitle>
+          <ion-card-title>
+            <ion-text color="dark">
+              {{currencySymbol}} {{(earnings || 0).toFixed(2)}}
+              <ion-note color="light" style="font-size: 1rem;">+12.5%</ion-note>
+            </ion-text>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <canvas #earningsChart></canvas>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="dashboard-card drivers-card">
+        <ion-card-header>
+          <ion-card-subtitle>
+            <ion-text color="dark">
+              <ion-icon name="car-outline"></ion-icon>
+              Drivers
+            </ion-text>
+          </ion-card-subtitle>
+          <ion-card-title>
+            <ion-text color="dark">{{numDrivers || 0}}</ion-text>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <canvas #driversChart></canvas>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="dashboard-card riders-card">
+        <ion-card-header>
+          <ion-card-subtitle>
+            <ion-text color="dark">
+              <ion-icon name="people-outline"></ion-icon>
+              Riders
+            </ion-text>
+          </ion-card-subtitle>
+          <ion-card-title>
+            <ion-text color="dark">{{numRiders || 0}}</ion-text>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <canvas #ridersChart></canvas>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="dashboard-card trips-card">
+        <ion-card-header>
+          <ion-card-subtitle>
+            <ion-text color="dark">
+              <ion-icon name="map-outline"></ion-icon>
+              Trips
+            </ion-text>
+          </ion-card-subtitle>
+          <ion-card-title>
+            <ion-text color="dark">{{numTrips || 0}}</ion-text>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <canvas #tripsChart></canvas>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content >
+
+
+
+
+  <ion-footer [translucent]="true" class="ion-no-border">
+
+    <!--location Button-->
+  
+
+    
+  </ion-footer>

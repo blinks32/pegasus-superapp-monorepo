@@ -1,0 +1,91 @@
+<ion-header class="ion-no-border chat-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    
+    <ion-title class="chat-title">
+      <div class="user-info" *ngIf="chatData?.userName">
+        <ion-avatar>
+          <img [src]="chatData?.userImage || 'assets/imgs/default-avatar.png'" alt="User">
+        </ion-avatar>
+        <div class="user-details">
+          <h2>{{ chatData?.userName || 'Chat' }}</h2>
+          <p class="status">Online</p>
+        </div>
+      </div>
+      <span *ngIf="!chatData?.userName">Chat</span>
+    </ion-title>
+    
+    <ion-buttons slot="end">
+      <ion-button color="primary">
+        <ion-icon name="call" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="closeChat()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="chat-content">
+  <!-- Loading state -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="bubbles"></ion-spinner>
+    <p>{{ 'LOADING_MESSAGES' | translate }}</p>
+  </div>
+  
+  <!-- Empty state -->
+  <div class="empty-chat" *ngIf="hasNoData && !isLoading">
+    <ion-img src="../../../assets/imgs/chat.svg"></ion-img>
+    <h2>{{ 'WE_RESPOND_IMMEDIATELY' | translate }}</h2>
+    <p>{{ 'TELL_US_HOW_WE_CAN_HELP' | translate }}</p>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages-container" *ngIf="!isLoading && !hasNoData">
+    <div class="message-wrapper" *ngFor="let message of messages | async"
+         [ngClass]="{'my-message': message.myMsg, 'other-message': !message.myMsg}">
+      <ion-avatar *ngIf="!message.myMsg" class="message-avatar">
+        <img [src]="chatData?.userImage || 'assets/imgs/default-avatar.png'" alt="User">
+      </ion-avatar>
+      
+      <div class="message-bubble">
+        <div class="message-info" *ngIf="!message.myMsg">
+          <span class="sender-name">{{ message.fromName }}</span>
+        </div>
+        <div class="message-content">{{ message.msg }}</div>
+        <div class="message-time">{{ formatTime(message.createdAt) }}</div>
+      </div>
+      
+      <ion-avatar *ngIf="message.myMsg" class="message-avatar">
+        <img src="assets/imgs/default-avatar.png" alt="Me">
+      </ion-avatar>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="chat-footer">
+  <ion-toolbar>
+    <div class="input-container">
+      <ion-textarea 
+        class="message-input" 
+        placeholder="{{ 'TYPE_MESSAGE' | translate }}"
+        rows="1" 
+        maxLength="500" 
+        [(ngModel)]="newMsg"
+        (ionFocus)="Show()"
+        (ionBlur)="Hide()"
+        autoGrow="true">
+      </ion-textarea>
+      
+      <ion-button 
+        class="send-button" 
+        [disabled]="!newMsg.trim() || isTyping" 
+        (click)="sendMessage()">
+        <ion-icon *ngIf="!isTyping" name="send"></ion-icon>
+        <ion-spinner *ngIf="isTyping" name="dots" class="send-spinner"></ion-spinner>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

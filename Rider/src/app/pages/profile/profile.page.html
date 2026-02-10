@@ -1,0 +1,75 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="goBack()">
+        <ion-back-button></ion-back-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'MY_PROFILE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="user; else loading">
+    <div class="preview">
+      <ion-avatar (click)="presentImageSourceActionSheet()">
+        <img *ngIf="user.photoURL; else placeholder_avatar;" [src]="user.photoURL" />
+        <ng-template #placeholder_avatar>
+          <div class="fallback">
+            <p>{{ 'SELECT_AVATAR' | translate }}</p>
+          </div>
+        </ng-template>
+      </ion-avatar>
+    </div>
+
+    <form [formGroup]="profileForm">
+      <ion-item class="ion-margin">
+        <ion-icon name="call" color="primary" slot="start"></ion-icon>
+        <ion-label>
+          {{ user.phoneNumber || 'No phone number' }}
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="ion-margin">
+        <ion-icon name="person" color="primary" slot="start"></ion-icon>
+        <ion-input formControlName="displayName" placeholder="Name"></ion-input>
+      </ion-item>
+
+      <ion-item class="ion-margin">
+        <ion-icon name="mail" color="primary" slot="start"></ion-icon>
+        <ion-label>
+          {{ user.email || 'No email' }}
+        </ion-label>
+      </ion-item>
+    </form>
+
+    <ion-label color="primary" class="ion-text-center ion-padding-top">
+      <p>{{ 'RECEIPT_EMAIL_NOTE' | translate }}</p>
+    </ion-label>
+  </div>
+
+  <ng-template #loading>
+    <ion-spinner></ion-spinner>
+    <p>{{ 'LOADING_PROFILE' | translate }}</p>
+  </ng-template>
+
+  <!-- Language Selector FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="language-fab">
+    <ion-fab-button size="medium" color="light">
+      <ion-icon name="language-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
+            <ion-text>EN</ion-text>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
+            <ion-text>MS</ion-text>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>

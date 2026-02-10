@@ -1,0 +1,68 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Riders</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openFilter()">
+        <ion-icon name="options-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngIf="!hasNoData; else noDataTemplate">
+    <div class="search-bar">
+      <ion-searchbar placeholder="Search riders" (ionChange)="applyFilter($event)"></ion-searchbar>
+    </div>
+
+    <ion-list>
+      <ion-item-sliding *ngFor="let rider of records.data">
+        <ion-item>
+          <ion-avatar slot="start">
+            <img [src]="rider.photoUrl || rider.Rider_imgUrl || 'assets/imgs/empty.svg'" alt="Rider avatar">
+          </ion-avatar>
+          <ion-label>
+            <h2>{{rider.Rider_name}}</h2>
+            <p>{{rider.Rider_phone}}</p>
+            <p>{{rider.Rider_email}}</p>
+          </ion-label>
+          <ion-badge slot="end" color="primary">{{rider.Rider_rating}}</ion-badge>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="primary" (click)="EditDriver(rider)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="BlockDriver(rider)">
+            <ion-icon slot="icon-only" name="hand-left-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($any($event))">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ng-container>
+
+  <ng-template #noDataTemplate>
+    <div class="no-data">
+      <ion-img src="../assets/imgs/empty.svg"></ion-img>
+      <h2>No Riders Found</h2>
+      <p>There are no riders registered in the system yet.</p>
+    </div>
+  </ng-template>
+</ion-content>
+
+<ion-footer>
+  <ion-fab vertical="bottom" horizontal="start" (click)="AddDriver()">
+    <ion-fab-button size="large" color="primary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

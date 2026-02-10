@@ -1,0 +1,74 @@
+<ion-content class="ion-padding">
+  <div class="pana-admin-title">
+    <h1>PEGASUS ADMIN</h1>
+  </div>
+
+  <div class="content-container">
+    <ion-slides pager="true" [options]="slideOpts">
+      <ion-slide>
+        <ion-img src="../assets/imgs/main.svg"></ion-img>
+      </ion-slide>
+      <ion-slide>
+        <ion-img src="../assets/imgs/main1.svg"></ion-img>
+      </ion-slide>
+      <ion-slide>
+        <ion-img src="../assets/imgs/main2.svg"></ion-img>
+      </ion-slide>
+    </ion-slides>
+
+    <form [formGroup]="form" class="modern-form">
+      <ion-item>
+        <ion-button class="country-code-btn" fill="clear" (click)="openCountrySearchModal()">
+          <ion-icon name="globe-outline"></ion-icon>
+          {{  defaultCountryCode ||CountryCode }}
+        </ion-button>
+        <div id="sign-in-button"></div>
+        <ion-input
+          formControlName="phone"
+          placeholder="Mobile Number"
+          type="tel"
+          clearInput
+          [attr.maxlength]="maxPhoneLength"
+          (ionFocus)="Show()"
+          (ionBlur)="Hide()"
+          class="phone-input">
+        </ion-input>
+      </ion-item>
+      <ion-text class="error" *ngIf="!form.get('phone').valid && form.get('phone').touched">
+        <p *ngIf="form.get('phone').hasError('required')">
+          Please enter the Mobile Number
+        </p>
+        <p *ngIf="form.get('phone').hasError('minlength') && !form.get('phone').hasError('required')">
+          Please enter a valid Mobile Number
+        </p>
+      </ion-text>
+      <ion-button expand="block" type="submit" 
+        [disabled]="!form.valid || !CountryCode" 
+        (click)="signIn()"
+        class="submit-button">
+        <span *ngIf="!approve2">
+          <ion-icon name="log-in-outline"></ion-icon>
+          Continue
+        </span>
+        <ion-spinner *ngIf="approve2" name="crescent"></ion-spinner>
+      </ion-button>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <ion-button expand="block" 
+        (click)="signInWithGoogle()"
+        class="google-button"
+        color="light">
+        <ion-icon slot="start" src="assets/icon/google.svg"></ion-icon>
+        Continue with Google
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <!-- Add this at the end of your template -->
+  <div id="recaptcha-container"></div>
+</ion-footer>

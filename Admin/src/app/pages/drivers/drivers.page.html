@@ -1,0 +1,165 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Drivers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-segment value="default" [(ngModel)]="segmentModel">
+    <ion-segment-button value="default">
+      <ion-label>Approved</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="segment">
+      <ion-label>Pending</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- No Data View -->
+  <div class="no-data" *ngIf="hasNoData">
+    <ion-text color="medium">
+      <h3>No drivers found</h3>
+    </ion-text>
+  </div>
+
+  <!-- Loading Skeleton -->
+  <ion-list *ngIf="hideSkeleton">
+    <ion-item *ngFor="let skeleton of skeletOns">
+      <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+    </ion-item>
+  </ion-list>
+
+  <!-- Data Tables -->
+  <div *ngIf="!hideSkeleton">
+    <!-- Approved Drivers Table -->
+    <ion-card *ngIf="segmentModel === 'default'">
+      <ion-searchbar (ionInput)="applyFilter($event)" placeholder="Search drivers"></ion-searchbar>
+      
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col size="1.5">Driver</ion-col>
+          <ion-col size="1.5">Contact</ion-col>
+          <ion-col size="2">Vehicle</ion-col>
+          <ion-col size="1.5">License</ion-col>
+          <ion-col size="1.5">Stats</ion-col>
+          <ion-col size="2">Status</ion-col>
+          <ion-col size="2">Actions</ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let driver of records.data" class="data-row">
+          <ion-col size="1.5" class="driver-info">
+            <ion-avatar *ngIf="driver.Driver_image">
+              <img [src]="driver.Driver_image" />
+            </ion-avatar>
+            <div>
+              <strong>{{driver.Driver_name}}</strong>
+            </div>
+          </ion-col>
+          <ion-col size="1.5">
+            <div>{{driver.Driver_phone}}</div>
+            <small>{{driver.Driver_email}}</small>
+          </ion-col>
+          <ion-col size="2">
+            <div>{{driver.Driver_car}}</div>
+            <small>{{driver.Driver_carType}} | {{driver.Driver_plate}}</small>
+          </ion-col>
+          <ion-col size="1.5">
+            <div>{{driver.license || 'N/A'}}</div>
+            <small>Mileage: {{driver.mileage || 'N/A'}}</small>
+          </ion-col>
+          <ion-col size="1.5">
+            <div>Rides: {{driver.Driver_num_rides}}</div>
+            <div>Rating: {{driver.Driver_rating.toFixed(1)}}</div>
+          </ion-col>
+          <ion-col size="2">
+            <ion-badge [color]="driver.onlineState ? 'success' : 'medium'">
+              {{driver.onlineState ? 'Online' : 'Offline'}}
+            </ion-badge>
+            <small *ngIf="driver.submissionDate">
+              Approved: {{driver.submissionDate.toDate() | date:'short'}}
+            </small>
+          </ion-col>
+          <ion-col size="2">
+            <ion-buttons>
+              <ion-button (click)="EditDriver(driver)" color="primary" fill="clear">
+                <ion-icon name="create-outline"></ion-icon>
+              </ion-button>
+              <ion-button (click)="gotoDocs(driver)" color="secondary" fill="clear">
+                <ion-icon name="document-text-outline"></ion-icon>
+              </ion-button>
+              <ion-button (click)="toggleApproval(driver)" color="danger" fill="clear">
+                <ion-icon name="close-circle-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+
+    <!-- Pending Drivers Table -->
+    <ion-card *ngIf="segmentModel === 'segment'">
+      <ion-searchbar (ionInput)="applyFilter2($event)" placeholder="Search pending drivers"></ion-searchbar>
+      
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col size="1.5">Driver</ion-col>
+          <ion-col size="1.5">Contact</ion-col>
+          <ion-col size="2">Vehicle</ion-col>
+          <ion-col size="1.5">License</ion-col>
+          <ion-col size="1.5">Documents</ion-col>
+          <ion-col size="2">Submission</ion-col>
+          <ion-col size="2">Actions</ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let driver of records2.data" class="data-row">
+          <ion-col size="1.5" class="driver-info">
+            <ion-avatar *ngIf="driver.Driver_image">
+              <img [src]="driver.Driver_image" />
+            </ion-avatar>
+            <div>
+              <strong>{{driver.Driver_name}}</strong>
+            </div>
+          </ion-col>
+          <ion-col size="1.5">
+            <div>{{driver.Driver_phone}}</div>
+            <small>{{driver.Driver_email}}</small>
+          </ion-col>
+          <ion-col size="2">
+            <div>{{driver.Driver_car}}</div>
+            <small>{{driver.Driver_carType}} | {{driver.Driver_plate}}</small>
+          </ion-col>
+          <ion-col size="1.5">
+            <div>{{driver.license || 'N/A'}}</div>
+            <small>Mileage: {{driver.mileage || 'N/A'}}</small>
+          </ion-col>
+          <ion-col size="1.5">
+            <ion-badge color="{{driver.Document ? 'success' : 'warning'}}">
+              {{driver.Document ? 'Submitted' : 'Pending'}}
+            </ion-badge>
+          </ion-col>
+          <ion-col size="2">
+            <div *ngIf="driver.submissionDate">
+              {{driver.submissionDate.toDate() | date:'short'}}
+            </div>
+          </ion-col>
+          <ion-col size="2">
+            <ion-buttons>
+              <ion-button (click)="toggleApproval(driver)" color="success" fill="clear">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+              </ion-button>
+              <ion-button (click)="gotoDocs(driver)" color="secondary" fill="clear">
+                <ion-icon name="document-text-outline"></ion-icon>
+              </ion-button>
+              <ion-button (click)="EditDriver(driver)" color="primary" fill="clear">
+                <ion-icon name="create-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+  </div>
+</ion-content>
+

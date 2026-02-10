@@ -1,0 +1,102 @@
+ion-menu {
+  --width: 280px;
+  
+  &.menu-collapsed {
+    --width: 72px;
+  }
+
+  ion-header {
+    ion-toolbar {
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --padding-top: 16px;
+      --padding-bottom: 16px;
+      
+      ion-avatar {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  }
+
+  ion-content {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --padding-top: 8px;
+    --background: var(--ion-color-light);
+
+    ion-list {
+      background: transparent;
+      padding: 0;
+
+      ion-item {
+        --background: transparent;
+        --background-hover: rgba(var(--ion-color-primary-rgb), 0.08);
+        --background-activated: rgba(var(--ion-color-primary-rgb), 0.12);
+        --padding-start: 16px;
+        --padding-end: 16px;
+        --border-radius: 8px;
+        margin-bottom: 4px;
+
+        &.selected {
+          --background: rgba(var(--ion-color-primary-rgb), 0.12);
+          --color: var(--ion-color-primary);
+          font-weight: 500;
+
+          ion-icon {
+            color: var(--ion-color-primary);
+          }
+        }
+
+        ion-icon {
+          font-size: 24px;
+          margin-right: 16px;
+        }
+      }
+
+      ion-list-header {
+        padding-top: 24px;
+        padding-bottom: 8px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+
+  ion-footer {
+    ion-toolbar {
+      --background: transparent;
+      --min-height: 40px;
+
+      ion-title {
+        font-size: 12px;
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+}
+
+// Dark mode styles
+@media (prefers-color-scheme: dark) {
+  ion-menu {
+    ion-content {
+      --background: var(--ion-background-color);
+    }
+  }
+}
+
+// Mobile styles
+@media (max-width: 768px) {
+  ion-menu {
+    --width: 280px !important;
+  }
+}
+
+// Handle split-pane behavior
+ion-split-pane {
+  --side-width: 280px;
+  --side-min-width: 72px;
+  --side-max-width: 280px;
+}

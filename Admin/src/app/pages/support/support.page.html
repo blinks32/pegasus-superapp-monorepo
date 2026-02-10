@@ -1,0 +1,79 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-buttons slot="start">
+        <ion-menu-button color="primary"></ion-menu-button>
+      </ion-buttons>
+    </ion-buttons>
+    <ion-title> Support </ion-title>
+   
+  </ion-toolbar>
+ 
+</ion-header>
+ 
+<ion-content class="ion-padding">
+
+  <div *ngIf="hasNoData">
+  <ion-img src="../assets/imgs/empty.svg"></ion-img>
+
+  <ion-list-header style="margin-top: 10%">
+    <ion-label color="primary" class="ion-text-center">
+      No Data
+      </ion-label>
+  </ion-list-header>
+  </div>
+
+<div *ngIf="hideSkeleton">
+  <ion-grid  class="ion-margin">
+    <ion-row>
+      <ion-col><ion-skeleton-text [animated]="true" style="width: auto; height: 400px;"></ion-skeleton-text></ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+
+
+<div *ngIf="!hideSkeleton">
+  <ion-card class="ion-padding">
+    <ion-searchbar (ionInput)="handleSearch($event)" placeholder="Search"></ion-searchbar>
+
+    <ion-grid>
+      <ion-row class="header-row">
+        <ion-col>Name</ion-col>
+        <ion-col>Phone</ion-col>
+        <ion-col>Email</ion-col>
+        <ion-col>Chat</ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let element of filteredRecords">
+        <ion-col>{{element.name}}</ion-col>
+        <ion-col>{{element.phone}}</ion-col>
+        <ion-col>{{element.email}}</ion-col>
+        <ion-col>
+          <ion-button color="primary" (click)="gotoDocs(element)">
+            <ion-icon name="chatbubble-ellipses"></ion-icon>
+            <ion-badge *ngIf="element.new" color="danger">new</ion-badge>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-button fill="clear" [disabled]="currentPage === 0" (click)="previousPage()">
+            <ion-icon name="chevron-back"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" [disabled]="(currentPage + 1) * pageSize >= filteredRecords.length" (click)="nextPage()">
+            <ion-icon name="chevron-forward"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+</div>
+</ion-content>
+
+
+<ion-footer>
+   
+</ion-footer>

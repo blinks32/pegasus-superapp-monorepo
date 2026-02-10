@@ -1,0 +1,24 @@
+{
+  "name": "payment-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "@google-cloud/firestore": "^7.9.0",
+    "@onesignal/node-onesignal": "^5.3.1-beta1",
+    "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "razorpay": "^2.9.4",
+    "stripe": "^16.1.0"
+  }
+}

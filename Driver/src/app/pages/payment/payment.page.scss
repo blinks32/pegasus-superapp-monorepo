@@ -1,0 +1,130 @@
+@keyframes slide-top {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0%);
+    }
+  }
+  
+  .slide-top {
+      animation: slide-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  }
+
+  ion-item{
+    animation-name: slide-top;
+    animation-duration: 0.5s;
+  }
+
+  .test{
+    animation-name: slide-top;
+    animation-duration: 0.6s;
+  }
+
+.balance-card {
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+  border-radius: 16px;
+  
+  ion-card-content {
+    padding: 24px;
+  }
+
+  .balance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h1 {
+      color: white;
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+  }
+
+  .balance-amount {
+    margin-bottom: 24px;
+    
+    h2 {
+      color: white;
+      font-size: 36px;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  .balance-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    ion-button {
+      margin: 0;
+      --background: rgba(255, 255, 255, 0.1);
+      --color: white;
+      
+      &[fill="outline"] {
+        --border-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+}
+
+.transactions-section {
+  margin-top: 24px;
+
+  ion-list-header {
+    padding-left: 0;
+    
+    ion-label {
+      font-weight: 600;
+      font-size: 18px;
+    }
+  }
+}
+
+.transaction-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 8px;
+
+  ion-icon {
+    font-size: 24px;
+    margin-right: 12px;
+  }
+
+  ion-label {
+    h2 {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    p {
+      color: var(--ion-color-medium);
+      font-size: 12px;
+    }
+  }
+
+  ion-note {
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.transaction-item {
+  animation: slide-in 0.3s ease-out forwards;
+  animation-delay: calc(var(--animation-order) * 0.1s);
+}
+  

@@ -1,0 +1,116 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary">
+        <ion-back-button></ion-back-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'HISTORY.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+
+  <!-- Stats Summary Card -->
+  <ion-card class="stats-card">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <div class="stat-item">
+            <h3>{{ totalTrips }}</h3>
+            <p>{{ 'HISTORY.TOTAL_TRIPS' | translate }}</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="stat-item">
+            <h3>{{ averageRating | number:'1.1-1' }}</h3>
+            <p>{{ 'HISTORY.AVG_RATING' | translate }}</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="stat-item">
+            <h3>{{ currencySymbol }}{{ totalEarnings | number:'1.2-2' }}</h3>
+            <p>{{ 'HISTORY.TOTAL_EARNINGS' | translate }}</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+  <!-- Date Filter Segment -->
+  <ion-segment [(ngModel)]="selectedPeriod" (ionChange)="filterHistory()">
+    <ion-segment-button value="today">
+      {{ 'HISTORY.TODAY' | translate }}
+    </ion-segment-button>
+    <ion-segment-button value="week">
+      {{ 'HISTORY.THIS_WEEK' | translate }}
+    </ion-segment-button>
+    <ion-segment-button value="month">
+      {{ 'HISTORY.THIS_MONTH' | translate }}
+    </ion-segment-button>
+  </ion-segment>
+</ion-header>
+
+<ion-content>
+  <!-- Skeleton loaders -->
+  <ion-list *ngIf="loading; else loadedContent">
+    <ion-item *ngFor="let item of [1, 2, 3]">
+      <ion-skeleton-text animated style="width: 100%; height: 100px;"></ion-skeleton-text>
+    </ion-item>
+  </ion-list>
+
+  <!-- Loaded content -->
+  <ng-template #loadedContent>
+    <ion-list *ngIf="groupedHistories.length > 0; else noData">
+      <div *ngFor="let group of groupedHistories">
+        <!-- Date Header -->
+        <ion-item-divider sticky="true">
+          <ion-label>
+            {{ group.date | date:'mediumDate' }}
+          </ion-label>
+          <ion-note slot="end">
+            {{ currencySymbol }}{{ group.totalEarnings | number:'1.2-2' }}
+          </ion-note>
+        </ion-item-divider>
+
+        <!-- Trips for the date -->
+        <ion-card *ngFor="let trip of group.trips" class="trip-card">
+          <ion-card-content>
+            <ion-grid>
+              <ion-row>
+                <ion-col size="2">
+                  <ion-avatar>
+                    <ion-img [src]="trip.Rider_imgUrl || 'assets/imgs/default-avatar.png'"></ion-img>
+                  </ion-avatar>
+                </ion-col>
+                <ion-col size="7">
+                  <h3>{{ trip.Rider_name }}</h3>
+                  <p class="trip-details">
+                    <ion-icon name="time-outline"></ion-icon>
+                    {{ trip.time?.toDate() | date: 'shortTime' }}
+                  </p>
+                  <p class="trip-details">
+                    <ion-icon name="star"></ion-icon>
+                    {{ trip.driverRating || 'N/A' }}
+                  </p>
+                </ion-col>
+                <ion-col size="3" class="ion-text-end">
+                    <h3 class="earnings">{{ currencySymbol }}{{ trip.price | number:'1.2-2' }}</h3>
+                  <ion-badge [color]="trip.status === 'completed' ? 'success' : 'warning'">
+                    {{ trip.status }}
+                  </ion-badge>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ion-list>
+  </ng-template>
+
+  <!-- No Data Template -->
+  <ng-template #noData>
+    <div class="empty-state">
+      <ion-img src="../assets/imgs/empty.svg"></ion-img>
+      <h2>{{ 'HISTORY.NO_DATA' | translate }}</h2>
+      <p>{{ 'HISTORY.BOOK_RIDE' | translate }}</p>
+    </div>
+  </ng-template>
+</ion-content>

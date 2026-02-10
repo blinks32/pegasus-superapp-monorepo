@@ -1,0 +1,132 @@
+ion-content {
+    --background: var(--ion-color-light);
+}
+
+.otp-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 24px;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ion-color-dark);
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: var(--ion-color-medium);
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.otp-input-container {
+    margin-bottom: 24px;
+
+    ::ng-deep {
+        .otp-input {
+            width: 40px !important;
+            height: 40px !important;
+            border: 2px solid var(--ion-color-medium);
+            border-radius: 8px;
+            font-size: 24px;
+            color: var(--ion-color-dark);
+            margin: 0 4px;
+
+            &:focus {
+                border-color: var(--ion-color-primary);
+                box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.2);
+            }
+        }
+    }
+}
+
+.countdown {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin-bottom: 24px;
+}
+
+.verify-button {
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(var(--ion-color-primary-rgb), 0.25);
+    margin-bottom: 16px;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.resend-button {
+    --color: var(--ion-color-primary);
+    font-weight: 500;
+}
+
+// Dark mode adjustments
+@media (prefers-color-scheme: dark) {
+    ion-content {
+        --background: var(--ion-color-dark);
+    }
+
+    h1 {
+        color: var(--ion-color-light);
+    }
+
+    .otp-input-container {
+        ::ng-deep {
+            .otp-input {
+                background-color: var(--ion-color-dark-shade);
+                border-color: var(--ion-color-medium);
+                color: var(--ion-color-light);
+            }
+        }
+    }
+}
+
+ion-list {
+    background: transparent;
+}
+
+ion-list-header {
+    padding-bottom: 15px;
+
+    ion-label {
+        font-size: 24px;
+        font-weight: bold;
+    }
+}
+
+ion-item {
+    --background: transparent;
+}
+
+::ng-deep {
+    .otp-input {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 24px !important;
+        font-weight: 600 !important;
+        background-color: #ffffff !important;
+        color: #333333 !important;
+        border: 1px solid #cccccc !important;
+        border-radius: 8px !important;
+        margin: 0 5px;
+    }
+}
+
+ion-button {
+    margin-top: 20px;
+}

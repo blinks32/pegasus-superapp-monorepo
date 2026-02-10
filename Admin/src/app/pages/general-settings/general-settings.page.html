@@ -1,0 +1,43 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>General Settings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Currency Settings</ion-card-title>
+            <ion-card-subtitle>Set the default currency for the application</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label position="stacked">Currency</ion-label>
+              <ion-select [(ngModel)]="settings.currency" (ionChange)="onCurrencyChange($event)" interface="popover">
+                <ion-select-option *ngFor="let c of currencies" [value]="c.code">
+                  {{ c.name }} ({{ c.code }} - {{ c.symbol }})
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+            
+            <ion-item lines="none" class="ion-margin-top">
+              <ion-label>
+                Current Symbol: <ion-text color="primary"><strong>{{ settings.currencySymbol }}</strong></ion-text>
+              </ion-label>
+            </ion-item>
+
+            <ion-button expand="block" class="ion-margin-top" (click)="saveSettings()">
+              Save Changes
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,30 @@
+# Node.js
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# Angular
+**/.angular/
+**/dist/
+**/www/
+
+# Capacitor
+**/android/
+**/ios/
+
+# Environment
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.*
+
+# IDE
+**/.vscode/
+**/.idea/
+**/.DS_Store
+
+# Temporary
+**/tmp/
+**/temp/

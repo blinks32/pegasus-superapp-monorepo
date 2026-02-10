@@ -1,0 +1,122 @@
+<ion-header [translucent]="true" class="ion-no-border modern-header">
+  <ion-list lines="none">
+    <ion-list-header class="ion-padding">
+      <ion-label color="primary" class="ion-text-center">
+        <h1 class="app-title">{{ 'LOGIN.TITLE' | translate }}</h1>
+        <p class="app-tagline">{{ 'LOGIN.SUBTITLE' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+  </ion-list>
+</ion-header>
+
+<ion-content class="ion-padding modern-content">
+  <ion-slides pager="true" [options]="slideOpts">
+    <ion-slide>
+      <ion-img src="../assets/imgs/main.svg"></ion-img>
+    </ion-slide>
+    <ion-slide>
+      <ion-img src="../assets/imgs/main1.svg"></ion-img>
+    </ion-slide>
+    <ion-slide>
+      <ion-img src="../assets/imgs/main2.svg"></ion-img>
+    </ion-slide>
+  </ion-slides>
+  <ion-row class="ion-no-padding">
+    <ion-list class="ion-no-padding full-width">
+      <ion-item-group class="ion-margin-horizontal">
+        <form [formGroup]="form" class="ion-padding modern-form">
+          <div id="sign-in-button"></div>
+          <div class="phone-input-container">
+            <ion-item lines="none" class="country-select">
+              <ion-button fill="clear" class="country-button" (click)="openCountrySearchModal()">
+                <img [src]="flag" class="country-flag" />
+                {{ CountryCode }}
+                <ion-icon name="chevron-down-outline"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="phone-input"
+                formControlName="phone"
+                [placeholder]="'MOBILE_NUMBER' | translate"
+                type="tel"
+                clearInput
+                minlength="10"
+                maxlength="11"
+                (ionFocus)="Show()"
+                (ionBlur)="Hide()">
+              </ion-input>
+            </ion-item>
+            <ion-text class="ion-text-center" *ngIf="!form.get('phone').valid && form.get('phone').touched">
+              <ion-text class="error" *ngIf="form.get('phone').hasError('required')" color="danger">
+                {{ 'MOBILE_REQUIRED' | translate }}
+              </ion-text>
+              <ion-text class="error" *ngIf="form.get('phone').hasError('minlength') && !form.get('phone').hasError('required')" color="danger">
+                {{ 'MOBILE_INVALID' | translate }}
+              </ion-text>
+            </ion-text>
+          </div>
+          <ion-button 
+            class="submit-button" 
+            shape="round" 
+            size="large" 
+            type="submit" 
+            [disabled]="!form.get('phone').valid" 
+            (click)="signIn()" 
+            expand="block">
+            <ion-label *ngIf="!approve2">{{ 'CONTINUE' | translate }}</ion-label>
+            <ion-icon *ngIf="!approve2" name="arrow-forward-outline"></ion-icon>
+            <ion-progress-bar *ngIf="approve2" type="indeterminate"></ion-progress-bar>
+          </ion-button>
+
+          <div class="divider-container">
+            <div class="divider-line"></div>
+            <span class="divider-text">{{ 'OR' | translate }}</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <ion-button 
+            class="google-button" 
+            shape="round" 
+            size="large" 
+            fill="outline"
+            (click)="signInWithGoogle()" 
+            expand="block">
+            <ion-icon name="logo-google" slot="start"></ion-icon>
+            <ion-label>{{ 'CONTINUE_WITH_GOOGLE' | translate }}</ion-label>
+          </ion-button>
+        </form>
+      </ion-item-group>
+    </ion-list>
+  </ion-row>
+
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="globe"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')">
+        <ion-img src="https://cdn.kcak11.com/CountryFlags/countries/gb.svg" style="width: 24px; height: 24px;"></ion-img>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ms')">
+        <ion-img src="https://cdn.kcak11.com/CountryFlags/countries/my.svg" style="width: 24px; height: 24px;"></ion-img>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab> -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="language-fab">
+    <ion-fab-button size="small" color="light">
+      <ion-icon name="language-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
+        <span class="lang-flag">🇺🇸</span>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
+        <span class="lang-flag">🇲🇾</span>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>
+<ion-footer>
+  <!-- Add this at the end of your template -->
+  <div id="recaptcha-container"></div>
+</ion-footer>

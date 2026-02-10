@@ -1,0 +1,102 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar class="header-toolbar">
+    <ion-title class="app-title">
+      <h1>{{ 'PEGASUS' | translate }}</h1>
+
+      <p class="tagline">{{ 'APP_TAGLINE' | translate }}</p>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="login-content">
+  <div class="content-wrapper" style="padding-top:10px ;">
+    <!-- Image Slider -->
+    <div class="slider-container">
+      <swiper-container
+        [pagination]="{ clickable: true }"
+        [autoplay]="{ delay: 3000, disableOnInteraction: false }"
+        [initialSlide]="0"
+        [speed]="400">
+        <swiper-slide>
+          <ion-img src="../assets/imgs/main.svg"></ion-img>
+        </swiper-slide>
+        <swiper-slide>
+          <ion-img src="../assets/imgs/main1.svg"></ion-img>
+        </swiper-slide>
+        <swiper-slide>
+          <ion-img src="../assets/imgs/main2.svg"></ion-img>
+        </swiper-slide>
+      </swiper-container>
+    </div>
+
+    <!-- Login Form -->
+    <div class="form-container">
+      <form [formGroup]="form">
+        <div id="sign-in-button"></div>
+
+        <!-- Phone Input Card -->
+        <ion-card class="phone-input-card">
+          <ion-card-content class="card-content">
+            <div class="input-wrapper">
+              <!-- Country Code Button -->
+              <button type="button" class="country-select-btn" (click)="openCountrySearchModal()">
+                <img *ngIf="!flagLoadError" [src]="flag" class="country-flag" alt="country flag" (error)="onFlagLoadError()">
+                <span *ngIf="flagLoadError" class="country-flag-emoji">{{ flagEmoji }}</span>
+                <span class="country-code">{{ CountryCode }}</span>
+                <ion-icon name="chevron-down-outline" class="dropdown-icon"></ion-icon>
+              </button>
+
+              <!-- Phone Number Input -->
+              <div class="phone-input-wrapper">
+                <ion-input class="phone-input" type="tel" formControlName="phone"
+                  [placeholder]="'MOBILE_NUMBER' | translate" clearInput minlength="10" maxlength="10"
+                  (ionFocus)="Show()" (ionBlur)="Hide()">
+                </ion-input>
+              </div>
+            </div>
+
+            <!-- Validation Error -->
+            <div class="validation-error" *ngIf="!form.get('phone').valid && form.get('phone').touched">
+              <ion-text color="danger">
+                <small *ngIf="form.get('phone').hasError('required')">
+                  {{ 'MOBILE_REQUIRED' | translate }}
+                </small>
+                <small *ngIf="form.get('phone').hasError('minlength') && !form.get('phone').hasError('required')">
+                  {{ 'MOBILE_INVALID' | translate }}
+                </small>
+              </ion-text>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Submit Button -->
+        <ion-button class="submit-btn" shape="round" size="large" type="submit" [disabled]="!form.get('phone').valid"
+          color="primary" (click)="signIn()" expand="block">
+          <span *ngIf="!approve2">{{ 'CONTINUE' | translate }}</span>
+          <ion-icon *ngIf="!approve2" slot="end" name="arrow-forward-outline"></ion-icon>
+          <ion-spinner *ngIf="approve2" name="crescent"></ion-spinner>
+        </ion-button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Language Selector FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="language-fab">
+    <ion-fab-button size="medium" color="light">
+      <ion-icon name="language-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
+            <ion-text>EN</ion-text>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
+            <ion-text>MS</ion-text>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div id="recaptcha-container"></div>
+</ion-footer>

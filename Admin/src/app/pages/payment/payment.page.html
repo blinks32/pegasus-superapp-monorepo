@@ -1,0 +1,61 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary">
+        <ion-back-button></ion-back-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'PAYMENT.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center ion-padding">
+  <ion-card class="ion-no-border no-shadow">
+    <ion-card-content class="no-shadow">
+      <div class="payment-details" [ngClass]="{'slide-down': selectedProvider !== ''}">
+        <form [formGroup]="paymentForm" (ngSubmit)="processPayment()">
+          <div *ngIf="selectedProvider === 'stripe'">
+            <div #cardElement class="stripe-element"></div>
+            <div id="card-errors" role="alert"></div>
+          </div>
+          <ion-button color="success" shape="round" expand="block" size="large" type="submit" 
+          [disabled]="!paymentForm.valid || !isCardComplete">
+            {{ 'PAYMENT.ADD_CARD' | translate }}
+          </ion-button>
+        </form>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="savedPaymentMethods.length > 0" class="no-shadow">
+    <ion-card-header>
+      <ion-card-title>{{ 'PAYMENT.SAVED_METHODS' | translate }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content class="no-shadow">
+      <ion-radio-group [(ngModel)]="selectedCardId" (ionChange)="setActiveCard($event)">
+        <ion-item *ngFor="let method of savedPaymentMethods">
+          <ion-label>{{ method.last4 }}</ion-label>
+          <ion-radio slot="start" [value]="method.cardId"></ion-radio>
+          <ion-button slot="end" color="danger" (click)="deletePaymentMethod(method.cardId)">
+            {{ 'PAYMENT.DELETE' | translate }}
+          </ion-button>
+        </ion-item>
+      </ion-radio-group>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Add language switcher -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="globe"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')">
+        <ion-img src="https://cdn.kcak11.com/CountryFlags/countries/us.svg" style="width: 24px; height: 24px;"></ion-img>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ar')">
+        <ion-img src="https://cdn.kcak11.com/CountryFlags/countries/sa.svg" style="width: 24px; height: 24px;"></ion-img>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>

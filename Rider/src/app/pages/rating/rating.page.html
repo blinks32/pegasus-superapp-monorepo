@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'RATING.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Language Selector FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="language-fab">
+    <ion-fab-button size="medium" color="light">
+      <ion-icon name="language-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
+            <ion-text>EN</ion-text>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
+            <ion-text>MS</ion-text>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>

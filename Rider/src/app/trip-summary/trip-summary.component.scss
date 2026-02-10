@@ -1,0 +1,230 @@
+:host {
+  --card-border-radius: 16px;
+  --animation-duration: 0.4s;
+}
+
+.summary-container {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--animation-duration) ease-out, transform var(--animation-duration) ease-out;
+  
+  &.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ion-card {
+  border-radius: var(--card-border-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  
+  ion-card-header {
+    padding-bottom: 8px;
+    
+    ion-card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+  }
+}
+
+.trip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.route-visualization {
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  width: 80%;
+  padding: 10px 0;
+  
+  .route-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    
+    &.start {
+      background-color: var(--ion-color-primary);
+    }
+    
+    &.end {
+      background-color: var(--ion-color-danger);
+    }
+  }
+  
+  .route-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, var(--ion-color-primary), var(--ion-color-danger));
+    margin: 0 8px;
+  }
+}
+
+.locations {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  .location-item {
+    display: flex;
+    flex-direction: column;
+    
+    .location-label {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+      margin-bottom: 4px;
+    }
+    
+    .location-value {
+      font-size: 0.95rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.trip-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 10px;
+    
+    ion-icon {
+      font-size: 1.5rem;
+      color: var(--ion-color-primary);
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+.rating-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  
+  .stars {
+    display: flex;
+    gap: 8px;
+    
+    ion-icon {
+      font-size: 2rem;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s, transform 0.2s;
+      
+      &.selected {
+        color: #ffb400;
+      }
+      
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  .comment-box {
+    width: 100%;
+    --background: #f8f8f8;
+    --border-radius: 12px;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    
+    ion-textarea {
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+    }
+  }
+  
+  .submit-button {
+    margin-top: 10px;
+    --border-radius: 12px;
+    height: 48px;
+    font-weight: 500;
+    width: 100%;
+    
+    ion-spinner {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Shared Ride Label
+.shared-ride-label {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+  
+  ion-chip {
+    --background: var(--ion-color-success);
+    --color: white;
+    font-weight: 600;
+    padding: 8px 16px;
+  }
+}
+
+// Shared Ride Price Display
+.shared-ride-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  .original-price {
+    font-size: 0.85em;
+    color: var(--ion-color-medium);
+    margin-bottom: 2px;
+    
+    del {
+      text-decoration: line-through;
+    }
+  }
+  
+  .final-price {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--ion-color-success);
+  }
+}
+
+// Savings stat
+.savings-stat {
+  ion-icon {
+    color: var(--ion-color-success) !important;
+  }
+  
+  .savings-value {
+    color: var(--ion-color-success) !important;
+    font-weight: 700;
+  }
+}
+
+// Responsive adjustments
+@media (min-width: 768px) {
+  .summary-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}

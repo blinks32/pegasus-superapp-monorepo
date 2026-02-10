@@ -1,0 +1,223 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+
+
+ion-header.md {
+    ion-toolbar:first-child {
+        --padding-top: 27px;
+        height: 80px;
+        // --ion-background-color: red;
+        // color: white;
+    }
+}
+
+#inbox-list{
+    --ion-background-color: white;
+}
+
+ion-button{
+    --box-shadow:none;
+}
+
+// Force light mode globally - override all dark mode attempts
+:root {
+    color-scheme: light only !important;
+}
+
+body {
+    --ion-background-color: #ffffff !important;
+    --ion-background-color-rgb: 255, 255, 255 !important;
+    --ion-text-color: #000000 !important;
+    --ion-text-color-rgb: 0, 0, 0 !important;
+    --ion-color-step-50: #f2f2f2 !important;
+    --ion-color-step-100: #e6e6e6 !important;
+    --ion-color-step-150: #d9d9d9 !important;
+    --ion-color-step-200: #cccccc !important;
+    --ion-color-step-250: #bfbfbf !important;
+    --ion-color-step-300: #b3b3b3 !important;
+    --ion-color-step-350: #a6a6a6 !important;
+    --ion-color-step-400: #999999 !important;
+    --ion-color-step-450: #8c8c8c !important;
+    --ion-color-step-500: #808080 !important;
+    --ion-color-step-550: #737373 !important;
+    --ion-color-step-600: #666666 !important;
+    --ion-color-step-650: #595959 !important;
+    --ion-color-step-700: #4d4d4d !important;
+    --ion-color-step-750: #404040 !important;
+    --ion-color-step-800: #333333 !important;
+    --ion-color-step-850: #262626 !important;
+    --ion-color-step-900: #1a1a1a !important;
+    --ion-color-step-950: #0d0d0d !important;
+    color-scheme: light only !important;
+    background-color: #ffffff !important;
+}
+
+ion-content {
+    --ion-background-color: #ffffff !important;
+    --background: #ffffff !important;
+}
+
+ion-card {
+    --ion-background-color: #ffffff !important;
+    --background: #ffffff !important;
+}
+
+ion-item {
+    --ion-background-color: #ffffff !important;
+    --background: #ffffff !important;
+}
+
+ion-toolbar {
+    --ion-background-color: #ffffff !important;
+    --background: #ffffff !important;
+}
+
+ion-modal {
+    --ion-background-color: #ffffff !important;
+    --background: #ffffff !important;
+}
+
+// Completely disable dark mode
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: light only !important;
+    }
+    
+    body {
+        --ion-background-color: #ffffff !important;
+        --ion-background-color-rgb: 255, 255, 255 !important;
+        --ion-text-color: #000000 !important;
+        --ion-text-color-rgb: 0, 0, 0 !important;
+        background-color: #ffffff !important;
+    }
+    
+    ion-content {
+        --ion-background-color: #ffffff !important;
+        --background: #ffffff !important;
+    }
+    
+    ion-card {
+        --ion-background-color: #ffffff !important;
+        --background: #ffffff !important;
+    }
+    
+    ion-item {
+        --ion-background-color: #ffffff !important;
+        --background: #ffffff !important;
+    }
+    
+    ion-toolbar {
+        --ion-background-color: #ffffff !important;
+        --background: #ffffff !important;
+    }
+    
+    ion-modal {
+        --ion-background-color: #ffffff !important;
+        --background: #ffffff !important;
+    }
+}
+
+// Detailed error alert styling
+.detailed-error-alert {
+    .alert-message {
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        text-align: left;
+        max-height: 400px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        line-height: 1.6;
+        
+        strong {
+            color: #d32f2f;
+            font-weight: 600;
+        }
+        
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #c7254e;
+        }
+    }
+    
+    .alert-button-group {
+        button {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+}
+
+// Simple error alert styling (cleaner, more readable)
+.simple-error-alert {
+    .alert-message {
+        white-space: pre-wrap;
+        text-align: left;
+        line-height: 1.7;
+        font-size: 14px;
+        
+        strong {
+            color: #d32f2f;
+            font-weight: 600;
+            display: block;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+        
+        code {
+            background-color: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #c7254e;
+            display: block;
+            margin: 8px 0;
+            word-wrap: break-word;
+        }
+    }
+    
+    .alert-button-group {
+        button {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+}
+
+// Error alert styling
+.error-alert {
+    .alert-message {
+        white-space: pre-wrap;
+        text-align: left;
+        line-height: 1.5;
+    }
+}

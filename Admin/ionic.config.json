@@ -1,0 +1,7 @@
+{
+  "name": "shamRide",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

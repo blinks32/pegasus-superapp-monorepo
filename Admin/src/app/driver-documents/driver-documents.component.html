@@ -1,0 +1,84 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ driverName }}'s Documents</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Loading State -->
+  <div *ngIf="isLoading">
+    <ion-card *ngFor="let i of [1,2,3]">
+      <ion-card-header>
+        <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-skeleton-text animated style="width: 100%; height: 100px;"></ion-skeleton-text>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- No Data State -->
+  <div *ngIf="!isLoading && hasNoData" class="ion-text-center ion-padding">
+    <ion-icon name="document-outline" style="font-size: 64px; color: var(--ion-color-medium);"></ion-icon>
+    <h3>No Documents Found</h3>
+    <p>This driver has not submitted any documents yet.</p>
+  </div>
+
+  <!-- Documents List -->
+  <div *ngIf="!isLoading && !hasNoData" class="document-list">
+    <ion-card *ngFor="let document of records" class="document-card">
+      <ion-card-header>
+        <ion-row class="ion-align-items-center">
+          <ion-col size="auto">
+            <ion-icon [name]="getDocumentIcon(document.type)" color="primary" style="font-size: 24px;"></ion-icon>
+          </ion-col>
+          <ion-col>
+            <ion-card-title>{{ document.name }}</ion-card-title>
+            <ion-card-subtitle>
+              <ion-badge [color]="getStatusColor(document.status)">{{ document.status || 'Pending' }}</ion-badge>
+              <span class="document-type">{{ document.type | titlecase }}</span>
+            </ion-card-subtitle>
+          </ion-col>
+        </ion-row>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Text Document -->
+        <div *ngIf="document.type === 'text'" class="text-content">
+          <p>{{ document.value || document.content || document.text }}</p>
+        </div>
+
+        <!-- Image Document -->
+        <div *ngIf="document.type === 'image'" class="image-content">
+          <img [src]="document.value || document.image || document.content" alt="{{ document.name }}" class="document-image" (click)="openDocument(document.value || document.image || document.content)">
+        </div>
+
+        <!-- PDF Document -->
+        <div *ngIf="document.type === 'pdf'" class="pdf-content">
+          <ion-button expand="block" fill="outline" (click)="openDocument(document.value || document.content)">
+            <ion-icon name="open-outline" slot="start"></ion-icon>
+            View PDF
+          </ion-button>
+        </div>
+
+        <!-- Fallback for unknown types or legacy data -->
+        <div *ngIf="!document.type">
+          <p *ngIf="document.text">{{ document.text }}</p>
+          <img *ngIf="document.image" [src]="document.image" alt="{{ document.name }}" class="document-image">
+        </div>
+
+        <div class="document-meta" *ngIf="document.date || document.createdAt">
+          <ion-text color="medium">
+            <small>Submitted: {{ (document.date?.toDate ? document.date.toDate() : document.date) || (document.createdAt?.toDate ? document.createdAt.toDate() : document.createdAt) | date:'medium' }}</small>
+          </ion-text>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

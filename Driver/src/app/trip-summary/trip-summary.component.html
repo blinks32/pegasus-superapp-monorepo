@@ -1,0 +1,103 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Trip Summary</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div class="trip-details-card">
+    <ion-card>
+      <ion-card-content>
+        <!-- Trip Details -->
+        <div class="trip-info">
+          <ion-item lines="none">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Date</h2>
+              <p>{{ tripDate | date:'MMM dd, yyyy' }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" *ngIf="formattedDistance">
+            <ion-icon name="navigate-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Distance</h2>
+              <p>{{ formattedDistance }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" *ngIf="formattedDuration">
+            <ion-icon name="time-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Duration</h2>
+              <p>{{ formattedDuration }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" *ngIf="formattedPrice">
+            <ion-icon name="cash-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Fare</h2>
+              <p>{{ formattedPrice }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" *ngIf="tripData?.Rider_Location">
+            <ion-icon name="location-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Pickup</h2>
+              <p>{{ tripData.Rider_Location }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" *ngIf="tripData?.Destination">
+            <ion-icon name="flag-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Destination</h2>
+              <p>{{ tripData.Destination }}</p>
+            </ion-label>
+          </ion-item>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Rating Section -->
+  <div class="rating-section">
+    <h2>Rate your experience</h2>
+    
+    <div class="star-rating">
+      <ion-icon 
+        *ngFor="let num of [1, 2, 3, 4, 5]" 
+        [name]="rating >= num ? 'star' : 'star-outline'"
+        (click)="setRating(num)">
+      </ion-icon>
+    </div>
+    
+    <ion-item>
+      <ion-label position="floating">Comments (optional)</ion-label>
+      <ion-textarea [(ngModel)]="comment" rows="4"></ion-textarea>
+    </ion-item>
+    
+    <!-- Submit Rating button - only show if not yet submitted -->
+    <ion-button *ngIf="!ratingSubmitted" expand="block" (click)="submitRating()" class="submit-button">
+      Submit Rating
+    </ion-button>
+    
+    <!-- Skip Rating button - only show if not yet submitted -->
+    <ion-button *ngIf="!ratingSubmitted" expand="block" fill="outline" color="medium" (click)="skipRating()" class="skip-button">
+      Skip Rating
+    </ion-button>
+    
+    <!-- Continue button - shows after rating is submitted or skipped -->
+    <ion-button *ngIf="ratingSubmitted" expand="block" color="success" (click)="dismiss()" class="continue-button">
+      Continue
+    </ion-button>
+  </div>
+</ion-content>

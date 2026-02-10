@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "459110381543",
+    "project_id": "pegasus-2be94",
+    "storage_bucket": "pegasus-2be94.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459110381543:android:ba2071e2cea27c5cdfaf42",
+        "android_client_info": {
+          "package_name": "com.pegasus.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5ShOlRI8493ovNQ4e--utZawgmjc3x0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459110381543:android:9b23f7bae4d3cc9fdfaf42",
+        "android_client_info": {
+          "package_name": "com.pegasus.rider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5ShOlRI8493ovNQ4e--utZawgmjc3x0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459110381543:android:05d31f86fd5fb8bcdfaf42",
+        "android_client_info": {
+          "package_name": "io.ionic.rider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5ShOlRI8493ovNQ4e--utZawgmjc3x0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

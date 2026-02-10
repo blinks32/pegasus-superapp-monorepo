@@ -1,0 +1,389 @@
+// Header Styles
+.header-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  padding-top: 20px;
+}
+
+.app-title {
+  text-align: center;
+  
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin:0;
+    padding:0;
+    color: var(--ion-color-primary);
+  }
+  
+  .tagline {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 4px 0 0 0;
+    font-weight: 400;
+  }
+}
+
+// Content Styles
+.login-content {
+  --background: var(--ion-background-color);
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 24px;
+}
+
+// Slider Styles
+.slider-container {
+  flex: 0 0 auto;
+  margin: 20px 0;
+  
+  swiper-container {
+    height: 280px;
+  }
+  
+  ion-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+// Form Container
+.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-bottom: 80px;
+}
+
+// Phone Input Card
+.phone-input-card {
+  margin: 0 0 24px 0;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  
+  .card-content {
+    padding: 16px;
+  }
+}
+
+// Input Wrapper
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  padding: 4px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  
+  &:focus-within {
+    border-color: var(--ion-color-primary);
+    background: var(--ion-color-light-tint);
+  }
+}
+
+// Country Select Button
+.country-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 110px;
+  
+  &:hover {
+    background: var(--ion-color-light-shade);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  .country-flag {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    object-fit: cover;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .country-code {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+  
+  .dropdown-icon {
+    font-size: 16px;
+    color: var(--ion-color-medium);
+  }
+}
+
+// Phone Input Wrapper
+.phone-input-wrapper {
+  flex: 1;
+  
+  .phone-input {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --background: transparent;
+    --placeholder-color: var(--ion-color-medium);
+    --placeholder-opacity: 0.7;
+    font-size: 16px;
+    font-weight: 500;
+    height: 48px;
+  }
+}
+
+// Validation Error
+.validation-error {
+  margin-top: 12px;
+  padding: 0 4px;
+  
+  small {
+    font-size: 13px;
+    display: block;
+    margin: 0;
+  }
+}
+
+// Submit Button
+.submit-btn {
+  margin-top: 8px;
+  height: 56px;
+  --border-radius: 14px;
+  font-weight: 600;
+  font-size: 17px;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+  
+  &:not([disabled]) {
+    &:hover {
+      --box-shadow: 0 6px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+    }
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+  
+  ion-icon {
+    font-size: 22px;
+    margin-left: 8px;
+  }
+  
+  ion-spinner {
+    --color: white;
+  }
+}
+
+// Divider
+.divider-container {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--ion-color-medium-tint);
+  }
+  
+  .divider-text {
+    padding: 0 16px;
+    color: var(--ion-color-medium);
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+// Google Sign-in Button
+.google-btn {
+  height: 56px;
+  --border-radius: 14px;
+  font-weight: 600;
+  font-size: 17px;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  --background: #ffffff;
+  --color: #3c4043;
+  border: 1px solid #dadce0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  
+  &:not([disabled]) {
+    &:hover {
+      --background: #f8f9fa;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+  
+  .google-icon {
+    font-size: 22px;
+    margin-right: 8px;
+    color: #4285f4;
+  }
+  
+  ion-spinner {
+    --color: #4285f4;
+  }
+}
+
+// Language FAB
+.language-fab {
+  margin: 0 16px 16px 0;
+  
+  ion-fab-button {
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+  
+  ion-fab-list {
+    ion-fab-button {
+      width: 48px;
+      height: 48px;
+      margin: 8px 0;
+      
+      ion-img {
+        width: 28px;
+        height: 28px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+// Footer
+ion-footer {
+  background: transparent;
+  
+  #recaptcha-container {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+  }
+}
+
+// Animations
+@keyframes slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100px);
+  }
+}
+
+@keyframes slide-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100px);
+  }
+}
+
+.slide-left {
+  animation: slide-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.slide-right {
+  animation: slide-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+// RTL Support
+[dir="rtl"] {
+  .input-wrapper {
+    flex-direction: row-reverse;
+  }
+  
+  .country-select-btn {
+    .country-flag {
+      margin-left: 8px;
+      margin-right: 0;
+    }
+  }
+  
+  .submit-btn {
+    ion-icon {
+      margin-right: 8px;
+      margin-left: 0;
+      transform: rotate(180deg);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 360px) {
+  .app-title h1 {
+    font-size: 28px;
+   
+  }
+  
+  .slider-container swiper-container {
+    height: 220px;
+  }
+  
+  .country-select-btn {
+    min-width: 95px;
+    padding: 10px 12px;
+    
+    .country-flag {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .content-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+// Flag emoji styles
+.country-flag-emoji {
+  font-size: 20px;
+  width: 24px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+}
+
+.lang-flag {
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Ensure country flag img has consistent sizing
+.country-flag {
+  width: 24px;
+  height: 18px;
+  object-fit: cover;
+  margin-right: 8px;
+  border-radius: 2px;
+}

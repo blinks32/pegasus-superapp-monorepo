@@ -1,0 +1,89 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-buttons slot="start">
+        <ion-menu-button color="primary"></ion-menu-button>
+      </ion-buttons>
+    </ion-buttons>
+    <ion-title> Payout </ion-title>
+   
+  </ion-toolbar>
+ 
+</ion-header>
+ 
+<ion-content class="ion-padding">
+
+  <!-- <ion-segment value="default" [(ngModel)]="segmentModel">
+    <ion-segment-button value="default">
+      <ion-label>Approved</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="segment">
+      <ion-label>Pending</ion-label>
+    </ion-segment-button>
+  </ion-segment> -->
+
+  <div *ngIf="hasNoData">
+  <ion-img src="../assets/imgs/empty.svg"></ion-img>
+
+  <ion-list-header style="margin-top: 10%">
+    <ion-label color="primary" class="ion-text-center">
+      No Data
+      </ion-label>
+  </ion-list-header>
+  </div>
+
+<div *ngIf="hideSkeleton">
+  <ion-grid  class="ion-margin">
+    <ion-row>
+      <ion-col><ion-skeleton-text [animated]="true" style="width: auto; height: 400px;"></ion-skeleton-text></ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+
+
+<div *ngIf="!hideSkeleton">
+  <ion-card class="ion-padding">
+    <ion-searchbar (ionInput)="applyFilter($event)" placeholder="Ex. Mia"></ion-searchbar>
+
+    <ion-grid>
+      <ion-row class="header-row">
+        <ion-col>Name</ion-col>
+        <ion-col>Phone</ion-col>
+        <ion-col>Email</ion-col>
+        <ion-col>Earnings</ion-col>
+        <ion-col>Pay</ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let element of filteredRecords | slice:currentPage * pageSize:(currentPage + 1) * pageSize">
+        <ion-col>{{element.Driver_name}}</ion-col>
+        <ion-col>{{element.Driver_phone}}</ion-col>
+        <ion-col>{{element.Driver_email}}</ion-col>
+        <ion-col>{{currencySymbol}}{{element.Earnings}}</ion-col>
+        <ion-col>
+          <ion-button color="success" (click)="gotoDocs(element)">
+            <ion-icon name="cash-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    
+    <ion-grid [hidden]="(currentPage + 1) * pageSize >= filteredRecords.length">
+      <ion-row class="ion-justify-content-between">
+        <ion-col size="12" class="ion-text-center">
+          <ion-button fill="clear" [disabled]="currentPage === 0" (click)="previousPage()">
+            <ion-icon name="chevron-back"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" [disabled]="(currentPage + 1) * pageSize >= filteredRecords.length" (click)="nextPage()">
+            <ion-icon name="chevron-forward"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+</div>
+</ion-content>
+
+
+<ion-footer>
+   
+</ion-footer>

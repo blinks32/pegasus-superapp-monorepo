@@ -1,0 +1,232 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'DETAILS.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding custom-content">
+  <form [formGroup]="form">
+    <!-- Profile Image Section -->
+    <div class="profile-image-section">
+      <div class="image-container" (click)="presentImageSourceActionSheet()">
+        <ng-container *ngIf="!isUploading; else uploadingTemplate">
+          <img [src]="imageDisplayUrl" *ngIf="imageDisplayUrl" alt="Profile photo">
+          <div class="placeholder" *ngIf="!imageDisplayUrl">
+            <ion-icon name="person"></ion-icon>
+          </div>
+          <div class="overlay">
+            <ion-icon name="camera"></ion-icon>
+          </div>
+        </ng-container>
+        <ng-template #uploadingTemplate>
+          <div class="upload-loader">
+            <ion-spinner name="circular"></ion-spinner>
+            <p>{{ 'DETAILS.UPLOAD_STATUS.UPLOADING' | translate }}</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Rest of the form with updated styling -->
+    <div class="form-container">
+      <ion-list>
+        <!-- Personal Information -->
+        <ion-item-group class="custom-group">
+          <ion-item-divider>
+            <ion-label>{{ 'DETAILS.PERSONAL_INFO.TITLE' | translate }}</ion-label>
+          </ion-item-divider>
+
+          <ion-item [class.ion-invalid]="form.get('fullname')?.touched && form.get('fullname')?.invalid">
+            <ion-label position="floating">{{ 'DETAILS.PERSONAL_INFO.FIRST_NAME' | translate }}</ion-label>
+            <ion-input formControlName="fullname" type="text">
+            </ion-input>
+            <ion-note slot="error" *ngIf="form.get('fullname')?.touched && form.get('fullname')?.errors?.['required']">
+              {{ 'VALIDATION.REQUIRED' | translate }}
+            </ion-note>
+          </ion-item>
+
+          <ion-item>
+            <ion-input formControlName="lastname" [placeholder]="'DETAILS.PERSONAL_INFO.LAST_NAME' | translate">
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input formControlName="email" type="email" [placeholder]="'DETAILS.PERSONAL_INFO.EMAIL' | translate">
+            </ion-input>
+          </ion-item>
+        </ion-item-group>
+
+        <!-- Vehicle Information -->
+        <ion-item-group class="custom-group">
+          <ion-item-divider>
+            <ion-label>{{ 'DETAILS.VEHICLE_INFO.TITLE' | translate }}</ion-label>
+          </ion-item-divider>
+          <ion-item>
+            <ion-input formControlName="plateNumber" [placeholder]="'DETAILS.VEHICLE_INFO.PLATE_NUMBER' | translate">
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-select formControlName="carType" [placeholder]="'DETAILS.VEHICLE_INFO.CAR_TYPE' | translate">
+              <ion-select-option *ngFor="let type of cartypes" [value]="type.id">
+                {{type.name}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-input formControlName="carName" [placeholder]="'DETAILS.VEHICLE_INFO.CAR_NAME' | translate">
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input formControlName="mileage" type="number"
+              [placeholder]="'DETAILS.VEHICLE_INFO.MILEAGE' | translate">
+            </ion-input>
+          </ion-item>
+        </ion-item-group>
+
+        <!-- License Information -->
+        <ion-item-group class="custom-group">
+          <ion-item-divider>
+            <ion-label>{{ 'DETAILS.LICENSE_INFO.TITLE' | translate }}</ion-label>
+          </ion-item-divider>
+
+          <ion-item>
+            <ion-input formControlName="driverLicense" [placeholder]="'DETAILS.LICENSE_INFO.NUMBER' | translate">
+            </ion-input>
+          </ion-item>
+
+          <!-- License Image Preview -->
+          <div class="license-image-section">
+            <div class="license-image-container" (click)="selectDriverLicenseImage()">
+              <ng-container *ngIf="!isUploadingLicense; else licenseUploadingTemplate">
+                <img [src]="licenseDisplayUrl" *ngIf="licenseDisplayUrl" alt="License photo">
+                <div class="placeholder" *ngIf="!licenseDisplayUrl">
+                  <ion-icon name="id-card"></ion-icon>
+                  <p>{{ 'DETAILS.LICENSE_INFO.TAP_TO_UPLOAD' | translate }}</p>
+                </div>
+                <div class="overlay" *ngIf="licenseDisplayUrl">
+                  <ion-icon name="camera"></ion-icon>
+                </div>
+              </ng-container>
+              <ng-template #licenseUploadingTemplate>
+                <div class="upload-loader">
+                  <ion-spinner name="circular"></ion-spinner>
+                  <p>{{ 'DETAILS.UPLOAD_STATUS.UPLOADING' | translate }}</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </ion-item-group>
+
+        <!-- Required Documents Section -->
+        <!-- <ion-item-group class="custom-group" *ngIf="requiredDocuments.length > 0">
+          <ion-item-divider>
+            <ion-label>{{ 'DETAILS.DOCUMENTS.TITLE' | translate }}</ion-label>
+          </ion-item-divider>
+
+          <div class="documents-list">
+            <div class="document-card" *ngFor="let doc of requiredDocuments">
+              <div class="document-header">
+                <div class="document-icon">
+                  <ion-icon [name]="doc.type === 'text' ? 'document-text' : doc.type === 'image' ? 'image' : 'document'"></ion-icon>
+                </div>
+                <div class="document-info">
+                  <h3>{{ doc.name }}</h3>
+                  <p class="document-description">{{ doc.description }}</p>
+                  <ion-badge [color]="getStatusColor(doc.id)">
+                    {{ getDocumentStatus(doc.id) | translate }}
+                  </ion-badge>
+                </div>
+              </div> -->
+
+              <!-- Show submitted value for text documents -->
+              <!-- <div class="submitted-text" *ngIf="doc.type === 'text' && isDocumentSubmitted(doc.id)">
+                <p>{{ getSubmittedValue(doc.id) }}</p>
+              </div> -->
+
+              <!-- Show preview for image documents -->
+              <!-- <div class="submitted-image" *ngIf="doc.type === 'image' && isDocumentSubmitted(doc.id)">
+                <img [src]="getSubmittedValue(doc.id)" alt="Submitted document" (click)="viewDocument(doc.id)">
+              </div> -->
+
+              <!-- Show PDF indicator -->
+              <!-- <div class="submitted-pdf" *ngIf="doc.type === 'pdf' && isDocumentSubmitted(doc.id)">
+                <ion-button fill="outline" size="small" (click)="viewDocument(doc.id)">
+                  <ion-icon name="eye" slot="start"></ion-icon>
+                  {{ 'DETAILS.DOCUMENTS.VIEW' | translate }} PDF
+                </ion-button>
+              </div> -->
+
+              <!-- Upload/Edit button -->
+              <!-- <div class="document-actions">
+                <ion-button 
+                  [fill]="isDocumentSubmitted(doc.id) ? 'outline' : 'solid'"
+                  size="small"
+                  (click)="handleDocumentAction(doc)"
+                  [disabled]="uploadingDocumentId === doc.id || isDocumentApproved(doc.id)">
+                  <ng-container *ngIf="uploadingDocumentId !== doc.id">
+                    <ion-icon [name]="isDocumentSubmitted(doc.id) ? 'create' : 'cloud-upload'" slot="start"></ion-icon>
+                    {{ isDocumentSubmitted(doc.id) ? ('DETAILS.DOCUMENTS.EDIT' | translate) : ('DETAILS.DOCUMENTS.UPLOAD' | translate) }}
+                  </ng-container>
+                  <ion-spinner name="crescent" *ngIf="uploadingDocumentId === doc.id"></ion-spinner>
+                </ion-button>
+              </div> -->
+
+              <!-- Instruction/Sample content -->
+              <!-- <div class="document-instruction" *ngIf="doc.content && !isDocumentSubmitted(doc.id)">
+                <ion-icon name="information-circle"></ion-icon>
+                <span>{{ doc.content }}</span>
+              </div>
+            </div>
+          </div> -->
+
+          <!-- No documents message -->
+          <!-- <div class="no-documents" *ngIf="requiredDocuments.length === 0">
+            <ion-icon name="documents"></ion-icon>
+            <p>{{ 'DETAILS.DOCUMENTS.NO_DOCUMENTS' | translate }}</p>
+          </div>
+        </ion-item-group> -->
+      </ion-list>
+    </div>
+
+    <div class="submit-section">
+      <ion-button expand="block" (click)="updateProfile()" [disabled]="!isFormCompleteForSubmission() || isSubmitting"
+        class="submit-button">
+        <ion-icon name="save" slot="start"></ion-icon>
+        {{ 'DETAILS.BUTTONS.SUBMIT' | translate }}
+        <ion-spinner name="crescent" *ngIf="isSubmitting"></ion-spinner>
+      </ion-button>
+      
+      <!-- Missing requirements info -->
+      <div class="missing-requirements" *ngIf="!isFormCompleteForSubmission()">
+        <p class="missing-title">{{ 'DETAILS.DOCUMENTS.MISSING_REQUIREMENTS' | translate }}</p>
+        <p *ngIf="!form.valid" class="missing-item">
+          <ion-icon name="close-circle" color="danger"></ion-icon>
+          {{ 'DETAILS.DOCUMENTS.FORM_INCOMPLETE' | translate }}
+        </p>
+        <p *ngIf="!imageUrl || (!imageUrl.startsWith('img_') && !imageUrl.startsWith('assets/'))" class="missing-item">
+          <ion-icon name="close-circle" color="danger"></ion-icon>
+          {{ 'DETAILS.DOCUMENTS.PROFILE_PHOTO_REQUIRED' | translate }}
+        </p>
+        <p *ngIf="!form.get('driverLicenseImage')?.value || (!form.get('driverLicenseImage')?.value.startsWith('img_') && !form.get('driverLicenseImage')?.value.startsWith('assets/'))" class="missing-item">
+          <ion-icon name="close-circle" color="danger"></ion-icon>
+          {{ 'DETAILS.DOCUMENTS.LICENSE_PHOTO_REQUIRED' | translate }}
+        </p>
+        <ng-container *ngIf="getMissingDocuments().length > 0">
+          <p *ngFor="let missingDoc of getMissingDocuments()" class="missing-item">
+            <ion-icon name="close-circle" color="danger"></ion-icon>
+            {{ missingDoc.name }}
+          </p>
+        </ng-container>
+      </div>
+
+      <!-- Connectivity test button - remove in production -->
+      <!-- <ion-button fill="clear" size="small" (click)="testConnectivity()" style="margin-top: 10px;">
+        <ion-icon name="wifi" slot="start"></ion-icon>
+        Test Firebase Connection
+      </ion-button> -->
+    </div>
+  </form>
+</ion-content>

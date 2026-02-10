@@ -1,0 +1,75 @@
+<ion-app>
+  <ng-container *ngIf="menuEnabled; else noMenu">
+    <ion-split-pane when="md" contentId="main-content">
+      <ion-menu contentId="main-content" type="overlay">
+        <ion-header>
+          <ion-toolbar>
+            <ion-row class="ion-align-items-center">
+              <ion-col size="auto">
+                <ion-avatar>
+                  <img [src]="avatar.profile?.imageUrl || 'assets/default-avatar.png'" alt="Profile Picture">
+                </ion-avatar>
+              </ion-col>
+                <ion-col (click)="gotoProfile()" class="profile-info">
+                <ion-title size="small">{{ avatar.profile?.name || 'User Name' }}</ion-title>
+                <ion-text color="medium">
+                  <ion-title size="small">Administrator</ion-title>
+                </ion-text>
+                </ion-col>
+              <ion-col size="auto" *ngIf="!isMobile">
+                <ion-button fill="clear" (click)="toggleMenu()">
+                  <ion-icon slot="icon-only" [name]="isMenuCollapsed ? 'chevron-forward' : 'chevron-back'"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-toolbar>
+        </ion-header>
+
+        <ion-content>
+          <ion-list>
+            <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
+              <ion-item [routerLink]="[p.url]" routerDirection="root" routerLinkActive="selected" detail="false">
+                <ion-icon [name]="p.icon" slot="start" [color]="p.color"></ion-icon>
+                <ion-text color="dark">
+                  <ion-title size="small">{{ p.title }}</ion-title>
+                </ion-text>
+              </ion-item>
+            </ion-menu-toggle>
+          </ion-list>
+
+          <ion-list>
+            <ion-list-header>
+              <ion-text color="medium">
+                <ion-title size="small">Account</ion-title>
+              </ion-text>
+            </ion-list-header>
+            <ion-menu-toggle auto-hide="false">
+              <ion-item button (click)="logout()" detail="false">
+                <ion-icon name="log-out" slot="start"></ion-icon>
+                <ion-text color="dark">
+                  <ion-title size="small">Logout</ion-title>
+                </ion-text>
+              </ion-item>
+            </ion-menu-toggle>
+          </ion-list>
+        </ion-content>
+
+        <ion-footer class="ion-no-border">
+          <ion-toolbar>
+            <ion-text color="medium">
+              <ion-title size="small">App Version 1.0.0</ion-title>
+            </ion-text>
+          </ion-toolbar>
+        </ion-footer>
+      </ion-menu>
+
+      <div class="ion-page" id="main-content">
+        <ion-router-outlet></ion-router-outlet>
+      </div>
+    </ion-split-pane>
+  </ng-container>
+
+  <ng-template #noMenu>
+    <ion-router-outlet></ion-router-outlet>
+  </ng-template>
+</ion-app>

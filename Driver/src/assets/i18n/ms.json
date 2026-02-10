@@ -1,0 +1,220 @@
+{
+  "LOGIN": {
+    "TITLE": "PEGASUS PEMANDU",
+    "SUBTITLE": "Pandulah dan jana pendapatan dengan yakin dan berintegriti",
+    "MOBILE_PLACEHOLDER": "Nombor Telefon",
+    "CONTINUE": "Teruskan",
+    "SELECT_COUNTRY": "Pilih Negara",
+    "VALIDATION": {
+      "REQUIRED": "Sila masukkan nombor telefon",
+      "INVALID": "Sila masukkan nombor telefon yang sah"
+    },
+    "EXIT": {
+      "HEADER": "Keluar Aplikasi",
+      "MESSAGE": "Adakah anda pasti mahu keluar daripada aplikasi?",
+      "CANCEL": "Batal",
+      "CONFIRM": "Keluar"
+    }
+  },
+  "TABS": {
+    "HOME": "Laman Utama",
+    "TRIPS": "Perjalanan Saya",
+    "WALLET": "Dompet",
+    "PROFILE": "Profil"
+  },
+  "DETAILS": {
+    "TITLE": "Lengkapkan Profil Anda",
+    "PERSONAL_INFO": {
+      "TITLE": "Maklumat Peribadi",
+      "FIRST_NAME": "Nama Pertama",
+      "LAST_NAME": "Nama Keluarga",
+      "EMAIL": "E-mel"
+    },
+    "VEHICLE_INFO": {
+      "TITLE": "Maklumat Kenderaan",
+      "PLATE_NUMBER": "Nombor Plat",
+      "CAR_TYPE": "Jenis Kereta",
+      "CAR_NAME": "Nama Kereta",
+      "MILEAGE": "Jumlah Perbatuan"
+    },
+    "LICENSE_INFO": {
+      "TITLE": "Maklumat Lesen",
+      "NUMBER": "Nombor Lesen Pemandu",
+      "UPLOAD": "Muat naik imej lesen",
+      "UPLOAD_PHOTO": "Muat naik gambar profil",
+      "TAP_TO_UPLOAD": "Ketuk untuk muat naik imej lesen"
+    },
+    "BUTTONS": {
+      "SUBMIT": "Hantar",
+      "CAMERA": "Kamera",
+      "GALLERY": "Galeri",
+      "FILE": "Fail",
+      "CANCEL": "Batal"
+    },
+    "ALERTS": {
+      "UPLOAD_SUCCESS": "Muat naik berjaya",
+      "UPLOAD_FAILED": "Muat naik gagal",
+      "EXIT": {
+        "HEADER": "Keluar Aplikasi",
+        "MESSAGE": "Adakah anda pasti mahu keluar daripada aplikasi?",
+        "CANCEL": "Batal",
+        "CONFIRM": "Keluar"
+      },
+      "EMAIL_VERIFICATION": "Pengesahan e-mel diperlukan",
+      "EMAIL_VERIFICATION_MESSAGE": "E-mel pengesahan telah dihantar ke alamat baharu anda. Sila sahkan e-mel sebelum meneruskan."
+    },
+    "UPLOAD_STATUS": {
+      "UPLOADING": "Sedang dimuat naik..."
+    }
+  },
+  "HOME": {
+    "EARNINGS": "RM",
+    "TIME_LEFT": "Masa Baki",
+    "SECONDS": "saat",
+    "ACCEPT": "Terima",
+    "ARRIVAL_IN": "Tiba dalam",
+    "YOUR_RIDER_IS": "Penumpang anda",
+    "DESTINATION": "Destinasi",
+    "PICK_UP": "Ambil",
+    "DROP_OFF": "Hantar",
+    "NAVIGATE": "Navigasi",
+    "CANCEL_RIDE": {
+      "HEADER": "Batal Perjalanan",
+      "CHANGED_MIND": "Saya berubah fikiran",
+      "TOOK_TOO_LONG": "Pemandu mengambil masa terlalu lama",
+      "FOUND_ANOTHER": "Temui perjalanan lain",
+      "OTHER": "Lain-lain"
+    },
+    "SHARED_RIDE": {
+      "PASSENGERS": "Penumpang",
+      "PICK_UP_PASSENGER": "Ambil",
+      "DROP_OFF_PASSENGER": "Hantar",
+      "PASSENGERS_GOING_YOUR_WAY": "Penumpang Menuju Arah Sama",
+      "MATCH_PERCENT": "padanan",
+      "DETOUR": "lencongan",
+      "YOUR_EARNINGS": "Pendapatan Anda",
+      "PASSENGER_ADDED": "ditambah ke perjalanan anda!",
+      "PASSENGER_REMOVED": "Penumpang dikeluarkan dari perjalanan",
+      "ADDING_PASSENGER": "Menambah penumpang..."
+    }
+  },
+  "COMMON": {
+    "CANCEL": "Batal",
+    "OK": "OK",
+    "PLEASE_WAIT": "Sila tunggu..."
+  },
+  "PROFILE": {
+    "TITLE": "Profil Pemandu",
+    "SELECT_AVATAR": "Pilih avatar",
+    "MORE_FEATURES": "Lebih banyak ciri akan ditambah",
+    "LOGOUT": "Log keluar",
+    "TOTAL_EARNINGS": "Jumlah Pendapatan",
+    "TOTAL_RIDES": "Jumlah Perjalanan",
+    "VEHICLE_INFO": "Maklumat Kenderaan",
+    "CAR_MODEL": "Model Kereta",
+    "PLATE_NUMBER": "Nombor Plat",
+    "CONTACT_INFO": "Maklumat Hubungan",
+    "PHONE": "Nombor Telefon",
+    "EMAIL": "Alamat E-mel",
+    "LANGUAGE": "Bahasa",
+    "RIDE_SHARING": {
+      "TITLE": "Perkongsian Perjalanan",
+      "ENABLE": "Aktifkan Perkongsian",
+      "ENABLE_DESC": "Terima beberapa penumpang dalam laluan yang sama",
+      "MAX_PASSENGERS": "Maksimum Penumpang",
+      "MAX_PASSENGERS_DESC": "Penumpang maksimum setiap perjalanan berkongsi",
+      "MAX_DETOUR": "Lencongan Maksimum",
+      "MAX_DETOUR_DESC": "Jarak tambahan maksimum dibenarkan",
+      "INFO": "Apabila diaktifkan, anda mungkin menerima permintaan daripada penumpang yang menuju ke arah yang sama. Setiap penumpang mendapat diskaun dan anda memperoleh lebih banyak setiap perjalanan!",
+      "SETTINGS_SAVED": "Tetapan perkongsian perjalanan disimpan"
+    }
+  },
+  "ABOUT": {
+    "TITLE": "Tentang",
+    "HEADING": "Kami Yang Terbaik",
+    "COPYRIGHT": "© 2022 Pana, Inc."
+  },
+  "SUPPORT": {
+    "TITLE": "Sokongan",
+    "NO_DATA_HEADING": "Kami bertindak segera",
+    "NO_DATA_TEXT": "Beritahu kami bagaimana kami boleh membantu anda.",
+    "INPUT_PLACEHOLDER": "Mula menaip.."
+  },
+  "PAYMENT": {
+    "TITLE": "Pembayaran",
+    "ADD_CARD": "Tambah Kad Baharu",
+    "PROCEED": "Teruskan",
+    "PAYMENT_METHODS": "Kaedah Pembayaran",
+    "TEST_CARD": "Kad Ujian"
+  },
+  "HISTORY": {
+    "TITLE": "Sejarah",
+    "TOTAL_TRIPS": "Jumlah Perjalanan",
+    "AVG_RATING": "Penilaian Purata",
+    "TOTAL_EARNINGS": "Jumlah Pendapatan",
+    "TODAY": "Hari Ini",
+    "THIS_WEEK": "Minggu Ini",
+    "THIS_MONTH": "Bulan Ini",
+    "NO_DATA": "Tiada Data",
+    "BOOK_RIDE": "Tempah perjalanan untuk melihat sejarah"
+  },
+  "NETWORK": {
+    "TITLE": "Status Rangkaian",
+    "ERROR": "Ralat Rangkaian",
+    "TRY_AGAIN": "Cuba Lagi"
+  },
+  "CHAT": {
+    "TITLE": "Sembang",
+    "NO_DATA_HEADING": "Kami bertindak segera",
+    "NO_DATA_TEXT": "Beritahu kami bagaimana kami boleh membantu anda.",
+    "START_TYPING": "Mula menaip.."
+  },
+  "OTP": {
+    "VERIFY": "Sahkan OTP",
+    "ENTER_CODE": "Masukkan Kod Pengesahan",
+    "SECONDS_REMAINING": "saat berbaki",
+    "RESEND": "Hantar semula OTP",
+    "CONTINUE": "Teruskan",
+    "INCORRECT_OTP": "OTP tidak sah. Sila cuba lagi."
+  },
+  "APP_NAME": "Nama Aplikasi",
+  "APP_TAGLINE": "Tagline Aplikasi",
+  "MOBILE_NUMBER": "Nombor Telefon",
+  "MOBILE_REQUIRED": "* Sila masukkan nombor telefon",
+  "MOBILE_INVALID": "* Sila masukkan nombor telefon yang sah",
+  "ALERTS": {
+    "RIDER_ACCOUNT": {
+      "HEADER": "Akaun Penumpang Dikesan",
+      "MESSAGE": "Bahagian ini hanya untuk pemandu. Sila gunakan nombor telefon berbeza untuk mendaftar sebagai pemandu."
+    }
+  },
+  "WAITING": {
+    "TITLE": "Permohonan Sedang Dinilai",
+    "MESSAGE": "Terima kasih kerana menghantar permohonan anda. Pasukan kami sedang menilai maklumat dan dokumen anda.",
+    "STATUS": "Menunggu kelulusan"
+  },
+  "WALLET": {
+    "TITLE": "Dompet Saya",
+    "BALANCE": "Baki Tersedia",
+    "VERIFIED": "Disahkan",
+    "ADD_MONEY": "Tambah Wang",
+    "WITHDRAW": "Keluarkan",
+    "RECENT_TRANSACTIONS": "Transaksi Terkini",
+    "ENTER_AMOUNT": "Masukkan amaun",
+    "MONEY_ADDED": "Wang Ditambah",
+    "MONEY_ADDED_SUCCESS": "Wang berjaya ditambah",
+    "WITHDRAWAL": "Pengeluaran",
+    "WITHDRAWAL_SUCCESS": "Pengeluaran berjaya",
+    "ERROR": "Ralat",
+    "INSUFFICIENT_BALANCE": "Baki tidak mencukupi"
+  },
+  "EXISTING_USER": "Pengguna Sedia Ada",
+  "EXISTING_USER_MESSAGE": "Nombor telefon ini sudah didaftarkan. Pengesahan SMS hanya tersedia untuk pendaftaran pemandu baru. Sila hubungi sokongan jika anda perlu mengakses akaun sedia ada anda.",
+  "OR": "atau",
+  "CONTINUE_WITH_GOOGLE": "Teruskan dengan Google",
+  "GOOGLE_SIGNIN_ERROR": "Gagal log masuk dengan Google. Sila cuba lagi.",
+  "SIGNIN_CANCELLED": "Log masuk dibatalkan.",
+  "NETWORK_ERROR": "Ralat rangkaian. Sila periksa sambungan anda.",
+  "ERROR": "Ralat",
+  "CONTINUE": "Teruskan"
+}

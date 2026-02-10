@@ -1,0 +1,82 @@
+ion-content {
+  --background: #ffffff;
+}
+
+ion-list {
+  background: transparent;
+}
+
+ion-list-header {
+  padding-bottom: 15px;
+
+  ion-label {
+    font-size: 24px;
+    font-weight: bold;
+
+    .phone-number {
+      font-size: 16px;
+      color: var(--ion-color-medium);
+      margin-top: 8px;
+    }
+  }
+}
+
+ion-item {
+  --background: transparent;
+}
+
+::ng-deep {
+  .otp-input {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #cccccc !important;
+    border-radius: 8px !important;
+    margin: 0 4px;
+
+    @media (max-width: 360px) {
+      width: 35px !important;
+      height: 35px !important;
+      font-size: 18px !important;
+      margin: 0 2px;
+    }
+
+    &:focus {
+      border-color: var(--ion-color-primary) !important;
+      box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.2) !important;
+    }
+  }
+}
+
+.countdown {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ion-color-dark);
+  transition: color 0.3s ease;
+
+  &.expired {
+    color: var(--ion-color-danger);
+  }
+}
+
+ion-button {
+  margin-top: 20px;
+  height: 48px;
+
+  ion-spinner {
+    margin-right: 8px;
+  }
+}
+
+ion-footer {
+  background: transparent;
+  
+  ion-button {
+    margin: 0;
+    height: auto;
+    font-size: 14px;
+  }
+}

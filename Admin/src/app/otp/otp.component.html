@@ -1,0 +1,37 @@
+<ion-content class="ion-padding">
+  <div class="otp-container">
+    <ion-button fill="clear" class="close-button" (click)="closeModal()">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-button>
+
+    <h1>Verify OTP</h1>
+    <p class="subtitle">Enter the 6-digit code sent to your device</p>
+
+    <div class="otp-input-container">
+      <ng-otp-input #otpInput
+        (onInputChange)="onOtpChange($event)"
+        [config]="{
+          length: 6,
+          inputStyles: {
+            width: '40px',
+            height: '40px',
+            fontSize: '24px'
+          }
+        }">
+      </ng-otp-input>
+    </div>
+
+    <p class="countdown">{{ countdown }} seconds remaining</p>
+
+    <ion-button expand="block" class="verify-button" [disabled]="!otp || otp.length !== 6" (click)="verifyOtp()">
+      <ng-container *ngIf="!approve2">
+        Verify
+      </ng-container>
+      <ion-spinner *ngIf="approve2" name="crescent"></ion-spinner>
+    </ion-button>
+
+    <ion-button expand="block" fill="clear" class="resend-button" [disabled]="countdown > 0" (click)="resend()">
+      Resend OTP
+    </ion-button>
+  </div>
+</ion-content>

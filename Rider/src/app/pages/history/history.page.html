@@ -1,0 +1,138 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary">
+        <ion-back-button></ion-back-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'HISTORY.TITLE' | translate }}</ion-title>
+    
+    <!-- Add filter button -->
+    <ion-buttons slot="end">
+      <ion-button (click)="presentFilterOptions()">
+        <ion-icon name="filter-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <!-- Add segment for time filtering -->
+  <ion-segment [(ngModel)]="selectedTimeFilter" (ionChange)="filterByTime()" class="time-segment">
+    <ion-segment-button value="all">
+      {{ 'HISTORY.ALL' | translate }}
+    </ion-segment-button>
+    <ion-segment-button value="week">
+      {{ 'HISTORY.WEEK' | translate }}
+    </ion-segment-button>
+    <ion-segment-button value="month">
+      {{ 'HISTORY.MONTH' | translate }}
+    </ion-segment-button>
+  </ion-segment>
+</ion-header>
+
+<ion-content>
+  <!-- Skeleton loaders while data is loading -->
+  <ion-list *ngIf="loading; else loadedContent">
+    <ion-item *ngFor="let item of [1, 2, 3, 4, 5]">
+      <ion-avatar slot="start">
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-avatar>
+      <ion-label>
+        <h2><ion-skeleton-text animated style="width: 80%;"></ion-skeleton-text></h2>
+        <p><ion-skeleton-text animated style="width: 60%;"></ion-skeleton-text></p>
+        <p><ion-skeleton-text animated style="width: 40%;"></ion-skeleton-text></p>
+        <p><ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Loaded content after data fetching is complete -->
+  <ng-template #loadedContent>
+    <ion-list *ngIf="filteredHistories.length > 0; else noData" class="ride-history-list">
+      <ion-item-group *ngFor="let group of groupedHistories | keyvalue">
+        <ion-item-divider sticky>
+          <ion-label>{{ group.key }}</ion-label>
+        </ion-item-divider>
+        
+        <ion-item *ngFor="let history of group.value" class="history-item">
+          <ion-avatar slot="start">
+            <ion-img [src]="history.Driver_imgUrl || 'assets/icon/car.png'" 
+                     (ionError)="handleImageError($event)"></ion-img>
+          </ion-avatar>
+          <ion-label>
+            <div class="history-header">
+              <h2>{{ history.Driver_name || 'Unknown Driver' }}</h2>
+              <span class="history-price">{{ history.formattedPrice }}</span>
+            </div>
+            <p>{{ history.Driver_car || 'Unknown Vehicle' }} {{ history.Driver_plate ? '- ' + history.Driver_plate : '' }}</p>
+            <div class="route-info">
+              <p class="location-text">
+                <ion-icon name="location-outline" color="primary"></ion-icon>
+                {{ history.Rider_Location || 'Unknown pickup' }}
+              </p>
+              <p class="destination-text">
+                <ion-icon name="flag-outline" color="danger"></ion-icon>
+                {{ history.Rider_Destination || 'Unknown destination' }}
+              </p>
+            </div>
+            <div class="history-footer">
+              <p>
+                <ion-icon name="star" color="warning"></ion-icon>
+                {{ history.Driver_rating?.toFixed(1) || '0.0' }}
+              </p>
+              <p>{{ history.time?.toDate() | date:'short' }}</p>
+            </div>
+          </ion-label>
+          <ion-button slot="end" fill="clear" (click)="viewRideDetails(history)">
+            <ion-icon name="information-circle-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-item-group>
+    </ion-list>
+  </ng-template>
+
+  <!-- No Data - show SVG when there is no history -->
+  <ng-template #noData>
+    <div class="empty-state">
+      <ion-img src="../assets/imgs/empty.svg"></ion-img>
+      <ion-list-header>
+        <ion-label color="primary" class="ion-text-center">
+          <h1>{{ 'HISTORY.NO_DATA' | translate }}</h1>
+          <p>{{ 'HISTORY.BOOK_RIDE_MESSAGE' | translate }}</p>
+        </ion-label>
+      </ion-list-header>
+      <ion-button expand="block" class="book-now-btn" (click)="navigateToHome()">
+        {{ 'HISTORY.BOOK_NOW' | translate }}
+      </ion-button>
+    </div>
+  </ng-template>
+
+  <!-- Add language switcher -->
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="globe"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')">
+        <ion-img src="https://cdn.kcak11.com/CountryFlags/countries/us.svg" style="width: 24px; height: 24px;"></ion-img>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ar')">
+        <ion-img src="https://cdn.kcak11.com/CountryFlags/countries/sa.svg" style="width: 24px; height: 24px;"></ion-img>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab> -->
+
+  <!-- Language Selector FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="language-fab">
+    <ion-fab-button size="medium" color="light">
+      <ion-icon name="language-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
+            <ion-text>EN</ion-text>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
+            <ion-text>MS</ion-text>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>

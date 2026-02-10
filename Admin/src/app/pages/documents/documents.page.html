@@ -1,0 +1,87 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Documents</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="AddDoc()">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ng-container *ngIf="!isLoading; else loadingTemplate">
+    <ng-container *ngIf="cartypes.length; else noDataTemplate">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let item of cartypes">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>{{item.name}}</ion-card-title>
+                <ion-card-subtitle>{{item.type}}</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p>{{item.description}}</p>
+                
+                <div class="ion-margin-top" *ngIf="item.type !== 'text'">
+                   <ion-button fill="outline" size="small" [href]="item.content" target="_blank">
+                     View {{ item.type | titlecase }}
+                   </ion-button>
+                </div>
+                <div class="ion-margin-top" *ngIf="item.type === 'text'">
+                   <p><strong>Content:</strong> {{ item.content | slice:0:50 }}{{ item.content.length > 50 ? '...' : '' }}</p>
+                </div>
+
+                <div class="ion-margin-top">
+                  <ion-button fill="clear" (click)="EditBtn(item)">
+                    <ion-icon slot="start" name="create-outline"></ion-icon>
+                    Edit
+                  </ion-button>
+                  <ion-button fill="clear" color="danger" (click)="Delete(item)">
+                    <ion-icon slot="start" name="trash-outline"></ion-icon>
+                    Delete
+                  </ion-button>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-container>
+  </ng-container>
+</ion-content>
+
+<ng-template #noDataTemplate>
+  <div class="ion-text-center ion-padding">
+    <ion-img src="../assets/imgs/empty.svg" style="max-width: 200px; margin: 0 auto;"></ion-img>
+    <h2>No Documents</h2>
+    <p>Start by adding your first document.</p>
+    <ion-button (click)="AddDoc()">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Add Document
+    </ion-button>
+  </div>
+</ng-template>
+
+<ng-template #loadingTemplate>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let item of [1,2,3,4,5,6]">
+        <ion-card>
+          <ion-card-header>
+            <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 100%"></ion-skeleton-text>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ng-template>

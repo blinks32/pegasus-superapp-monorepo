@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'PAYMENT_CALLBACK.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="status">
+    <h2>{{ statusMessage }}</h2>
+    <ion-button (click)="goBack()">{{ 'PAYMENT_CALLBACK.GO_BACK' | translate }}</ion-button>
+  </div>
+
+  <!-- Language Selector FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="language-fab">
+    <ion-fab-button size="medium" color="light">
+      <ion-icon name="language-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
+            <ion-text>EN</ion-text>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
+            <ion-text>MS</ion-text>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>

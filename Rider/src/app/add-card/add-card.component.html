@@ -1,0 +1,40 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close-outline" color="primary"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'PAYMENT.ADD_NEW_CARD' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="add-card-section">
+    <div class="section-header">
+      <ion-icon name="card" color="primary"></ion-icon>
+      <h2>{{ 'PAYMENT.ADD_NEW_CARD' | translate }}</h2>
+    </div>
+    
+    <div class="card-form-container">
+      <form [formGroup]="paymentForm" (ngSubmit)="processPayment()">
+        <div class="stripe-container">
+          <div #cardElement class="stripe-element"></div>
+          <div id="card-errors" class="card-errors" role="alert"></div>
+        </div>
+        
+        <ion-button 
+          class="add-card-btn"
+          color="primary" 
+          shape="round" 
+          expand="block" 
+          size="large" 
+          type="submit" 
+          [disabled]="!paymentForm.valid || !isCardComplete">
+          <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+          {{ 'PAYMENT.ADD_CARD' | translate }}
+        </ion-button>
+      </form>
+    </div>
+  </div>
+</ion-content>

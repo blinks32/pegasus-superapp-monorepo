@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Ride App Configuration",
+  "description": "Configuration file for the ride-sharing application. Edit app-config.json with your values.",
+  "type": "object",
+  "required": ["firebase", "googleMaps", "payment"],
+  "properties": {
+    "firebase": {
+      "type": "object",
+      "description": "Firebase configuration - Get these from Firebase Console > Project Settings",
+      "required": ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId"],
+      "properties": {
+        "apiKey": { "type": "string", "description": "Firebase API Key" },
+        "authDomain": { "type": "string", "description": "Firebase Auth Domain (projectId.firebaseapp.com)" },
+        "projectId": { "type": "string", "description": "Firebase Project ID" },
+        "storageBucket": { "type": "string", "description": "Firebase Storage Bucket" },
+        "messagingSenderId": { "type": "string", "description": "Firebase Messaging Sender ID" },
+        "appId": { "type": "string", "description": "Firebase App ID" }
+      }
+    },
+    "googleMaps": {
+      "type": "object",
+      "description": "Google Maps configuration - Get from Google Cloud Console",
+      "required": ["apiKey"],
+      "properties": {
+        "apiKey": { "type": "string", "description": "Google Maps API Key with Maps SDK, Places, Directions APIs enabled" }
+      }
+    },
+    "onesignal": {
+      "type": "object",
+      "description": "OneSignal Push Notifications - Get from OneSignal Dashboard",
+      "properties": {
+        "appId": { "type": "string", "description": "OneSignal App ID" },
+        "restApiKey": { "type": "string", "description": "OneSignal REST API Key" },
+        "androidChannelId": { "type": "string", "description": "Android Notification Channel ID (optional)" }
+      }
+    },
+    "fcm": {
+      "type": "object",
+      "description": "Firebase Cloud Messaging - Alternative to OneSignal",
+      "properties": {
+        "serverKey": { "type": "string", "description": "FCM Server Key" },
+        "senderId": { "type": "string", "description": "FCM Sender ID" }
+      }
+    },
+    "payment": {
+      "type": "object",
+      "description": "Payment server configuration",
+      "required": ["serverUrl"],
+      "properties": {
+        "serverUrl": { "type": "string", "description": "URL of your payment server" },
+        "stripePublishableKey": { "type": "string", "description": "Stripe Publishable Key (starts with pk_)" }
+      }
+    },
+    "app": {
+      "type": "object",
+      "description": "General app settings",
+      "properties": {
+        "name": { "type": "string", "description": "Your app name" },
+        "defaultCurrency": { "type": "string", "description": "Default currency code (USD, EUR, etc.)" },
+        "defaultCountryCode": { "type": "string", "description": "Default country ISO code" },
+        "supportEmail": { "type": "string", "description": "Support email address" },
+        "supportPhone": { "type": "string", "description": "Support phone number" }
+      }
+    },
+    "defaultLogin": {
+      "type": "object",
+      "description": "Default login credentials for testing - auto-fills login forms when enabled",
+      "properties": {
+        "rider": {
+          "type": "object",
+          "description": "Default login for Rider app",
+          "properties": {
+            "enabled": { "type": "boolean", "description": "Enable auto-fill for Rider app login", "default": false },
+            "countryCode": { "type": "string", "description": "Country dial code (e.g., +60)", "default": "+60" },
+            "phoneNumber": { "type": "string", "description": "Phone number without country code" },
+            "otp": { "type": "string", "description": "OTP code for verification", "default": "123456" }
+          }
+        },
+        "driver": {
+          "type": "object",
+          "description": "Default login for Driver app",
+          "properties": {
+            "enabled": { "type": "boolean", "description": "Enable auto-fill for Driver app login", "default": false },
+            "countryCode": { "type": "string", "description": "Country dial code (e.g., +60)", "default": "+60" },
+            "phoneNumber": { "type": "string", "description": "Phone number without country code" },
+            "otp": { "type": "string", "description": "OTP code for verification", "default": "123456" }
+          }
+        },
+        "admin": {
+          "type": "object",
+          "description": "Default login for Admin app",
+          "properties": {
+            "enabled": { "type": "boolean", "description": "Enable auto-fill for Admin app login", "default": false },
+            "countryCode": { "type": "string", "description": "Country dial code (e.g., +60)", "default": "+60" },
+            "phoneNumber": { "type": "string", "description": "Phone number without country code" },
+            "otp": { "type": "string", "description": "OTP code for verification", "default": "123456" }
+          }
+        }
+      }
+    }
+  }
+}

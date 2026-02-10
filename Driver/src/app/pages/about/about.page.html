@@ -1,0 +1,41 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary">
+        <ion-back-button></ion-back-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">{{ 'ABOUT.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-img src="../assets/imgs/about.svg"></ion-img>
+
+  <ion-list-header style="margin-top: 10%">
+    <ion-label color="primary" class="ion-text-center">
+      <h1>{{ 'ABOUT.HEADING' | translate }}</h1>
+      <p>{{ 'ABOUT.COPYRIGHT' | translate }}</p>
+    </ion-label>
+  </ion-list-header>
+
+  <!-- Add language switcher FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="language"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="setLanguage('en')">
+        <img src="https://cdn.jsdelivr.net/npm/country-flag-icons/3x2/GB.svg" 
+             alt="English"
+             style="width: 20px; height: 20px;"
+             [class.selected]="currentLanguage === 'en'">
+      </ion-fab-button>
+      <ion-fab-button (click)="setLanguage('ar')">
+        <img src="https://cdn.jsdelivr.net/npm/country-flag-icons/3x2/SA.svg" 
+             alt="Arabic"
+             style="width: 20px; height: 20px;"
+             [class.selected]="currentLanguage === 'ar'">
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>

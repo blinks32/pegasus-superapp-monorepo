@@ -1,0 +1,103 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Trip History</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-segment value="default" [(ngModel)]="segmentModel" mode="ios">
+    <ion-segment-button value="default">
+      <ion-label>Completed</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="segment">
+      <ion-label>Cancelled</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div *ngIf="!isLoading">
+    <ion-card class="ion-padding" *ngIf="hasData">
+      <ion-searchbar (ionInput)="applyFilter($event)" placeholder="Search trips"></ion-searchbar>
+
+      <ion-grid *ngIf="segmentModel === 'default'">
+        <ion-row class="header-row">
+          <ion-col>Driver Name</ion-col>
+          <ion-col>Driver Phone</ion-col>
+          <ion-col>Rider Name</ion-col>
+          <ion-col>Rider Phone</ion-col>
+          <ion-col>Pickup</ion-col>
+          <ion-col>DropOff</ion-col>
+          <ion-col>Price</ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let trip of displayedTripHistory | slice:currentTripPage * pageSize:(currentTripPage + 1) * pageSize">
+          <ion-col>{{getDriverName(trip)}}</ion-col>
+          <ion-col>{{getDriverPhone(trip)}}</ion-col>
+          <ion-col>{{trip.Rider_name}}</ion-col>
+          <ion-col>{{trip.Rider_phone}}</ion-col>
+          <ion-col>{{getPickup(trip)}}</ion-col>
+          <ion-col>{{getDropoff(trip)}}</ion-col>
+          <ion-col>{{currencySymbol}}{{trip.price}}</ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-grid *ngIf="segmentModel === 'segment'">
+        <ion-row class="header-row">
+          <ion-col>Driver Name</ion-col>
+          <ion-col>Driver Phone</ion-col>
+          <ion-col>Rider Name</ion-col>
+          <ion-col>Rider Phone</ion-col>
+          <ion-col>Pickup</ion-col>
+          <ion-col>DropOff</ion-col>
+          <ion-col>Price</ion-col>
+          <ion-col>Reason</ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let trip of displayedCancelledHistory | slice:currentCancelledPage * pageSize:(currentCancelledPage + 1) * pageSize">
+          <ion-col>{{getDriverName(trip)}}</ion-col>
+          <ion-col>{{getDriverPhone(trip)}}</ion-col>
+          <ion-col>{{trip.Rider_name}}</ion-col>
+          <ion-col>{{trip.Rider_phone}}</ion-col>
+          <ion-col>{{getPickup(trip)}}</ion-col>
+          <ion-col>{{getDropoff(trip)}}</ion-col>
+          <ion-col>{{currencySymbol}}{{trip.price}}</ion-col>
+          <ion-col>{{trip.reason}}</ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-grid>
+        <ion-row class="ion-justify-content-between">
+          <ion-col size="12" class="ion-text-center">
+            <ion-button fill="clear" [disabled]="(segmentModel === 'default' ? currentTripPage : currentCancelledPage) === 0" (click)="previousPage()">
+              <ion-icon name="chevron-back"></ion-icon>
+            </ion-button>
+            <ion-text>
+              {{ (segmentModel === 'default' ? currentTripPage : currentCancelledPage) + 1 }} / {{ segmentModel === 'default' ? totalTripPages : totalCancelledPages }}
+            </ion-text>
+            <ion-button fill="clear" [disabled]="(segmentModel === 'default' ? (currentTripPage + 1) * pageSize >= displayedTripHistory.length : (currentCancelledPage + 1) * pageSize >= displayedCancelledHistory.length)" (click)="nextPage()">
+              <ion-icon name="chevron-forward"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+
+    <div class="no-data-container" *ngIf="!hasData">
+      <ion-img src="../assets/imgs/empty.svg"></ion-img>
+      <ion-text color="primary" class="ion-text-center">
+        <h2>No Data</h2>
+        <p>Book a ride to see Trips</p>
+      </ion-text>
+    </div>
+  </div>
+
+  <ion-grid *ngIf="isLoading">
+    <ion-row>
+      <ion-col>
+        <ion-skeleton-text [animated]="true" style="width: 100%; height: 400px;"></ion-skeleton-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

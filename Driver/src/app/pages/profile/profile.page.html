@@ -1,0 +1,175 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'PROFILE.TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="profile-header" *ngIf="profile">
+    <div class="profile-image-container">
+      <img [src]="getProfileImageSrc()" (click)="changeImage()" *ngIf="profile?.Driver_imgUrl">
+      <div class="image-placeholder" (click)="changeImage()" *ngIf="!profile?.Driver_imgUrl">
+        <ion-icon name="person"></ion-icon>
+      </div>
+      <div class="edit-overlay">
+        <ion-icon name="camera"></ion-icon>
+      </div>
+    </div>
+    
+    <h2 class="driver-name">{{profile?.Driver_name}}</h2>
+    <div class="rating-container">
+      <ion-icon name="star" color="warning"></ion-icon>
+      <span>{{profile?.Driver_rating || 0}} ({{profile?.Driver_num_rides || 0}} rides)</span>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <ion-icon name="cash-outline" color="success"></ion-icon>
+      <div class="stat-content">
+        <span class="stat-value">{{ currencySymbol }}{{ profile?.Earnings || 0 | number:'1.2-2' }}</span>
+        <span class="stat-label">{{ 'PROFILE.Earnings' | translate }}</span>
+      </div>
+    </div>
+    <div class="stat-box">
+      <ion-icon name="car-outline" color="primary"></ion-icon>
+      <div class="stat-content">
+        <span class="stat-value">{{profile?.Driver_num_rides || 0}}</span>
+        <span class="stat-label">{{ 'PROFILE.TOTAL_RIDES' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <ion-list lines="none">
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>{{ 'PROFILE.VEHICLE_INFO' | translate }}</ion-label>
+      </ion-item-divider>
+      
+      <ion-item>
+        <ion-icon name="car" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <h3>{{ 'PROFILE.CAR_MODEL' | translate }}</h3>
+          <p>{{profile?.Driver_car}}</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="clipboard" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <h3>{{ 'PROFILE.PLATE_NUMBER' | translate }}</h3>
+          <p>{{profile?.Driver_plate}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>{{ 'PROFILE.CONTACT_INFO' | translate }}</ion-label>
+      </ion-item-divider>
+
+      <ion-item>
+        <ion-icon name="call" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <h3>{{ 'PROFILE.PHONE' | translate }}</h3>
+          <p>{{profile?.Driver_phone}}</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="mail" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <h3>{{ 'PROFILE.EMAIL' | translate }}</h3>
+          <p>{{profile?.Driver_email}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
+
+  <ion-list lines="none">
+    <ion-item>
+      <ion-icon name="language" slot="start"></ion-icon>
+      <ion-label>{{ 'PROFILE.LANGUAGE' | translate }}</ion-label>
+      <ion-select [(ngModel)]="currentLanguage" (ionChange)="setLanguage($event)">
+        <ion-select-option value="en">English</ion-select-option>
+        <ion-select-option value="ms">Malay</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <!-- Ride Sharing Settings Section -->
+  <ion-list lines="none" class="ride-sharing-settings">
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>{{ 'PROFILE.RIDE_SHARING.TITLE' | translate }}</ion-label>
+      </ion-item-divider>
+
+      <ion-item>
+        <ion-icon name="people" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h3>{{ 'PROFILE.RIDE_SHARING.ENABLE' | translate }}</h3>
+          <p>{{ 'PROFILE.RIDE_SHARING.ENABLE_DESC' | translate }}</p>
+        </ion-label>
+        <ion-toggle 
+          slot="end" 
+          [checked]="rideSharingEnabled" 
+          (ionChange)="toggleRideSharing($event)"
+          color="success">
+        </ion-toggle>
+      </ion-item>
+
+      <ion-item *ngIf="rideSharingEnabled">
+        <ion-icon name="person-add" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <h3>{{ 'PROFILE.RIDE_SHARING.MAX_PASSENGERS' | translate }}</h3>
+          <p>{{ 'PROFILE.RIDE_SHARING.MAX_PASSENGERS_DESC' | translate }}</p>
+        </ion-label>
+        <ion-select 
+          slot="end" 
+          [value]="maxPassengers" 
+          (ionChange)="onMaxPassengersChange($event)"
+          interface="popover">
+          <ion-select-option [value]="2">2</ion-select-option>
+          <ion-select-option [value]="3">3</ion-select-option>
+          <ion-select-option [value]="4">4</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item *ngIf="rideSharingEnabled">
+        <ion-icon name="git-branch" slot="start" color="medium"></ion-icon>
+        <ion-label>
+          <h3>{{ 'PROFILE.RIDE_SHARING.MAX_DETOUR' | translate }}</h3>
+          <p>{{ 'PROFILE.RIDE_SHARING.MAX_DETOUR_DESC' | translate }}</p>
+        </ion-label>
+        <ion-select 
+          slot="end" 
+          [value]="maxDetourPercent" 
+          (ionChange)="onMaxDetourChange($event)"
+          interface="popover">
+          <ion-select-option [value]="10">10%</ion-select-option>
+          <ion-select-option [value]="15">15%</ion-select-option>
+          <ion-select-option [value]="20">20%</ion-select-option>
+          <ion-select-option [value]="25">25%</ion-select-option>
+          <ion-select-option [value]="30">30%</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item *ngIf="rideSharingEnabled" lines="none">
+        <ion-icon name="information-circle" slot="start" color="tertiary"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <p class="info-text">{{ 'PROFILE.RIDE_SHARING.INFO' | translate }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,81 @@
+ion-item {
+  margin-bottom: 20px;
+}
+
+ion-textarea {
+  min-height: 100px;
+}
+
+ion-header {
+  ion-toolbar {
+    --background: transparent;
+  }
+}
+
+ion-content {
+  --background: var(--ion-color-light-shade);
+}
+
+.form-container {
+  background: var(--ion-color-light);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-field {
+  margin-bottom: 20px;
+
+  ion-label {
+    color: var(--ion-color-medium);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  ion-input, ion-textarea {
+    --background: var(--ion-color-light-shade);
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  ion-textarea {
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+  }
+}
+
+ion-button {
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(var(--ion-color-primary-rgb), 0.25);
+  margin-top: 16px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+
+  ion-icon {
+    margin-right: 8px;
+  }
+}
+
+// Dark mode adjustments
+@media (prefers-color-scheme: dark) {
+  ion-content {
+    --background: var(--ion-color-dark);
+  }
+
+  .form-container {
+    background: var(--ion-color-dark-shade);
+  }
+
+  .form-field {
+    ion-input, ion-textarea {
+      --background: var(--ion-color-dark);
+    }
+  }
+}

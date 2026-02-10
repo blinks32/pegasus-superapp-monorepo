@@ -1,0 +1,117 @@
+.message {
+    padding: 10px !important;
+    border-radius: 10px !important;
+    margin-bottom: 4px !important;
+    white-space: pre-wrap;
+    
+}
+
+
+
+.my-message {
+    background: var(--ion-color-tertiary);
+    color: #fff;
+    animation-name: slide-top;
+    animation-duration: 0.5s;
+}
+ 
+ 
+.time {
+    color: #dfdfdf;
+    float: right;
+    font-size: small;
+}
+table {
+    width: 100%;
+    background: none;
+    box-shadow: none;
+    font-size: large;
+    font-family: 'Lato';  //This is what we are going to call  
+}
+
+
+.mat-cell {
+    width: 40%;
+    border-radius: 50px;
+    background: none;
+    box-shadow: none;
+}
+  
+.mat-column-gender {
+    width: 20%;
+    background: none;
+    box-shadow: none;
+}
+
+th.mat-sort-header-sorted {
+    color: black;
+    background: none;
+    box-shadow: none;
+  }
+  
+  mat-paginator{
+    background: none;
+    box-shadow: none;
+  }
+
+  .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+   // border-radius: 30px;
+   // border: 1px solid white;
+  }
+
+.header-row {
+  background: var(--ion-color-light);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  padding: 1rem 0.5rem;
+}
+
+.data-row {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--ion-color-light);
+  align-items: center;
+
+  &:hover {
+    background: var(--ion-color-light-shade);
+  }
+}
+
+.driver-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  ion-avatar {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+ion-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+small {
+  color: var(--ion-color-medium);
+  font-size: 0.8em;
+  display: block;
+}
+
+ion-buttons {
+  justify-content: flex-start;
+}
+
+ion-button {
+  --padding-start: 4px;
+  --padding-end: 4px;
+}
+
+ion-grid {
+  padding: 0;
+}

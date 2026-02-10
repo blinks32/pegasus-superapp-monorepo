@@ -1,0 +1,1213 @@
+capacitor-google-maps {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slide-top {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+.slide-top {
+	animation: slide-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.centerPin{
+  animation-name: slide-top;
+  animation-duration: 0.8s;
+}
+
+.bottomItems{
+  animation-name: slide-top;
+  animation-duration: 0.5s;
+}
+
+ion-skeleton-text {
+  --background: rgba(0, 98, 255, 0.625);
+}
+
+ion-header{
+   
+  ion-fab{
+    margin-top: 20px;
+  }
+  ion-row {
+    padding-top: 0vh;
+    background: transparent;
+    display: block;
+    .bottomItems {
+        border-radius: 0px 0px 20px 20px;
+        padding-bottom: 0vh;
+        ion-item{
+          width: 100%;
+          --inner-padding-bottom: 0;
+          --inner-padding-end: 0;
+          --inner-padding-start: 0;
+          --inner-padding-top: 0;
+        }
+    }
+}
+  
+}
+
+ion-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  position: relative;
+  --background: transparent;
+  margin-top: 20px;
+}
+
+ion-footer{
+  ion-row {
+    padding-top: 5vh;
+    background: transparent;
+    display: block;
+    ion-fab-button {
+        margin-right: 2.5vh;
+    }
+    .bottomItems {
+        border-radius: 20px 20px 0 0;
+        background: #ffffff; /* Ensure background is set since ion-list had a default */
+        // padding-bottom: 6vh;
+        ion-list-header {
+            ion-label {
+                font-weight: bold;
+                font-size: 1.8rem;
+            }
+        }
+    }
+}
+  ion-fab{
+    margin-top: -40px;
+  }
+   .bottomItems{
+     .payment{
+      font-size: 1.1em;
+      //  margin-top: 5px;
+       --background: transparent !important;
+       ion-item{
+        --inner-padding-bottom: 1px;
+        --inner-padding-end: 0;
+        --inner-padding-start: 0;
+        --inner-padding-top: 0;
+        --background: transparent !important;
+     
+       }
+       
+      
+       
+     }
+
+  }
+}
+
+.centerElem
+{
+  justify-content: center;
+  align-items: center;
+}
+
+.price
+ {
+  margin-left: auto;
+  flex: 0.5;
+ }
+ 
+ .shadow-top
+  {
+    box-shadow: 0px -1.5px 1.5px rgba(196, 196, 196, 0.414);
+  }
+
+  .top_bar{
+    box-shadow: 0px 1.5px 1.5px rgba(196, 196, 196, 0.414);
+  }
+
+  .card{
+    box-shadow: 0px -1.5px 1.5px rgba(196, 196, 196, 0.414);
+  }
+
+.main-button{
+  color: var(--ion-color-dark); 
+  --background: var(--ion-color-light-shade);
+  // border-bottom: 1px solid var(--ion-color-primary);
+}
+
+.preview {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.fallback {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: #bfbfbf;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+}
+
+.map {
+  width: 100%;
+  height: 1024px;
+  padding-bottom: 100%
+}
+
+// Modern Card Styling for Selection Bar
+.bottomItems {
+  &.shadow-top {
+    // Remove fixed max-height
+    min-height: 150px; // Minimum height to ensure visibility
+    height: auto; // Let it grow based on content
+    max-height: 80vh; // Maximum height as percentage of viewport height
+    overflow-y: auto; // Keep scrolling if content is too long
+    transition: height 0.3s ease; // Smooth height transitions
+    
+    // Ensure proper padding and spacing
+    padding: 16px;
+    margin-bottom: env(safe-area-inset-bottom, 0px); // Account for notches/home indicators
+    
+    // When in different stages, adjust height accordingly
+    &[ngIf="trackingStage"],
+    &[ngIf="drivingToDestinationStage"] {
+      height: auto;
+      min-height: 200px; // Slightly taller for these stages
+    }
+    
+    &[ngIf="searchingStage"] {
+      height: auto;
+      min-height: 180px;
+    }
+    
+    &[ngIf="confirmStage"] {
+      height: auto;
+      min-height: 250px;
+    }
+    
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px 24px 0 0;
+    
+    .payment {
+      margin: 0;
+      padding: 12px 0;
+      
+      ion-item {
+        --padding-start: 0;
+        --inner-padding-end: 0;
+        border-radius: 16px;
+        margin-bottom: 12px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        ion-avatar {
+          width: 48px;
+          height: 48px;
+          margin-right: 12px;
+        }
+        
+        ion-label {
+          h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            ion-icon {
+              font-size: 18px;
+            }
+          }
+          
+          p {
+            font-size: 14px;
+            color: var(--ion-color-medium);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            ion-icon {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+      
+      .price {
+        text-align: right;
+        
+        h1 {
+          font-size: 20px;
+          font-weight: 700;
+          color: var(--ion-color-primary);
+          margin: 0;
+        }
+        
+        p del {
+          font-size: 14px;
+          color: var(--ion-color-medium);
+        }
+      }
+    }
+  }
+  
+  .card {
+    margin-top: 16px;
+    border-radius: 16px;
+    background: var(--ion-color-light);
+    overflow: hidden;
+    
+    ion-item {
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --background: transparent;
+      
+      ion-select {
+        width: 100%;
+        max-width: 100%;
+        --padding-start: 0;
+      }
+    }
+    
+    ion-button {
+      margin: 16px;
+      --border-radius: 12px;
+      --padding-top: 16px;
+      --padding-bottom: 16px;
+      
+      ion-icon {
+        margin-right: 8px;
+      }
+      
+      &[disabled] {
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+// Modern Progress Bar
+ion-progress-bar {
+  border-radius: 4px;
+  height: 4px;
+  margin: 8px 0;
+  
+  &[type="indeterminate"] {
+    --progress-background: var(--ion-color-primary);
+  }
+}
+
+// Skeleton Loading Animation
+ion-skeleton-text {
+  --border-radius: 8px;
+  --background: rgba(var(--ion-color-primary-rgb), 0.1);
+}
+
+// Shared styles for all tracking bars
+.bottomItems {
+  &.shadow-top {
+    // ... existing styles ...
+    
+    // Connecting to driver bar (searchingStage)
+    &:has(ion-progress-bar[type="indeterminate"]) {
+      .ion-margin-horizontal {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        
+        ion-button {
+          align-self: flex-end;
+          --padding-start: 12px;
+          --padding-end: 12px;
+          --border-radius: 20px;
+          height: 40px;
+          
+          ion-icon {
+            font-size: 18px;
+          }
+        }
+      }
+      
+      ion-list-header {
+        padding: 0;
+        
+        ion-item {
+          --padding-start: 0;
+          --inner-padding-end: 0;
+          
+          ion-avatar {
+            width: 56px;
+            height: 56px;
+            border: 2px solid var(--ion-color-primary);
+          }
+          
+          ion-label {
+            margin-left: 12px;
+            
+            h1 {
+              font-size: 18px;
+              font-weight: 600;
+              margin-bottom: 4px;
+            }
+            
+            p {
+              font-size: 14px;
+              color: var(--ion-color-primary);
+            }
+          }
+        }
+      }
+    }
+    
+    // Driver tracking styles (trackingStage & drivingToDestinationStage)
+    .card {
+      // ... existing styles ...
+      
+      // Enhanced driver info layout
+      ion-item {
+        // ... existing styles ...
+        margin-bottom: 8px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        ion-avatar {
+          width: 52px;
+          height: 52px;
+          border: 2px solid var(--ion-color-primary);
+          position: relative;
+          overflow: visible;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            background: var(--ion-color-success);
+            border-radius: 50%;
+            border: 2px solid white;
+          }
+        }
+        
+        &.price {
+          justify-content: center;
+          
+          ion-label {
+            h1 {
+              font-size: 24px;
+              font-weight: 700;
+              color: var(--ion-color-primary);
+            }
+          }
+        }
+        
+        // Driver car info
+        &:has(ion-label p:first-child) {
+          --background: rgba(var(--ion-color-light-rgb), 0.5);
+          border-radius: 12px;
+          margin: 8px 0;
+          
+          ion-label {
+            p {
+              font-size: 13px;
+              color: var(--ion-color-medium);
+              margin-bottom: 4px;
+            }
+            
+            h1 {
+              font-size: 16px;
+              font-weight: 600;
+              letter-spacing: 1px;
+            }
+          }
+        }
+        
+        // Payment method item
+        &:has(ion-icon[name="cash"]), 
+        &:has(ion-icon[name="card"]) {
+          --background: rgba(var(--ion-color-light-rgb), 0.5);
+          border-radius: 12px;
+          
+          ion-label h1 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            ion-icon {
+              font-size: 20px;
+            }
+          }
+        }
+      }
+    }
+    
+    // Arrival time header
+    ion-list-header.ion-margin-bottom {
+      padding: 12px 16px;
+      background: rgba(var(--ion-color-primary-rgb), 0.1);
+      border-radius: 16px;
+      margin-bottom: 16px !important;
+      
+      h1 {
+        width: 100%;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ion-color-primary);
+      }
+    }
+    
+    // Accordion group styling
+    ion-accordion-group {
+      margin-top: 16px;
+      
+      ion-accordion {
+        --border-radius: 12px;
+        overflow: hidden;
+        
+        ion-item[slot="header"] {
+          --background: rgba(var(--ion-color-light-rgb), 0.5);
+          --border-radius: 12px;
+          
+          ion-label h1 {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--ion-color-primary);
+          }
+        }
+        
+        div[slot="content"] {
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          
+          ion-button {
+            margin: 0;
+            --border-width: 1px;
+            
+            &:last-child {
+              --background: rgba(var(--ion-color-danger-rgb), 0.1);
+              --color: var(--ion-color-danger);
+              --border-color: var(--ion-color-danger);
+              
+              ion-icon {
+                color: var(--ion-color-danger) !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animation for driver avatar
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-primary-rgb), 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--ion-color-primary-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-primary-rgb), 0);
+  }
+}
+
+.bottomItems ion-list[ngIf="searchingStage"] ion-avatar,
+.bottomItems ion-list[ngIf="trackingStage"] ion-avatar,
+.bottomItems ion-list[ngIf="drivingToDestinationStage"] ion-avatar {
+  animation: pulse 2s infinite;
+}
+
+// Consistent height for all bottom bars
+.bottomItems {
+  &.shadow-top {
+    // Common settings for all bottom bars
+    max-height: calc(40vh - 20px);
+    overflow-y: auto;
+    
+    // Consistent card styling across all bottom bars
+    .card {
+      margin-top: 12px;
+      border-radius: 16px;
+      background: var(--ion-color-light);
+      overflow: hidden;
+      
+      // More compact item spacing for tracking/destination stages
+      ion-item {
+        --min-height: 48px; // Reduce default item height
+        margin-bottom: 0; // Remove margin between items
+        
+        // Reduce padding inside items
+        &.price ion-label h1 {
+          font-size: 18px; // Slightly smaller price font
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+        
+        // Make nested items more compact
+        ion-item {
+          --min-height: 42px;
+          
+          ion-label {
+            margin-top: 4px;
+            margin-bottom: 4px;
+            
+            h1 {
+              font-size: 15px;
+              margin-top: 0;
+              margin-bottom: 2px;
+            }
+            
+            p {
+              font-size: 12px;
+              margin-top: 0;
+              margin-bottom: 0;
+            }
+          }
+        }
+        
+        // Make avatars smaller and consistent
+        ion-avatar {
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+    
+    // More compact header
+    ion-list-header {
+      padding: 8px;
+      min-height: unset;
+      
+      ion-label h1 {
+        font-size: 16px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+    }
+    
+    // Specifically for tracking stages, make them more compact
+    ion-list.bottomItems.shadow-top[ngIf="trackingStage"] .ion-margin-bottom,
+    ion-list.bottomItems.shadow-top[ngIf="drivingToDestinationStage"] .ion-margin-bottom {
+      margin-bottom: 8px !important;
+    }
+
+    ion-list.bottomItems.shadow-top[ngIf="trackingStage"] ion-accordion-group,
+    ion-list.bottomItems.shadow-top[ngIf="drivingToDestinationStage"] ion-accordion-group {
+      margin-top: 8px;
+    }
+  }
+}
+
+// Make accordion more compact for action buttons
+ion-accordion div[slot="content"] {
+  padding: 8px !important;
+  
+  ion-button {
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    margin-bottom: 4px;
+    height: auto;
+  }
+}
+
+// Better layout for driver card
+.driver-card-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 0;
+  margin-bottom: 8px;
+}
+
+// Container for driver avatar and rating
+.driver-avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+  
+  ion-avatar {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 4px;
+  }
+  
+  .driver-rating {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    
+    ion-icon {
+      margin-right: 2px;
+    }
+  }
+}
+
+// Price container styling
+.price-container {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 70px;
+  
+  h1 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+  }
+}
+
+// Better accordion styling
+.driver-actions-accordion {
+  margin-top: 8px;
+  border-top: 1px solid var(--ion-color-light-shade);
+  
+  .accordion-header {
+    --background: var(--ion-color-light);
+  }
+  
+  .accordion-content {
+    padding: 8px 16px 16px;
+    
+    ion-button {
+      margin-top: 10px;
+    }
+  }
+}
+
+// General card styles
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 0 16px 16px;
+}
+
+// Fix nested items issue
+ion-item ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+}
+
+// Make sure bottom items are tall enough to be scrollable/visible
+.bottomItems {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+// Modern ride confirmation card styles
+.ride-confirmation-card {
+  background: white;
+  border-radius: 16px 16px 0 0;
+  padding: 16px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  
+  .ride-details {
+    margin-bottom: 16px;
+    
+    &.skeleton {
+      opacity: 0.7;
+    }
+  }
+  
+  .vehicle-info {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:active {
+      background: #eef0f2;
+    }
+    
+    ion-avatar {
+      width: 48px;
+      height: 48px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    
+    .vehicle-details {
+      flex: 1;
+      
+      h2 {
+        font-weight: 600;
+        margin: 0 0 4px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        
+        ion-icon {
+          margin-left: 6px;
+          font-size: 18px;
+        }
+      }
+      
+      .vehicle-stats {
+        display: flex;
+        gap: 12px;
+        margin: 0;
+        font-size: 14px;
+        color: var(--ion-color-medium);
+        
+        span {
+          display: flex;
+          align-items: center;
+          
+          ion-icon {
+            margin-right: 4px;
+            font-size: 16px;
+          }
+        }
+      }
+    }
+    
+    .price-tag {
+      text-align: right;
+      margin-left: 8px;
+      flex-shrink: 0;
+      
+      h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 2px;
+        color: var(--ion-color-primary);
+      }
+      
+      .original-price {
+        font-size: 14px;
+        margin: 0;
+        color: var(--ion-color-medium);
+        
+        del {
+          text-decoration-color: var(--ion-color-danger);
+        }
+      }
+    }
+  }
+  
+  .payment-selector {
+    margin: 16px 0;
+    
+    ion-item {
+      --background: #f8f9fa;
+      --padding-start: 12px;
+      --padding-end: 8px;
+      --min-height: 54px;
+      border-radius: 12px;
+      
+      ion-icon {
+        font-size: 20px;
+        margin-right: 10px;
+      }
+      
+      ion-label {
+        font-weight: 500;
+        font-size: 15px;
+      }
+      
+      ion-select {
+        min-width: 130px;
+        color: var(--ion-color-primary);
+        font-weight: 500;
+        --padding-end: 12px;
+        --placeholder-opacity: 1;
+      }
+    }
+    
+    .payment-hint {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--ion-color-medium);
+      background: rgba(var(--ion-color-primary-rgb), 0.05);
+      border-radius: 8px;
+      
+      ion-icon {
+        margin-right: 8px;
+        font-size: 16px;
+      }
+    }
+  }
+  
+  .book-button-container {
+    margin-top: 16px;
+    
+    .book-ride-btn {
+      --border-radius: 12px;
+      --padding-top: 16px;
+      --padding-bottom: 16px;
+      margin: 0;
+      
+      ion-icon {
+        margin-right: 8px;
+      }
+      
+      ion-progress-bar {
+        width: 60%;
+        margin: 0 auto;
+      }
+      
+      ion-label {
+        font-weight: 600;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+// Updates to make sure the card sticks properly at the bottom
+ion-footer .bottomItems.shadow-top[ngIf="confirmStage"] {
+  padding: 0;
+  background: transparent;
+  max-height: unset;
+  
+  .ride-confirmation-card {
+    animation: slide-top 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  }
+}
+
+// Improve animation for skeleton loading appearance
+@keyframes pulse-bg {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.ride-details.skeleton {
+  .vehicle-info {
+    ion-skeleton-text {
+      animation: pulse-bg 1.5s infinite;
+      --border-radius: 8px;
+      --background: rgba(var(--ion-color-primary-rgb), 0.12);
+    }
+  }
+}
+
+// Improve select popover appearance
+// Note: This requires :root styling for global impact on ion-selects
+:root {
+  ion-select-popover {
+    --width: 240px;
+    
+    .select-interface-option {
+      --padding-start: 16px;
+      --padding-end: 16px;
+      
+      ion-icon {
+        margin-right: 12px;
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+// Dark mode disabled - app uses light mode only
+
+// Fix map sizing and positioning
+.map-container {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - var(--bottom-bar-height, 0px));
+  top: var(--header-height, 0px);
+  left: 0;
+  z-index: 10;
+  transition: height 0.3s ease;
+  
+  // Adjust map height based on active UI stages
+  &.with-tracking {
+    height: calc(100% - 210px);
+    top: 56px; // Adjust for header height
+  }
+  
+  &.with-booking {
+    height: calc(100% - 100px);
+    top: 0;
+  }
+  
+  &.with-confirm {
+    height: calc(100% - 260px);
+    top: 120px; // Adjust for header height
+  }
+  
+  &.with-searching {
+    height: calc(100% - 180px);
+    top: 56px; // Adjust for header height
+  }
+}
+
+// ==================== SHARED RIDE STYLES ====================
+
+// Share & Save Toggle on Booking Screen
+.shared-ride-toggle {
+  margin: 12px 16px;
+  padding: 8px;
+  background: linear-gradient(135deg, rgba(45, 211, 111, 0.1) 0%, rgba(45, 211, 111, 0.05) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(45, 211, 111, 0.3);
+
+  .share-save-item {
+    --background: transparent;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    
+    h3 {
+      font-weight: 600;
+      color: var(--ion-color-success);
+      margin: 0;
+    }
+    
+    p {
+      font-size: 0.85em;
+      color: var(--ion-color-medium);
+      margin: 4px 0 0;
+    }
+  }
+
+  .savings-preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    background: rgba(45, 211, 111, 0.15);
+    border-radius: 8px;
+    font-size: 0.9em;
+    color: var(--ion-color-success-shade);
+    font-weight: 500;
+  }
+  
+  // Calculating route indicator
+  .calculating-route {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    margin-top: 8px;
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+    border-radius: 8px;
+    font-size: 0.9em;
+    color: var(--ion-color-primary);
+    
+    ion-spinner {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  // Nearby riders banner
+  .nearby-riders-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    background: linear-gradient(135deg, rgba(45, 211, 111, 0.2) 0%, rgba(45, 211, 111, 0.1) 100%);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:active {
+      transform: scale(0.98);
+      background: rgba(45, 211, 111, 0.25);
+    }
+    
+    ion-icon {
+      font-size: 24px;
+    }
+    
+    span {
+      flex: 1;
+      font-size: 0.9em;
+      font-weight: 600;
+      color: var(--ion-color-success-shade);
+    }
+    
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 0;
+      margin: 0;
+      height: auto;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+  }
+}
+
+// Shared price display on booking
+.shared-price {
+  font-size: 0.9em !important;
+  color: var(--ion-color-success);
+}
+
+// Shared ride matching message on searching stage
+.shared-ride-matching {
+  padding: 8px 16px;
+  text-align: center;
+  
+  .matching-message {
+    --background: rgba(45, 211, 111, 0.1);
+    border-radius: 8px;
+    
+    .matching-text {
+      color: var(--ion-color-success);
+      font-weight: 500;
+      animation: pulse 2s infinite;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+// Shared Ride Badge on Tracking Screen
+.shared-ride-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(45, 211, 111, 0.15) 0%, rgba(45, 211, 111, 0.05) 100%);
+  border-bottom: 1px solid rgba(45, 211, 111, 0.2);
+
+  ion-chip {
+    --background: var(--ion-color-success);
+    --color: white;
+    font-weight: 600;
+  }
+
+  .co-passenger-count {
+    font-size: 0.9em;
+    color: var(--ion-color-success-shade);
+    font-weight: 500;
+  }
+}
+
+// Shared price display on tracking
+.shared-price-display {
+  text-align: right;
+  
+  .original-price-small {
+    font-size: 0.8em;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+  
+  .discounted-price {
+    color: var(--ion-color-success);
+    font-weight: 700;
+    margin: 2px 0;
+  }
+  
+  .savings-badge {
+    font-size: 0.75em;
+    color: var(--ion-color-success);
+    background: rgba(45, 211, 111, 0.15);
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin: 0;
+    display: inline-block;
+  }
+}
+
+// Pickup Queue Message
+.pickup-queue {
+  padding: 8px 16px;
+  
+  .queue-message {
+    --background: rgba(var(--ion-color-primary-rgb), 0.1);
+    border-radius: 8px;
+    
+    p {
+      color: var(--ion-color-primary);
+      font-weight: 500;
+      font-size: 0.9em;
+    }
+  }
+}
+
+// Co-Passengers List
+.co-passengers {
+  padding: 8px 0;
+  border-top: 1px solid var(--ion-color-light);
+  
+  ion-list-header {
+    padding: 0 16px;
+    
+    ion-label {
+      font-size: 0.9em;
+      font-weight: 600;
+      color: var(--ion-color-medium);
+    }
+  }
+  
+  .co-passenger-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 56px;
+    
+    ion-avatar {
+      width: 36px;
+      height: 36px;
+      
+      ion-icon {
+        font-size: 36px;
+        color: var(--ion-color-medium);
+      }
+    }
+    
+    h3 {
+      font-weight: 600;
+      font-size: 0.95em;
+      margin: 0;
+    }
+    
+    p {
+      font-size: 0.8em;
+      color: var(--ion-color-medium);
+      margin: 2px 0 0;
+    }
+    
+    ion-badge {
+      font-size: 0.7em;
+      padding: 4px 8px;
+    }
+  }
+}
+
+

@@ -1,0 +1,75 @@
+<ion-header class="ion-no-border" [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'WALLET.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Balance Card -->
+  <ion-card class="balance-card ion-margin-bottom">
+    <ion-card-content>
+      <div class="balance-header">
+        <h1>{{ 'WALLET.BALANCE' | translate }}</h1>
+        <ion-chip color="success" *ngIf="wallet?.isVerified">
+          <ion-icon name="checkmark-circle"></ion-icon>
+          <ion-label>{{ 'WALLET.VERIFIED' | translate }}</ion-label>
+        </ion-chip>
+      </div>
+      
+      <div class="balance-amount">
+        <h2>{{ currencySymbol }} {{ wallet?.balance | number:'1.2-2' }}</h2>
+      </div>
+
+      <div class="balance-actions">
+        <ion-button expand="block" (click)="addMoney()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          {{ 'WALLET.ADD_MONEY' | translate }}
+        </ion-button>
+        <ion-button expand="block" fill="outline" (click)="withdraw()">
+          <ion-icon name="cash-outline" slot="start"></ion-icon>
+          {{ 'WALLET.WITHDRAW' | translate }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Transactions -->
+  <div class="transactions-section">
+    <ion-list-header>
+      <ion-label>{{ 'WALLET.RECENT_TRANSACTIONS' | translate }}</ion-label>
+    </ion-list-header>
+
+    <ion-list>
+      <ion-item *ngFor="let transaction of transactions" lines="full" class="transaction-item">
+        <ion-icon 
+          [name]="transaction.type === 'credit' ? 'arrow-down-circle' : 'arrow-up-circle'"
+          [color]="transaction.type === 'credit' ? 'success' : 'primary'"
+          slot="start">
+        </ion-icon>
+        
+        <ion-label>
+          <h2>{{ transaction.description }}</h2>
+          <p>{{ transaction.timestamp.toDate() | date:'medium' }}</p>
+        </ion-label>
+        
+        <ion-note [color]="transaction.type === 'credit' ? 'success' : 'primary'" slot="end">
+          {{ transaction.type === 'credit' ? '+' : '-' }}{{ currencySymbol }}{{ transaction.amount | number:'1.2-2' }}
+        </ion-note>
+      </ion-item>
+
+      <!-- Skeleton loader -->
+      <ion-item *ngFor="let i of [1,2,3]" lines="full" class="transaction-item" [hidden]="!isLoading">
+        <ion-skeleton-text animated style="width: 20px; height: 20px" slot="start"></ion-skeleton-text>
+        <ion-label>
+          <h2><ion-skeleton-text animated style="width: 50%"></ion-skeleton-text></h2>
+          <p><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></p>
+        </ion-label>
+        <ion-skeleton-text animated style="width: 50px" slot="end"></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
+

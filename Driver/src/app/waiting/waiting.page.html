@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>waiting</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="waiting-container">
+    <ion-img src="assets/waiting.svg" class="waiting-image"></ion-img>
+    
+    <h1>{{ 'WAITING.TITLE' | translate }}</h1>
+    <p>{{ 'WAITING.MESSAGE' | translate }}</p>
+    
+    <div class="status-container">
+      <ion-spinner name="circular"></ion-spinner>
+      <p class="status-text">{{ 'WAITING.STATUS' | translate }}</p>
+    </div>
+
+    <ion-button expand="block" color="danger" (click)="logout()">
+      {{ 'COMMON.LOGOUT' | translate }}
+    </ion-button>
+  </div>
+</ion-content>

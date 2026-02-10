@@ -1,0 +1,63 @@
+{
+  "$schema": "./app-config.schema.json",
+  "_instructions": "Edit this file with your API keys. No coding required! See SETUP_GUIDE.md for help.",
+  
+  "firebase": {
+    "apiKey": "YOUR_FIREBASE_API_KEY",
+    "authDomain": "YOUR_PROJECT_ID.firebaseapp.com",
+    "projectId": "YOUR_PROJECT_ID",
+    "storageBucket": "YOUR_PROJECT_ID.firebasestorage.app",
+    "messagingSenderId": "YOUR_SENDER_ID",
+    "appId": "YOUR_APP_ID"
+  },
+
+  "googleMaps": {
+    "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+  },
+
+  "onesignal": {
+    "appId": "YOUR_ONESIGNAL_APP_ID",
+    "restApiKey": "YOUR_ONESIGNAL_REST_API_KEY",
+    "androidChannelId": ""
+  },
+
+  "fcm": {
+    "serverKey": "YOUR_FCM_SERVER_KEY",
+    "senderId": "YOUR_FCM_SENDER_ID"
+  },
+
+  "payment": {
+    "serverUrl": "https://your-payment-server.vercel.app/",
+    "stripePublishableKey": "YOUR_STRIPE_PUBLISHABLE_KEY"
+  },
+
+  "app": {
+    "name": "My Ride App",
+    "defaultCurrency": "USD",
+    "defaultCountryCode": "US",
+    "supportEmail": "support@example.com",
+    "supportPhone": "+1234567890"
+  },
+
+  "defaultLogin": {
+    "_description": "Default login credentials for testing. Set enabled to true to auto-fill login forms.",
+    "rider": {
+      "enabled": false,
+      "countryCode": "+60",
+      "phoneNumber": "1234567890",
+      "otp": "123456"
+    },
+    "driver": {
+      "enabled": false,
+      "countryCode": "+60",
+      "phoneNumber": "1234567891",
+      "otp": "123456"
+    },
+    "admin": {
+      "enabled": false,
+      "countryCode": "+60",
+      "phoneNumber": "1234567892",
+      "otp": "123456"
+    }
+  }
+}

@@ -1,0 +1,231 @@
+// Modern chat styling
+.chat-header {
+  ion-toolbar {
+    --background: #ffffff;
+    --border-color: transparent;
+  }
+  
+  .chat-title {
+    .user-info {
+      display: flex;
+      align-items: center;
+      
+      ion-avatar {
+        width: 36px;
+        height: 36px;
+        margin-right: 10px;
+      }
+      
+      .user-details {
+        display: flex;
+        flex-direction: column;
+        
+        h2 {
+          font-size: 16px;
+          font-weight: 600;
+          margin: 0;
+        }
+        
+        .status {
+          font-size: 12px;
+          color: var(--ion-color-success);
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+.chat-content {
+  --background: #f5f5f5;
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    
+    ion-spinner {
+      margin-bottom: 16px;
+      --color: var(--ion-color-primary);
+    }
+    
+    p {
+      color: var(--ion-color-medium);
+    }
+  }
+  
+  .empty-chat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+    text-align: center;
+    
+    ion-img {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+    
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ion-color-primary);
+      margin-bottom: 8px;
+    }
+    
+    p {
+      color: var(--ion-color-medium);
+      margin-top: 0;
+    }
+  }
+  
+  .messages-container {
+    padding: 16px;
+    
+    .message-wrapper {
+      display: flex;
+      margin-bottom: 16px;
+      
+      .message-avatar {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+      }
+      
+      .message-bubble {
+        max-width: 75%;
+        padding: 12px;
+        border-radius: 18px;
+        position: relative;
+        
+        .message-info {
+          margin-bottom: 4px;
+          
+          .sender-name {
+            font-weight: 600;
+            font-size: 13px;
+          }
+        }
+        
+        .message-content {
+          font-size: 15px;
+          line-height: 1.4;
+          word-break: break-word;
+        }
+        
+        .message-time {
+          font-size: 11px;
+          opacity: 0.7;
+          text-align: right;
+          margin-top: 4px;
+        }
+      }
+      
+      &.my-message {
+        flex-direction: row-reverse;
+        
+        .message-avatar {
+          margin-left: 8px;
+        }
+        
+        .message-bubble {
+          background-color: var(--ion-color-primary);
+          color: white;
+          border-bottom-right-radius: 4px;
+        }
+      }
+      
+      &.other-message {
+        flex-direction: row;
+        
+        .message-avatar {
+          margin-right: 8px;
+        }
+        
+        .message-bubble {
+          background-color: white;
+          color: var(--ion-color-dark);
+          border-bottom-left-radius: 4px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+  }
+}
+
+.chat-footer {
+  --background: #ffffff;
+  --border-color: #e0e0e0;
+  
+  .input-container {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    
+    .message-input {
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --padding-top: 10px;
+      --padding-bottom: 10px;
+      --background: #f0f2f5;
+      --border-radius: 24px;
+      --placeholder-color: var(--ion-color-medium);
+      margin-right: 8px;
+      flex: 1;
+      max-height: 120px;
+    }
+    
+    .send-button {
+      --padding-start: 0;
+      --padding-end: 0;
+      --border-radius: 50%;
+      --background: var(--ion-color-primary);
+      width: 40px;
+      height: 40px;
+      margin: 0;
+      
+      ion-icon {
+        font-size: 20px;
+      }
+      
+      .send-spinner {
+        --color: white;
+      }
+    }
+  }
+}
+
+// RTL support
+:host-context([dir="rtl"]) {
+  .messages-container {
+    .message-wrapper {
+      &.my-message {
+        .message-avatar {
+          margin-left: 0;
+          margin-right: 8px;
+        }
+        
+        .message-bubble {
+          border-bottom-right-radius: 18px;
+          border-bottom-left-radius: 4px;
+        }
+      }
+      
+      &.other-message {
+        .message-avatar {
+          margin-right: 0;
+          margin-left: 8px;
+        }
+        
+        .message-bubble {
+          border-bottom-left-radius: 18px;
+          border-bottom-right-radius: 4px;
+        }
+      }
+    }
+  }
+}

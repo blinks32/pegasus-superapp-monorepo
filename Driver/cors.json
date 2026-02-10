@@ -1,0 +1,16 @@
+[
+  {
+    "origin": [
+      "https://pegasus-2be94.web.app",
+      "https://pegasus-2be94.firebaseapp.com",
+      "https://pegasus-driver.vercel.app",
+      "http://localhost:8100",
+      "http://localhost:49670",
+      "capacitor://localhost",
+      "ionic://localhost"
+    ],
+    "method": ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Authorization", "Content-Length", "X-Requested-With", "Access-Control-Allow-Origin"]
+  }
+]

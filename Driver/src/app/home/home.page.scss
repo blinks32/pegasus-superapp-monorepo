@@ -1,0 +1,645 @@
+capacitor-google-maps {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slide-top {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes slide-bottom {
+  100% {
+    transform: translateY(50%);
+  }
+  0% {
+    transform: translateY(0%);
+  }
+}
+
+.slide-bottom {
+  animation: slide-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.slide-top {
+  animation: slide-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.centerPin {
+  animation-name: slide-top;
+  animation-duration: 0.8s;
+}
+
+.bottomItems {
+  animation-name: slide-top;
+  animation-duration: 0.5s;
+}
+
+ion-skeleton-text {
+  --background: rgba(0, 98, 255, 0.625);
+}
+
+ion-content {
+  --background: transparent;
+  margin-top: 20px;
+}
+
+ion-footer {
+  ion-row {
+    padding-top: 5vh;
+    background: transparent;
+    display: block;
+    ion-fab-button {
+      margin-right: 2.5vh;
+    }
+    ion-list {
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+      ion-list-header {
+        ion-label {
+          font-weight: bold;
+          font-size: 1.8rem;
+        }
+      }
+    }
+  }
+  ion-fab {
+    margin-top: -40px;
+  }
+  ion-list {
+    .payment {
+      font-size: 1.1em;
+      color: var(--ion-color-dark);
+      --background: var(--ion-color-light);
+      ion-item {
+        color: var(--ion-color-dark);
+        --inner-padding-bottom: 1px;
+        --inner-padding-end: 0;
+        --inner-padding-start: 0;
+        --inner-padding-top: 0;
+        --background: var(--ion-color-light);
+        border-radius: 10px;
+        p {
+          color: var(--ion-color-dark);
+        }
+      }
+    }
+  }
+}
+
+ion-skeleton-text {
+  --background: rgba(188, 232, 198, 0.962);
+}
+
+.accept {
+  font-size: 1.3em;
+  padding: 12px;
+}
+
+.unbook {
+  background: #0a602d;
+}
+
+.book {
+  background: linear-gradient(135deg, var(--ion-color-success) 0%, #0a8f3c 100%);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 0;
+  
+  ion-list-header {
+    .ion-padding {
+      width: 100%;
+    }
+    
+    .accept {
+      font-size: 1.6em;
+      padding: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 1.2em !important;
+      padding: 16px !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      margin: 8px 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+    }
+
+    .acceptTimer {
+      font-size: 1.4em;
+      color: white;
+      background: rgba(var(--ion-color-danger-rgb), 0.9);
+      padding: 16px;
+      border-radius: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      margin: 16px 0;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      
+      strong {
+        color: white;
+        font-weight: 700;
+      }
+    }
+
+    .acceptPrice {
+      font-size: 2.5em;
+      color: white;
+      font-weight: 700;
+      text-align: center;
+      margin: 20px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      
+      &::before {
+        content: '$';
+        font-size: 0.8em;
+        vertical-align: top;
+        margin-right: 2px;
+      }
+    }
+  }
+
+  ion-button {
+    margin: 16px 20px;
+    height: 56px;
+    --border-radius: 16px;
+    --background: rgba(255, 255, 255, 0.95);
+    --color: var(--ion-color-success);
+    font-weight: 600;
+    font-size: 1.2em;
+    letter-spacing: 0.5px;
+    
+    ion-icon {
+      font-size: 24px;
+      margin-right: 8px;
+    }
+    
+    &:hover {
+      --background: white;
+    }
+  }
+}
+
+.custom-toolbar-background {
+  border-bottom: 2px solid var(--ion-color-primary);
+  animation: borderColorChange 4s infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes borderColorChange {
+  0% { border-color: red; }
+  25% { border-color: blue; }
+  50% { border-color: green; }
+  75% { border-color: yellow; }
+  100% { border-color: red; }
+}
+
+.center-button {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.acceptTimer {
+  font-size: 1.3em;
+  color: aliceblue;
+  margin-right: auto;
+  background: var(--ion-color-danger);
+  padding: 12px;
+  border-radius: 100px;
+  border: 1.3px solid aliceblue;
+}
+
+.centerElem {
+  justify-content: center;
+  align-items: center;
+}
+
+.pickMe {
+  height: 300px;
+}
+
+.price {
+  margin-left: auto;
+  flex: 0.7;
+}
+
+.shadow-top {
+  box-shadow: 0px -1.5px 1.5px rgba(196, 196, 196, 0.414);
+  animation-name: slide-top;
+  animation-duration: 0.6s;
+}
+
+.top_bar {
+  box-shadow: 0px 1.5px 1.5px rgba(196, 196, 196, 0.414);
+  --background: none;
+}
+
+.card {
+  box-shadow: 0px -1.5px 1.5px rgba(196, 196, 196, 0.414);
+  border-radius: 10px;
+}
+
+.main-button {
+  color: var(--ion-color-dark);
+  --background: var(--ion-color-light-shade);
+  border-radius: 10px;
+}
+
+.preview {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.fallback {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: #bfbfbf;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+}
+
+.map {
+  width: 100%;
+  height: 1024px;
+  padding-bottom: 100%;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lowered-fab {
+  margin-top: 20px;
+}
+
+ion-skeleton-text {
+  --background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  height: 24px;
+  margin: 8px 0;
+  
+  &.price-skeleton {
+    height: 40px;
+    width: 120px;
+    margin: 16px auto;
+  }
+}
+
+.modern-accept-card {
+  background: linear-gradient(135deg, var(--ion-color-success) 0%, #0a8f3c 100%);
+  border-radius: 20px 20px 0 0;
+  padding: 16px;
+  max-height: 280px;
+  overflow: hidden;
+}
+
+.accept-ride-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ride-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.trip-details {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+  
+  ion-icon {
+    margin-right: 4px;
+    font-size: 18px;
+  }
+  
+  .ml-2 {
+    margin-left: 8px;
+  }
+}
+
+.price-tag {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: white;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.location-container {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: white;
+  font-size: 1rem;
+  
+  ion-icon {
+    margin-right: 8px;
+    font-size: 18px;
+  }
+  
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.countdown-container {
+  display: flex;
+  justify-content: center;
+}
+
+.timer-indicator {
+  background: rgba(var(--ion-color-danger-rgb), 0.8);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  
+  strong {
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+}
+
+.accept-button {
+  margin: 4px 0;
+  height: 48px;
+  --border-radius: 12px;
+  --background: rgba(255, 255, 255, 0.95);
+  --color: var(--ion-color-success-shade);
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  
+  &:hover {
+    --background: white;
+  }
+  
+  ion-icon {
+    font-size: 20px;
+    margin-right: 6px;
+  }
+}
+
+ion-skeleton-text {
+  --background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  height: 20px;
+}
+
+// ==================== SHARED RIDE STYLES ====================
+
+.shared-ride-card {
+  background: var(--ion-color-light);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 0 16px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+
+  .current-waypoint {
+    background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+
+    .waypoint-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+
+      ion-badge {
+        font-size: 10px;
+        padding: 4px 8px;
+      }
+
+      .waypoint-rider {
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+      }
+    }
+
+    .waypoint-address {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+
+  .passengers-section {
+    .passengers-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--ion-color-light-shade);
+      margin-bottom: 8px;
+
+      ion-icon {
+        font-size: 20px;
+        color: var(--ion-color-primary);
+      }
+
+      span {
+        flex: 1;
+        font-weight: 500;
+        color: var(--ion-color-dark);
+      }
+    }
+
+    .passenger-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      gap: 12px;
+
+      ion-avatar {
+        width: 40px;
+        height: 40px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .passenger-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .passenger-name {
+          font-weight: 500;
+          color: var(--ion-color-dark);
+        }
+
+        ion-badge {
+          width: fit-content;
+          font-size: 10px;
+        }
+      }
+
+      .passenger-price {
+        font-weight: 600;
+        color: var(--ion-color-success);
+        font-size: 16px;
+      }
+    }
+  }
+
+  .earnings-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--ion-color-success-tint);
+    border-radius: 8px;
+    margin-top: 12px;
+
+    span {
+      color: var(--ion-color-success-shade);
+      font-size: 14px;
+    }
+
+    strong {
+      color: var(--ion-color-success);
+      font-size: 20px;
+    }
+  }
+}
+
+.match-candidates-card {
+  position: fixed;
+  bottom: 200px;
+  left: 16px;
+  right: 16px;
+  z-index: 1000;
+  margin: 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  max-height: 300px;
+  overflow-y: auto;
+
+  ion-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--ion-color-success);
+
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      font-size: 16px;
+
+      ion-icon {
+        color: white;
+      }
+    }
+
+    ion-button {
+      --color: white;
+    }
+  }
+
+  ion-card-content {
+    padding: 12px;
+
+    .match-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--ion-color-light);
+      border-radius: 12px;
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .match-info {
+        flex: 1;
+
+        strong {
+          display: block;
+          font-size: 16px;
+          color: var(--ion-color-dark);
+          margin-bottom: 4px;
+        }
+
+        p {
+          font-size: 12px;
+          color: var(--ion-color-medium);
+          margin: 0 0 8px;
+        }
+
+        .match-stats {
+          display: flex;
+          gap: 6px;
+
+          ion-badge {
+            font-size: 10px;
+          }
+        }
+      }
+
+      .match-actions {
+        display: flex;
+        gap: 8px;
+
+        ion-button {
+          --padding-start: 8px;
+          --padding-end: 8px;
+          height: 36px;
+        }
+      }
+    }
+  }
+}
+
+// Waypoint marker styles
+.waypoint-marker {
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+// ==================== END SHARED RIDE STYLES ====================

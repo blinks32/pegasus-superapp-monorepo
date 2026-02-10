@@ -1,0 +1,39 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- <ion-button color="primary">
+        <ion-back-button></ion-back-button>
+      </ion-button> -->
+    </ion-buttons>
+    <ion-title></ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-img src="../assets/imgs/No connection-pana.svg"></ion-img>
+
+  <ion-list-header class="ion-padding" >
+    <ion-label color="primary" class="ion-text-center">
+      <h1>{{ 'NETWORK.ERROR_MESSAGE' | translate }}</h1>
+    </ion-label>
+</ion-list-header>
+
+<ion-button size="large" shape="round" type="submit" color="primary" (click)="CheckNetwork()" expand="block">
+  <ion-label *ngIf="!approve">{{ 'NETWORK.TRY_AGAIN' | translate }}</ion-label> 
+  <ion-progress-bar *ngIf="approve"color='light' type="indeterminate"></ion-progress-bar>
+</ion-button>
+
+  <!-- Language Selector FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="language-fab">
+    <ion-fab-button size="medium" color="light">
+      <ion-icon name="language-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
+            <ion-text>EN</ion-text>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
+            <ion-text>MS</ion-text>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>
