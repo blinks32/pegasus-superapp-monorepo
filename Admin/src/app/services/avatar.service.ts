@@ -10,7 +10,7 @@ import {
 } from '@angular/fire/storage';
 import { Router } from '@angular/router';
 import { Photo } from '@capacitor/camera';
-import { geohashForLocation} from 'geofire-common';
+import { geohashForLocation } from 'geofire-common';
 import { combineLatest, Observable, of } from 'rxjs';
 import { Admin } from '../interfaces/admin';
 import { Card } from '../interfaces/card';
@@ -25,7 +25,7 @@ import { map, switchMap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AvatarService {
-  
+
   private driverCollection: CollectionReference<DocumentData>;
   directory: any;
   userUID: string;
@@ -40,38 +40,45 @@ export class AvatarService {
     private storage: Storage,
     private router: Router
   ) {
-    this.auth.onAuthStateChanged((user)=>{
-      if (user){
-      this.driverCollection = collection(this.firestore, 'Drivers');
+    this.auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.driverCollection = collection(this.firestore, 'Drivers');
 
-    
 
-     this.getUserProfile(user).subscribe(async (data) => {
-      this.profile = data;
 
-      console.log(data);
+        this.getUserProfile(user).subscribe({
+          next: async (data) => {
+            this.profile = data;
+            console.log(data);
 
-      if (this.profile){
-      if (!this.profile.Access)
-      this.router.navigateByUrl('details'); 
+            if (this.profile) {
+              if (!this.profile.Access)
+                this.router.navigateByUrl('details');
 
-      if (this.profile.Driver_name)
-      this.userName = this.profile.Driver_name;
+              if (this.profile.Driver_name)
+                this.userName = this.profile.Driver_name;
 
-      this.pathM = `uploads/${this.profile.uid}/profile.png`;
+              this.pathM = `uploads/${this.profile.uid}/profile.png`;
+            }
+          },
+          error: (error) => {
+            console.error('Error in Admin profile subscription:', error);
+            if (error.code === 'permission-denied') {
+              alert('Permission denied to access Admin profile. Please check Firestore Security Rules for the "Admins" collection in the new Firebase project.');
+            }
+          }
+        })
+
+      } else {
+        this.userName = "None";
+
       }
-     })
-     
-    }else{
-      this.userName = "None";
-      
-    }
-  })
+    })
   }
 
-   getUserProfile(user) {
+  getUserProfile(user) {
     const userDocRef = doc(this.firestore, `Admins/${user.uid}`);
-     return docData(userDocRef);
+    return docData(userDocRef);
   }
 
   async createItem(data: any): Promise<void> {
@@ -79,8 +86,8 @@ export class AvatarService {
     await addDoc(itemsCollection, data);
   }
 
-  async RequestRideWithRiderDetails(user_Loc_coord, user_Des_coord, ID){
-    try{
+  async RequestRideWithRiderDetails(user_Loc_coord, user_Des_coord, ID) {
+    try {
       const loc: Rider = {
         Loc_lat: 5.5096,
         Loc_lng: 7.0391,
@@ -101,21 +108,21 @@ export class AvatarService {
         time: '',
         notificationID: undefined
       };
-     
+
       const userDocRef = doc(this.firestore, 'Drivers', ID)
-      await updateDoc(userDocRef, {onlineState: false});
+      await updateDoc(userDocRef, { onlineState: false });
       console.log('deleted current driver ID');
-      await setDoc(doc(this.firestore, "Request",  ID), { ...loc});
+      await setDoc(doc(this.firestore, "Request", ID), { ...loc });
       console.log('Added New driver ID');
-    }catch(e){
+    } catch (e) {
       throw new Error(e);
     }
   }
 
 
-  async RejectRider(){
+  async RejectRider() {
     try {
-      const userDocRef = doc(this.firestore, "Request",  this.auth.currentUser.uid)
+      const userDocRef = doc(this.firestore, "Request", this.auth.currentUser.uid)
       await updateDoc(userDocRef, {
         cancel: true,
         start: false
@@ -128,9 +135,9 @@ export class AvatarService {
     }
   }
 
-  async PickRider(){
+  async PickRider() {
     try {
-      const userDocRef = doc(this.firestore, "Request",  this.auth.currentUser.uid)
+      const userDocRef = doc(this.firestore, "Request", this.auth.currentUser.uid)
       await updateDoc(userDocRef, {
         start: true,
       });
@@ -143,9 +150,9 @@ export class AvatarService {
   }
 
 
-  async EndRide(){
+  async EndRide() {
     try {
-      const userDocRef = doc(this.firestore, "Request",  this.auth.currentUser.uid)
+      const userDocRef = doc(this.firestore, "Request", this.auth.currentUser.uid)
       await updateDoc(userDocRef, {
         stop: true,
         start: false
@@ -159,52 +166,52 @@ export class AvatarService {
   }
 
 
-  async createHistory(user){
-      try{
-        const loc: Rider = {
-          Loc_lat: user.Loc_lat,
-          Loc_lng: user.Loc_lng,
-          Rider_id: user.Rider_id,
-          Rider_name: user.Rider_name,
-          Rider_phone: user.Rider_phone,
-          Rider_imgUrl: user.Rider_imgUrl,
-          Rider_rating: user.Rider_rating,
-          Des_lat: user.Des_lat,
-          Des_lng: user.Des_lng,
-          Rider_Location: user.Rider_Location,
-          Rider_Destination: user.Rider_Destination,
-          Rider_email: user.Rider_email,
-          countDown: 0,
-          cancel: false,
-          price: user.price,
-          cash: user.cash,
-          time: serverTimestamp(),
-          notificationID: ''
-        };
-        await setDoc(doc(this.firestore, "Drivers",  `${this.auth.currentUser.uid}/History/${user.Rider_id}`), { ...loc});
-        await setDoc(doc(this.firestore, "AllRides",  `${this.auth.currentUser.uid}/customer/${user.Rider_id}`), { ...loc});
-      }catch(e){
-        alert(e)
-      }
+  async createHistory(user) {
+    try {
+      const loc: Rider = {
+        Loc_lat: user.Loc_lat,
+        Loc_lng: user.Loc_lng,
+        Rider_id: user.Rider_id,
+        Rider_name: user.Rider_name,
+        Rider_phone: user.Rider_phone,
+        Rider_imgUrl: user.Rider_imgUrl,
+        Rider_rating: user.Rider_rating,
+        Des_lat: user.Des_lat,
+        Des_lng: user.Des_lng,
+        Rider_Location: user.Rider_Location,
+        Rider_Destination: user.Rider_Destination,
+        Rider_email: user.Rider_email,
+        countDown: 0,
+        cancel: false,
+        price: user.price,
+        cash: user.cash,
+        time: serverTimestamp(),
+        notificationID: ''
+      };
+      await setDoc(doc(this.firestore, "Drivers", `${this.auth.currentUser.uid}/History/${user.Rider_id}`), { ...loc });
+      await setDoc(doc(this.firestore, "AllRides", `${this.auth.currentUser.uid}/customer/${user.Rider_id}`), { ...loc });
+    } catch (e) {
+      alert(e)
     }
-  
+  }
+
 
 
   //GO offline()
 
-  async goOffline(){
+  async goOffline() {
     await deleteDoc(doc(this.firestore, "Drivers", this.auth.currentUser.uid));
   }
 
-//delete the driver that has a request sent to him.
-  async deleDriverFromRequest(ID){
+  //delete the driver that has a request sent to him.
+  async deleDriverFromRequest(ID) {
     await deleteDoc(doc(this.firestore, "Request", ID))
   }
 
 
-  async UpdateCountDown(time){
+  async UpdateCountDown(time) {
     try {
-      const userDocRef = doc(this.firestore, "Request",  this.auth.currentUser.uid)
+      const userDocRef = doc(this.firestore, "Request", this.auth.currentUser.uid)
       await updateDoc(userDocRef, {
         countDown: time,
       });
@@ -217,169 +224,169 @@ export class AvatarService {
 
 
   //Push driver info into the request database
-  async PushDriverToRequest(coord, name, email, phone, car, cartype, plate, imageUrl, document){
-    try{
-    const loc: Drivers = {
-      geohash: geohashForLocation([coord.coords.latitude, coord.coords.longitude]),
-      Driver_lat: coord.coords.latitude,
-      Driver_lng: coord.coords.longitude,
-      Driver_id: this.auth.currentUser.uid,
-      Driver_name: name,
-      Driver_car: car,
-      Driver_imgUrl: imageUrl,
-      Driver_rating: 0,
-      distance: 0,
-      duration: 0,
-      seats: 1,
-      start: false,
-      stop: false,
-      intransit: false,
-      cancel: false,
-      Driver_cartype: cartype,
-      Driver_plate: plate,
-      Driver_num_rides: 0,
-      Document: document,
-      Driver_email: email,
-      Driver_phone: phone,
-      onlineState: false,
-      Earnings: 0,
-      Approved: false
-    };
-    await updateDoc(doc(this.firestore, "Request",  this.auth.currentUser.uid), { ...loc});
-  }catch(e){
-    throw new Error(e);
-  }
-   
+  async PushDriverToRequest(coord, name, email, phone, car, cartype, plate, imageUrl, document) {
+    try {
+      const loc: Drivers = {
+        geohash: geohashForLocation([coord.coords.latitude, coord.coords.longitude]),
+        Driver_lat: coord.coords.latitude,
+        Driver_lng: coord.coords.longitude,
+        Driver_id: this.auth.currentUser.uid,
+        Driver_name: name,
+        Driver_car: car,
+        Driver_imgUrl: imageUrl,
+        Driver_rating: 0,
+        distance: 0,
+        duration: 0,
+        seats: 1,
+        start: false,
+        stop: false,
+        intransit: false,
+        cancel: false,
+        Driver_cartype: cartype,
+        Driver_plate: plate,
+        Driver_num_rides: 0,
+        Document: document,
+        Driver_email: email,
+        Driver_phone: phone,
+        onlineState: false,
+        Earnings: 0,
+        Approved: false
+      };
+      await updateDoc(doc(this.firestore, "Request", this.auth.currentUser.uid), { ...loc });
+    } catch (e) {
+      throw new Error(e);
+    }
+
     console.log('done')
   }
 
 
-   ///create a new driver and publish info to database
-   async CreateAdmin(name, email, phone, role, imageUrl, state, coordinates: any){
-    try{
-    const loc: Admin = {
-      name: name,
-      email: email,
-      phone: phone,
-      imageUrl: imageUrl,
-      role: role,
-      Access: state
-    };
-    await setDoc(doc(this.firestore, "Admins",  this.auth.currentUser.uid), { ...loc});
-  }catch(e){
-    throw new Error(e);
-  }
-  }
-
-
-   ///create a new driver and publish info to database
-   async UpdateDriver(coord, name, email, phone, car, cartype, plate, imageUrl, document, id){
-    try{
-    const loc: DriverUpdate = {
-      geohash: geohashForLocation([coord.coords.latitude, coord.coords.longitude]),
-      Driver_lat: coord.coords.latitude,
-      Driver_lng: coord.coords.longitude,
-      Driver_id: id,
-      Driver_name: name,
-      Driver_car: car,
-      Driver_imgUrl: imageUrl,
-      Driver_rating: 0,
-      distance: 0,
-      duration: 0,
-      seats: 1,
-      start: false,
-      stop: false,
-      intransit: false,
-      cancel: false,
-      Driver_cartype: cartype,
-      Driver_plate: plate,
-      Driver_num_rides: 0,
-      Document: document,
-      Driver_email: email,
-      Driver_phone: phone,
-    };
-    await updateDoc(doc(this.firestore, "Drivers",  id), { ...loc});
-  }catch(e){
-    throw new Error(e);
-  }
+  ///create a new driver and publish info to database
+  async CreateAdmin(name, email, phone, role, imageUrl, state, coordinates: any) {
+    try {
+      const loc: Admin = {
+        name: name,
+        email: email,
+        phone: phone,
+        imageUrl: imageUrl,
+        role: role,
+        Access: state
+      };
+      await setDoc(doc(this.firestore, "Admins", this.auth.currentUser.uid), { ...loc });
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 
 
   ///create a new driver and publish info to database
-  async CreateNewDriver(coord, name, email, phone, car, cartype, plate, imageUrl, document){
-    try{
-    const loc: Drivers = {
-      geohash: geohashForLocation([coord.coords.latitude, coord.coords.longitude]),
-      Driver_lat: coord.coords.latitude,
-      Driver_lng: coord.coords.longitude,
-      Driver_id: this.auth.currentUser.uid,
-      Driver_name: name,
-      Driver_car: car,
-      Driver_imgUrl: imageUrl,
-      Driver_rating: 0,
-      distance: 0,
-      duration: 0,
-      seats: 1,
-      start: false,
-      stop: false,
-      intransit: false,
-      cancel: false,
-      Driver_cartype: cartype,
-      Driver_plate: plate,
-      Driver_num_rides: 0,
-      Document: document,
-      Driver_email: email,
-      Driver_phone: phone,
-      onlineState: false,
-      Earnings: 0,
-      Approved: false
-    };
-    await setDoc(doc(this.firestore, "Drivers",  this.auth.currentUser.uid), { ...loc});
-  }catch(e){
-    throw new Error(e);
-  }
+  async UpdateDriver(coord, name, email, phone, car, cartype, plate, imageUrl, document, id) {
+    try {
+      const loc: DriverUpdate = {
+        geohash: geohashForLocation([coord.coords.latitude, coord.coords.longitude]),
+        Driver_lat: coord.coords.latitude,
+        Driver_lng: coord.coords.longitude,
+        Driver_id: id,
+        Driver_name: name,
+        Driver_car: car,
+        Driver_imgUrl: imageUrl,
+        Driver_rating: 0,
+        distance: 0,
+        duration: 0,
+        seats: 1,
+        start: false,
+        stop: false,
+        intransit: false,
+        cancel: false,
+        Driver_cartype: cartype,
+        Driver_plate: plate,
+        Driver_num_rides: 0,
+        Document: document,
+        Driver_email: email,
+        Driver_phone: phone,
+      };
+      await updateDoc(doc(this.firestore, "Drivers", id), { ...loc });
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 
 
-     getDriver() {
-      return collectionData(this.driverCollection, {
-        idField: 'id',
-      }) as Observable<Drivers[]>;
-     }
-
-
-    update(pokemon: Drivers) {
-      const pokemonDocumentReference = doc(
-        this.firestore,
-        `pokemon/${pokemon.Driver_id}`
-      );
-      return updateDoc(pokemonDocumentReference, { ...pokemon });
+  ///create a new driver and publish info to database
+  async CreateNewDriver(coord, name, email, phone, car, cartype, plate, imageUrl, document) {
+    try {
+      const loc: Drivers = {
+        geohash: geohashForLocation([coord.coords.latitude, coord.coords.longitude]),
+        Driver_lat: coord.coords.latitude,
+        Driver_lng: coord.coords.longitude,
+        Driver_id: this.auth.currentUser.uid,
+        Driver_name: name,
+        Driver_car: car,
+        Driver_imgUrl: imageUrl,
+        Driver_rating: 0,
+        distance: 0,
+        duration: 0,
+        seats: 1,
+        start: false,
+        stop: false,
+        intransit: false,
+        cancel: false,
+        Driver_cartype: cartype,
+        Driver_plate: plate,
+        Driver_num_rides: 0,
+        Document: document,
+        Driver_email: email,
+        Driver_phone: phone,
+        onlineState: false,
+        Earnings: 0,
+        Approved: false
+      };
+      await setDoc(doc(this.firestore, "Drivers", this.auth.currentUser.uid), { ...loc });
+    } catch (e) {
+      throw new Error(e);
     }
+  }
 
 
-    async uploadImage(cameraFile: Photo, uid) {
-   
-      const storageRef = ref(this.storage, this.pathM);
-  
-      try {
-        await uploadString(storageRef, cameraFile.base64String, 'base64');
-  
-        const imageUrl = await getDownloadURL(storageRef);
-  
-        const userDocRef = doc(this.firestore, `Drivers/${uid}`);
-        await setDoc(userDocRef, {
-          imageUrl,
-        });
-        return true;
-      } catch (e) {
-        console.log(e);
-        return null;
-      }
+  getDriver() {
+    return collectionData(this.driverCollection, {
+      idField: 'id',
+    }) as Observable<Drivers[]>;
+  }
+
+
+  update(pokemon: Drivers) {
+    const pokemonDocumentReference = doc(
+      this.firestore,
+      `pokemon/${pokemon.Driver_id}`
+    );
+    return updateDoc(pokemonDocumentReference, { ...pokemon });
+  }
+
+
+  async uploadImage(cameraFile: Photo, uid) {
+
+    const storageRef = ref(this.storage, this.pathM);
+
+    try {
+      await uploadString(storageRef, cameraFile.base64String, 'base64');
+
+      const imageUrl = await getDownloadURL(storageRef);
+
+      const userDocRef = doc(this.firestore, `Drivers/${uid}`);
+      await setDoc(userDocRef, {
+        imageUrl,
+      });
+      return true;
+    } catch (e) {
+      console.log(e);
+      return null;
     }
-  
+  }
+
 
   async uploadCartype(cameraFile: Photo, uid) {
-   
+
     const storageRef = ref(this.storage, `uploads/${uid}/profile.png`);
 
     try {
@@ -389,7 +396,7 @@ export class AvatarService {
 
       const userDocRef = doc(this.firestore, `Cartypes/${uid}`);
       await updateDoc(userDocRef, {
-        image:imageUrl,
+        image: imageUrl,
         id: uid
       });
       return true;
@@ -398,8 +405,8 @@ export class AvatarService {
       return null;
     }
   }
- 
-   getMessage(uid) {
+
+  getMessage(uid) {
     const userDocRef = collection(this.firestore, `Messages/${uid}/messages`);
     const q = query(userDocRef, orderBy('createdAt', 'asc'));
     return collectionData(q).pipe(
@@ -479,7 +486,7 @@ export class AvatarService {
   }
 
   getRequests() {
-    const userDocRef = doc(this.firestore,  `Request/${this.auth.currentUser.uid}`);
+    const userDocRef = doc(this.firestore, `Request/${this.auth.currentUser.uid}`);
     return docData(userDocRef);
   }
 
@@ -535,7 +542,7 @@ export class AvatarService {
 
   getAllPrices(): Observable<any[]> {
     const pricesRef = collection(this.firestore, 'prices');
-        return collectionData(pricesRef);
+    return collectionData(pricesRef);
   }
 
 
@@ -544,282 +551,282 @@ export class AvatarService {
     return collectionData(userDocRef);
   }
 
-async addChatMessage(msg, uid) {
-  return await addDoc(collection(this.firestore, `Messages/${uid}/messages`), {
-    msg: msg,
-    from: this.auth.currentUser.uid,
-    createdAt: serverTimestamp(),
-    myMsg: false,
-    fromName: this.profile.name
-  });
-}
-
-async createDocument(name, type, id, image, text, targetUid?) {
-  try {
-    const uid = targetUid || this.auth.currentUser.uid;
-    const loc: docs = {
-      name: name,
-      type: type,
-      id: id,
-      image: image,
-      text: text
-    };
-    await setDoc(doc(this.firestore, "Drivers",  `${uid}/Documents/${name}`), { ...loc});
-    return true;
-  } catch (e) {
-    // alert(e)
-    return null;
-  }
-
-}
-
-
-async createUser(name, email, img, phone, uid) {
-  try {
-    const loc: Rider = {
-      Loc_lat: 0,
-      Loc_lng: 0,
-      Rider_id: uid,
-      Rider_name: name,
-      Rider_phone: phone,
-      Rider_imgUrl: img,
-      Rider_rating: 0,
-      Des_lat: 0,
-      Des_lng: 0,
-      Rider_Location: '',
-      Rider_Destination: '',
-      Rider_email: email,
-      countDown: 0,
-      cancel: false,
-      price: 0,
-      cash: true,
-      notificationID: '',
-      time: ''
-    };
-    await setDoc(doc(this.firestore, "Riders",  uid), { ...loc});
-    return true;
-  } catch (e) {
-    return null;
-  }
-}
-
-
-getDocs() {
-  const userDocRef = collection(this.firestore, `Drivers/${this.auth.currentUser.uid}/Documents`);
-  return collectionData(userDocRef);
-}
-
-async updateMessageInfo(uid){
-  return await updateDoc(doc(this.firestore, `Messages/${uid}`),
-  {
-    new: false
-  }
-  )
-}
-
-async PriceSave(name, amt) {
-  return await addDoc(collection(this.firestore, `prices`), {
-     name: name,
-     amount: amt,
-  });
-}
-
-
-async DocumentUpdate(name, amt, uid, s) {
-  const userDocRef = doc(this.firestore, `Documents/${uid}`)
-  return await updateDoc(userDocRef, {
-     name: name,
-     amount: amt,
-     type: s,
-     id: uid
-  });
-}
-
-async CustomerBlock(value, uid) {
-  return await updateDoc(doc(this.firestore, `Riders/${uid}`), {
-     Block: value,
-  });
-}
-
-
-async DriverBlock(value, uid) {
-  return await updateDoc(doc(this.firestore, `Drivers/${uid}`), {
-     Block: value,
-  });
-}
-
-async UpdateDriverApprove(value,drivercheck, uid) {
-  return await updateDoc(doc(this.firestore, `Drivers/${uid}`), {
-     Approved: drivercheck,
-     isApproved: value
-  });
-}
-
-
-async DriverUpdateEarnings(amt, uid) {
-  return await updateDoc(doc(this.firestore, `Drivers/${uid}`), {
-     Earnings: amt,
-  });
-}
-
-async updateDriverNumRides(numRides: number, uid: string) {
-  return await updateDoc(doc(this.firestore, `Drivers/${uid}`), {
-     Driver_num_rides: numRides,
-  });
-}
-
-async DocumentSave(name, type, content, description) {
-  return await addDoc(collection(this.firestore, `Documents`), {
-     name: name,
-     type: type,
-     content: content,
-     description: description,
-     createdAt: serverTimestamp()
-  });
-}
-
-async DocumentComponentUpdate(id, name, type, content, description) {
-  const docRef = doc(this.firestore, `Documents/${id}`);
-  return await updateDoc(docRef, {
-     name: name,
-     type: type,
-     content: content,
-     description: description
-  });
-}
-
-async uploadFile(file: Blob, path: string): Promise<string> {
-  const storageRef = ref(this.storage, path);
-  const result = await uploadBytes(storageRef, file);
-  return await getDownloadURL(result.ref);
-}
-
-
-async PriceUpdate(name, amt, uid) {
-  const userDocRef = doc(this.firestore, `prices/${uid}`)
-  return await updateDoc(userDocRef, {
-     name: name,
-     amount: amt,
-     id: uid
-  });
-}
-
-
-
-async CartypeSave(name,seats) {
-  return await addDoc(collection(this.firestore, `Cartypes`), {
-     name: name,
-    seatNum: seats,
-    //  surcharge: surcharge,
-    //  mileage: mileage
-  });
-}
-
-async checkCartypeNameExists(name: string, excludeId?: string): Promise<boolean> {
-  const q = query(collection(this.firestore, 'Cartypes'), where('name', '==', name ));
-  const querySnapshot = await getDocs(q);
-  
-  if (querySnapshot.empty) {
-    return false;
-  }
-
-  if (excludeId) {
-    // If we are excluding an ID (updating), check if any of the found docs have a different ID
-    return querySnapshot.docs.some(doc => doc.id !== excludeId);
-  }
-
-  return true;
-}
-
-async CartypeUpdate(uid, name,seats) {
-  const userDocRef = doc(this.firestore, `Cartypes/${uid}`)
-  return await updateDoc(userDocRef, {
-     name: name,
-     seatNum: seats,
-    //  surcharge: surcharge,
-    //  mileage: mileage
-  });
-}
-
-
-async CartypeDelete(uid) {
-  const userDocRef = doc(this.firestore, `Cartypes/${uid}`)
-  await deleteDoc(userDocRef);
-}
-
-async DocumentDelete(uid) {
-  const userDocRef = doc(this.firestore, `Documents/${uid}`)
-  await deleteDoc(userDocRef);
-}
-
-async PriceDelete(uid) {
-  const userDocRef = doc(this.firestore, `prices/${uid}`)
-  await deleteDoc(userDocRef);
-}
-
-
-async createCard(name, number, type, id) {
-  try {
-    const loc: Card = {
-      name: name,
-      number: number,
-      type: type,
-      id: id,
-      selected: true
-    };
-    await setDoc(doc(this.firestore, "Drivers",  `${this.auth.currentUser.uid}/Cards/${name}`), { ...loc});
-    return true;
-  } catch (e) {
-    alert(e)
-    return null;
-  }
-  
-}
-
-async updateCArd(name, number, type, id, state) {
-  try {
-    const loc: Card = {
-      name: name,
-      number: number,
-      type: type,
-      id: id,
-      selected: state
-    };
-    await updateDoc(doc(this.firestore, "Drivers",  `${this.profile.Rider_id}/Cards/${name}`), { ...loc});
-    return true;
-  } catch (e) {
-    alert(e)
-    return null;
-  }
-
-}
-
-
-async updateOnlineState(state) {
-  try {
-    const userDocRef = doc(this.firestore, 'Drivers', `/${this.auth.currentUser.uid}/`)
-    await updateDoc(userDocRef, {
-      onlineState: state,
+  async addChatMessage(msg, uid) {
+    return await addDoc(collection(this.firestore, `Messages/${uid}/messages`), {
+      msg: msg,
+      from: this.auth.currentUser.uid,
+      createdAt: serverTimestamp(),
+      myMsg: false,
+      fromName: this.profile.name
     });
-    return true;
-  } catch (e) {
-    alert(e)
-    return null;
   }
-}
+
+  async createDocument(name, type, id, image, text, targetUid?) {
+    try {
+      const uid = targetUid || this.auth.currentUser.uid;
+      const loc: docs = {
+        name: name,
+        type: type,
+        id: id,
+        image: image,
+        text: text
+      };
+      await setDoc(doc(this.firestore, "Drivers", `${uid}/Documents/${name}`), { ...loc });
+      return true;
+    } catch (e) {
+      // alert(e)
+      return null;
+    }
+
+  }
 
 
-async updateEarnings(value) {
-  try {
-    const userDocRef = doc(this.firestore, 'Drivers', `/${this.auth.currentUser.uid}/`)
-    await updateDoc(userDocRef, {
-      Earnings: value,
+  async createUser(name, email, img, phone, uid) {
+    try {
+      const loc: Rider = {
+        Loc_lat: 0,
+        Loc_lng: 0,
+        Rider_id: uid,
+        Rider_name: name,
+        Rider_phone: phone,
+        Rider_imgUrl: img,
+        Rider_rating: 0,
+        Des_lat: 0,
+        Des_lng: 0,
+        Rider_Location: '',
+        Rider_Destination: '',
+        Rider_email: email,
+        countDown: 0,
+        cancel: false,
+        price: 0,
+        cash: true,
+        notificationID: '',
+        time: ''
+      };
+      await setDoc(doc(this.firestore, "Riders", uid), { ...loc });
+      return true;
+    } catch (e) {
+      return null;
+    }
+  }
+
+
+  getDocs() {
+    const userDocRef = collection(this.firestore, `Drivers/${this.auth.currentUser.uid}/Documents`);
+    return collectionData(userDocRef);
+  }
+
+  async updateMessageInfo(uid) {
+    return await updateDoc(doc(this.firestore, `Messages/${uid}`),
+      {
+        new: false
+      }
+    )
+  }
+
+  async PriceSave(name, amt) {
+    return await addDoc(collection(this.firestore, `prices`), {
+      name: name,
+      amount: amt,
     });
-    return true;
-  } catch (e) {
-    alert(e)
-    return null;
   }
-}
+
+
+  async DocumentUpdate(name, amt, uid, s) {
+    const userDocRef = doc(this.firestore, `Documents/${uid}`)
+    return await updateDoc(userDocRef, {
+      name: name,
+      amount: amt,
+      type: s,
+      id: uid
+    });
+  }
+
+  async CustomerBlock(value, uid) {
+    return await updateDoc(doc(this.firestore, `Riders/${uid}`), {
+      Block: value,
+    });
+  }
+
+
+  async DriverBlock(value, uid) {
+    return await updateDoc(doc(this.firestore, `Drivers/${uid}`), {
+      Block: value,
+    });
+  }
+
+  async UpdateDriverApprove(value, drivercheck, uid) {
+    return await updateDoc(doc(this.firestore, `Drivers/${uid}`), {
+      Approved: drivercheck,
+      isApproved: value
+    });
+  }
+
+
+  async DriverUpdateEarnings(amt, uid) {
+    return await updateDoc(doc(this.firestore, `Drivers/${uid}`), {
+      Earnings: amt,
+    });
+  }
+
+  async updateDriverNumRides(numRides: number, uid: string) {
+    return await updateDoc(doc(this.firestore, `Drivers/${uid}`), {
+      Driver_num_rides: numRides,
+    });
+  }
+
+  async DocumentSave(name, type, content, description) {
+    return await addDoc(collection(this.firestore, `Documents`), {
+      name: name,
+      type: type,
+      content: content,
+      description: description,
+      createdAt: serverTimestamp()
+    });
+  }
+
+  async DocumentComponentUpdate(id, name, type, content, description) {
+    const docRef = doc(this.firestore, `Documents/${id}`);
+    return await updateDoc(docRef, {
+      name: name,
+      type: type,
+      content: content,
+      description: description
+    });
+  }
+
+  async uploadFile(file: Blob, path: string): Promise<string> {
+    const storageRef = ref(this.storage, path);
+    const result = await uploadBytes(storageRef, file);
+    return await getDownloadURL(result.ref);
+  }
+
+
+  async PriceUpdate(name, amt, uid) {
+    const userDocRef = doc(this.firestore, `prices/${uid}`)
+    return await updateDoc(userDocRef, {
+      name: name,
+      amount: amt,
+      id: uid
+    });
+  }
+
+
+
+  async CartypeSave(name, seats) {
+    return await addDoc(collection(this.firestore, `Cartypes`), {
+      name: name,
+      seatNum: seats,
+      //  surcharge: surcharge,
+      //  mileage: mileage
+    });
+  }
+
+  async checkCartypeNameExists(name: string, excludeId?: string): Promise<boolean> {
+    const q = query(collection(this.firestore, 'Cartypes'), where('name', '==', name));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return false;
+    }
+
+    if (excludeId) {
+      // If we are excluding an ID (updating), check if any of the found docs have a different ID
+      return querySnapshot.docs.some(doc => doc.id !== excludeId);
+    }
+
+    return true;
+  }
+
+  async CartypeUpdate(uid, name, seats) {
+    const userDocRef = doc(this.firestore, `Cartypes/${uid}`)
+    return await updateDoc(userDocRef, {
+      name: name,
+      seatNum: seats,
+      //  surcharge: surcharge,
+      //  mileage: mileage
+    });
+  }
+
+
+  async CartypeDelete(uid) {
+    const userDocRef = doc(this.firestore, `Cartypes/${uid}`)
+    await deleteDoc(userDocRef);
+  }
+
+  async DocumentDelete(uid) {
+    const userDocRef = doc(this.firestore, `Documents/${uid}`)
+    await deleteDoc(userDocRef);
+  }
+
+  async PriceDelete(uid) {
+    const userDocRef = doc(this.firestore, `prices/${uid}`)
+    await deleteDoc(userDocRef);
+  }
+
+
+  async createCard(name, number, type, id) {
+    try {
+      const loc: Card = {
+        name: name,
+        number: number,
+        type: type,
+        id: id,
+        selected: true
+      };
+      await setDoc(doc(this.firestore, "Drivers", `${this.auth.currentUser.uid}/Cards/${name}`), { ...loc });
+      return true;
+    } catch (e) {
+      alert(e)
+      return null;
+    }
+
+  }
+
+  async updateCArd(name, number, type, id, state) {
+    try {
+      const loc: Card = {
+        name: name,
+        number: number,
+        type: type,
+        id: id,
+        selected: state
+      };
+      await updateDoc(doc(this.firestore, "Drivers", `${this.profile.Rider_id}/Cards/${name}`), { ...loc });
+      return true;
+    } catch (e) {
+      alert(e)
+      return null;
+    }
+
+  }
+
+
+  async updateOnlineState(state) {
+    try {
+      const userDocRef = doc(this.firestore, 'Drivers', `/${this.auth.currentUser.uid}/`)
+      await updateDoc(userDocRef, {
+        onlineState: state,
+      });
+      return true;
+    } catch (e) {
+      alert(e)
+      return null;
+    }
+  }
+
+
+  async updateEarnings(value) {
+    try {
+      const userDocRef = doc(this.firestore, 'Drivers', `/${this.auth.currentUser.uid}/`)
+      await updateDoc(userDocRef, {
+        Earnings: value,
+      });
+      return true;
+    } catch (e) {
+      alert(e)
+      return null;
+    }
+  }
 
 }

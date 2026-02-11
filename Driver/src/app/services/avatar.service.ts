@@ -38,7 +38,7 @@ export class AvatarService {
   ) {
     // Add connectivity check
     this.checkFirebaseConnectivity();
-    
+
     this.authStateSubscription = onAuthStateChanged(this.auth, async (user) => {
       if (user) {
         this.user = user;
@@ -71,22 +71,22 @@ export class AvatarService {
         authDomain: this.firestore.app.options.authDomain,
         apiKey: this.firestore.app.options.apiKey?.substring(0, 10) + '...'
       });
-      
+
       // Try to read from a simple collection to test connectivity
       const testRef = collection(this.firestore, 'connectivity-test');
       const testQuery = query(testRef, limit(1));
-      
-      const timeoutPromise = new Promise((_, reject) => 
+
+      const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Connectivity test timeout')), 10000)
       );
-      
+
       await Promise.race([getDocs(testQuery), timeoutPromise]);
       console.log('Firebase connectivity: OK');
     } catch (error) {
       console.error('Firebase connectivity issue:', error);
       console.error('Error code:', error.code);
       console.error('Error message:', error.message);
-      
+
       // Log additional diagnostic information
       console.log('Network state:', navigator.onLine ? 'Online' : 'Offline');
       console.log('User agent:', navigator.userAgent);
@@ -108,13 +108,13 @@ export class AvatarService {
   async loadUserProfile() {
     try {
       console.log('Loading user profile for UID:', this.user.uid);
-      
+
       // Add timeout to prevent hanging
       const profilePromise = getDoc(doc(this.firestore, 'Drivers', this.user.uid));
-      const timeoutPromise = new Promise((_, reject) => 
+      const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Profile load timeout')), 15000)
       );
-      
+
       const profileDoc = await Promise.race([profilePromise, timeoutPromise]) as any;
 
       if (profileDoc.exists()) {
@@ -129,11 +129,16 @@ export class AvatarService {
       console.error('Error loading user profile:', error);
       console.error('Error code:', error.code);
       console.error('Error message:', error.message);
-      
+
       // Set profile to null on error - don't create fallback profile
       this.profile = null;
-      
-      throw error;
+
+      let errorMsg = error.message;
+      if (error.code === 'permission-denied') {
+        errorMsg = 'Permission denied to access your profile. This is likely due to Firestore Security Rules in your new Firebase project. Please ensure rules allow reading from the "Drivers" collection.';
+      }
+
+      throw new Error(errorMsg);
     }
   }
 
@@ -411,7 +416,7 @@ export class AvatarService {
     try {
       const driverDocRef = doc(this.firestore, `Drivers/${uid}`);
       const driverDoc = await getDoc(driverDocRef);
-      
+
       if (driverDoc.exists()) {
         const data = driverDoc.data();
         // Check if the driver has completed registration (has required fields)
@@ -443,31 +448,31 @@ export class AvatarService {
 
 
 
-    async uploadImage(cameraFile: Photo, uid: string): Promise<string | null> {
-      const storageRef = ref(this.storage, `avatars/${uid}`);
-      try {
-        // Upload the image as a base64 string
-        await uploadString(storageRef, cameraFile.base64String, 'base64');
-        // Get the download URL for the uploaded image
-        const imageUrl = await getDownloadURL(storageRef);
-        // Reference to the user's document in Firestore
-        const userDocRef = doc(this.firestore, `Riders/${uid}`);
-    
-        // Check if the document exists
-        const docSnapshot = await getDoc(userDocRef);
-        if (docSnapshot.exists()) {
-          // If the document exists, update the photoURL field
-          await updateDoc(userDocRef, { photoURL: imageUrl });
-        } else {
-          // If the document does not exist, create it with the photoURL field
-          await setDoc(userDocRef, { photoURL: imageUrl }, { merge: true });
-        }
-        return imageUrl;
-      } catch (e) {
-        console.error('Error uploading image:', e);
-        return null;
+  async uploadImage(cameraFile: Photo, uid: string): Promise<string | null> {
+    const storageRef = ref(this.storage, `avatars/${uid}`);
+    try {
+      // Upload the image as a base64 string
+      await uploadString(storageRef, cameraFile.base64String, 'base64');
+      // Get the download URL for the uploaded image
+      const imageUrl = await getDownloadURL(storageRef);
+      // Reference to the user's document in Firestore
+      const userDocRef = doc(this.firestore, `Riders/${uid}`);
+
+      // Check if the document exists
+      const docSnapshot = await getDoc(userDocRef);
+      if (docSnapshot.exists()) {
+        // If the document exists, update the photoURL field
+        await updateDoc(userDocRef, { photoURL: imageUrl });
+      } else {
+        // If the document does not exist, create it with the photoURL field
+        await setDoc(userDocRef, { photoURL: imageUrl }, { merge: true });
       }
+      return imageUrl;
+    } catch (e) {
+      console.error('Error uploading image:', e);
+      return null;
     }
+  }
 
 
   //  async uploadImage(cameraFile: Photo, uid: string): Promise<string> {
@@ -556,10 +561,10 @@ export class AvatarService {
     const userDocRef = doc(this.firestore, `Drivers/${this.auth.currentUser.uid}`);
     return docData(userDocRef);
   }
- getCartypes(): Observable<DocumentData[]> {
+  getCartypes(): Observable<DocumentData[]> {
     console.log('Fetching cartypes from Firestore...');
     const cartypesRef = collection(this.firestore, `Cartypes`);
-    
+
     return new Observable(observer => {
       // Set a timeout for the Firestore request
       const timeoutId = setTimeout(() => {
@@ -580,7 +585,7 @@ export class AvatarService {
         next: (data) => {
           clearTimeout(timeoutId);
           console.log('Cartypes received from Firestore:', data);
-          
+
           // If no data is returned from Firestore, use mock data
           if (!data || data.length === 0) {
             console.log('No cartypes found in Firestore, using mock data');
@@ -602,7 +607,7 @@ export class AvatarService {
           console.error('Error fetching cartypes from Firestore:', error);
           console.error('Error code:', error.code);
           console.error('Error message:', error.message);
-          
+
           // Provide mock data on error
           const mockCartypes = [
             { id: 'sedan', name: 'Sedan' },
@@ -626,7 +631,7 @@ export class AvatarService {
   //     console.log('Fetching cartypes from Firestore...');
   //     const cartypesRef = collection(this.firestore, `Cartypes`);
   //     const cartypesObservable = collectionData(cartypesRef);
-      
+
   //     // Add error handling to the observable
   //     return new Observable(observer => {
   //       cartypesObservable.subscribe({
