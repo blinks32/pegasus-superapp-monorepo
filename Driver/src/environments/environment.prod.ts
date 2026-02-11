@@ -5,12 +5,13 @@
 export const environment = {
     production: true,
     firebase: {
-        'apiKey': 'AIzaSyA5ShOlRI8493ovNQ4e--utZawgmjc3x0g',
-        'authDomain': 'pegasus-2be94.firebaseapp.com',
-        'projectId': 'pegasus-2be94',
-        'storageBucket': 'pegasus-2be94.firebasestorage.app',
-        'messagingSenderId': '459110381543',
-        'appId': '1:459110381543:android:ba2071e2cea27c5cdfaf42'
+        'apiKey': 'AIzaSyDCh3xZfdbWtocmxfjLfrQ_SHUwjjOlQDY',
+        'authDomain': 'appy-45444.firebaseapp.com',
+        'projectId': 'appy-45444',
+        'storageBucket': 'appy-45444.firebasestorage.app',
+        'messagingSenderId': '711315471580',
+        'appId': '1:711315471580:web:f7586fa4c9e44d5176c819',
+        'measurementId': 'G-DDQH0VJ7GR'
 },
     apiKey: 'AIzaSyCTYjoPhLcshZVuEdr-amopUuVMy8lyEmA',
     onesignal: {
