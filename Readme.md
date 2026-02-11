@@ -1,4 +1,4 @@
-# Ride App Configuration Guide
+# App Configuration Guide
 
 This guide walks you through setting up all the required API keys and configurations for your ride-sharing app.
 
@@ -205,4 +205,4 @@ defaultLogin: {
 
 ## Need Help?
 
-Contact: support@example.com
+Contact: chndth@gmail.com
