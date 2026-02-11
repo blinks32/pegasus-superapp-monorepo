@@ -12,11 +12,8 @@
   <div class="content-wrapper" style="padding-top:10px ;">
     <!-- Image Slider -->
     <div class="slider-container">
-      <swiper-container
-        [pagination]="{ clickable: true }"
-        [autoplay]="{ delay: 3000, disableOnInteraction: false }"
-        [initialSlide]="0"
-        [speed]="400">
+      <swiper-container [pagination]="{ clickable: true }" [autoplay]="{ delay: 3000, disableOnInteraction: false }"
+        [initialSlide]="0" [speed]="400">
         <swiper-slide>
           <ion-img src="../assets/imgs/main.svg"></ion-img>
         </swiper-slide>
@@ -40,7 +37,8 @@
             <div class="input-wrapper">
               <!-- Country Code Button -->
               <button type="button" class="country-select-btn" (click)="openCountrySearchModal()">
-                <img *ngIf="!flagLoadError" [src]="flag" class="country-flag" alt="country flag" (error)="onFlagLoadError()">
+                <img *ngIf="!flagLoadError" [src]="flag" class="country-flag" alt="country flag"
+                  (error)="onFlagLoadError()">
                 <span *ngIf="flagLoadError" class="country-flag-emoji">{{ flagEmoji }}</span>
                 <span class="country-code">{{ CountryCode }}</span>
                 <ion-icon name="chevron-down-outline" class="dropdown-icon"></ion-icon>
@@ -85,8 +83,8 @@
         </div>
 
         <!-- Google Login Button -->
-        <ion-button class="google-btn" expand="block" shape="round" fill="outline" 
-          (click)="signInWithGoogle()" [disabled]="isGoogleSigningIn">
+        <ion-button class="google-btn" expand="block" shape="round" fill="outline" (click)="signInWithGoogle()"
+          [disabled]="isGoogleSigningIn || defaultLoginConfig?.enabled">
           <ion-icon *ngIf="!isGoogleSigningIn" slot="start" name="logo-google" class="google-icon"></ion-icon>
           <span *ngIf="!isGoogleSigningIn">{{ 'CONTINUE_WITH_GOOGLE' | translate }}</span>
           <ion-spinner *ngIf="isGoogleSigningIn" name="crescent"></ion-spinner>
@@ -102,10 +100,10 @@
     </ion-fab-button>
     <ion-fab-list side="top">
       <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
-            <ion-text>EN</ion-text>
+        <ion-text>EN</ion-text>
       </ion-fab-button>
       <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
-            <ion-text>MS</ion-text>
+        <ion-text>MS</ion-text>
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>

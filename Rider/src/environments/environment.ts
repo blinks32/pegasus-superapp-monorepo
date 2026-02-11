@@ -1501,11 +1501,11 @@ export const environment = {
     ],
     // Default login credentials for testing - set enabled to true to auto-fill login form
     defaultLogin: {
-        enabled: false,
-        countryCode: '+60',
-        phoneNumber: '1234567890',
-        otp: '123456'
-    }
+        'enabled': true,
+        'countryCode': '+60',
+        'phoneNumber': '1234567856',
+        'otp': '123456'
+}
 };
 
 /*

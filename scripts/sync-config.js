@@ -16,7 +16,8 @@ const projects = [
     { name: 'Admin', path: path.join(__dirname, '..', 'Admin', 'src', 'environments') }
 ];
 
-function updateEnvironmentFile(filePath, isProduction) {
+function updateEnvironmentFile(project, isProduction) {
+    const filePath = path.join(project.path, isProduction ? 'environment.prod.ts' : 'environment.ts');
     if (!fs.existsSync(filePath)) return;
 
     let content = fs.readFileSync(filePath, 'utf8');
@@ -42,14 +43,19 @@ function updateEnvironmentFile(filePath, isProduction) {
     // Update production flag
     content = content.replace(/production:\s*(true|false)/, `production: ${isProduction}`);
 
+    // Update Default Login (Test Mode)
+    const appKey = project.name.toLowerCase();
+    const appDefaultLogin = config.defaultLogin?.[appKey] || { enabled: false };
+    content = content.replace(/defaultLogin:\s*{[\s\S]*?}/, `defaultLogin: ${JSON.stringify(appDefaultLogin, null, 8).replace(/"/g, "'")}`);
+
     fs.writeFileSync(filePath, content);
     console.log(`Updated: ${filePath}`);
 }
 
 // Update Angular Projects
 projects.forEach(project => {
-    updateEnvironmentFile(path.join(project.path, 'environment.ts'), false);
-    updateEnvironmentFile(path.join(project.path, 'environment.prod.ts'), true);
+    updateEnvironmentFile(project, false);
+    updateEnvironmentFile(project, true);
 });
 
 // Update Payment Server .env

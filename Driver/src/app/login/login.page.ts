@@ -22,6 +22,7 @@ import { Preferences } from '@capacitor/preferences';
 })
 export class LoginPage implements OnInit {
   form: FormGroup;
+  isInTestMode: boolean = false; // Flag to track if we're in test mode
   CountryCode: any = '+60';
   CountryJson = environment.CountryJson;
   flag: any = "https://cdn.kcak11.com/CountryFlags/countries/my.svg";
@@ -97,7 +98,7 @@ export class LoginPage implements OnInit {
    */
   applyDefaultLogin() {
     if (this.defaultLoginConfig?.enabled) {
-      console.log('🔐 Default login enabled - auto-filling credentials');
+      console.log('🔐 Test Mode enabled - auto-filling credentials');
 
       // Set country code
       if (this.defaultLoginConfig.countryCode) {
@@ -120,6 +121,9 @@ export class LoginPage implements OnInit {
       if (this.defaultLoginConfig.otp) {
         localStorage.setItem('defaultOTP', this.defaultLoginConfig.otp);
       }
+
+      // Set test mode flag for seamless login
+      this.isInTestMode = true;
     }
   }
 
@@ -220,13 +224,26 @@ export class LoginPage implements OnInit {
       this.overlay.showLoader('');
       const fullPhoneNumber = this.numberT + this.form.value.phone;
 
-      const confirmationResult = await this.auth.signInWithPhoneNumber(fullPhoneNumber);
+      let confirmationResult;
 
-      let storedOTP = localStorage.getItem('defaultOTP');
-      if (!storedOTP) {
-        storedOTP = '';
+      // Check if we're in test mode - bypass Firebase
+      if (this.isInTestMode) {
+        console.log('🧪 Test mode active - bypassing Firebase');
+        this.overlay.hideLoader();
+        const testOTP = localStorage.getItem('defaultOTP') || '123456';
+        return this.proceedWithTestMode(this.form.value.phone, testOTP);
       }
 
+      try {
+        confirmationResult = await this.auth.signInWithPhoneNumber(fullPhoneNumber);
+      } catch (authError) {
+        console.error('Firebase authentication error:', authError);
+        this.overlay.hideLoader();
+        await this.handleAuthError(authError);
+        return;
+      }
+
+      let storedOTP = localStorage.getItem('defaultOTP') || '';
       this.overlay.hideLoader();
 
       const options: ModalOptions = {
@@ -235,7 +252,8 @@ export class LoginPage implements OnInit {
           defaultOtp: storedOTP,
           phone: this.form.value.phone,
           countryCode: this.numberT,
-          confirmationResult: confirmationResult
+          confirmationResult: confirmationResult,
+          isTestMode: false
         },
         swipeToClose: true
       };
@@ -277,6 +295,54 @@ export class LoginPage implements OnInit {
       this.approve2 = false;
       await this.handleAuthError(e);
     }
+  }
+
+  async proceedWithTestMode(phoneNumber: string, testOTP: string) {
+    // Use the correct test phone number
+    const testPhoneNumber = this.defaultLoginConfig?.phoneNumber || phoneNumber;
+
+    // Create a PURE MOCK confirmation result - NO FIREBASE CALLS
+    const mockConfirmationResult = {
+      confirm: async (otp: string) => {
+        console.log('🧪 Test mode: Verifying OTP:', otp);
+        if (otp === testOTP) {
+          console.log('✅ Test mode: OTP verified successfully');
+          try {
+            this.overlay.showLoader('Signing in...');
+            const fullPhoneNumber = this.numberT + testPhoneNumber;
+            // This is the ONLY Firebase call in test mode - when OTP is verified
+            const realConfirmationResult = await this.auth.signInWithPhoneNumber(fullPhoneNumber);
+            const result = await realConfirmationResult.confirm(otp);
+            this.overlay.hideLoader();
+            console.log('✅ Test mode: Firebase authentication completed');
+            return result;
+          } catch (error) {
+            this.overlay.hideLoader();
+            console.error('❌ Test mode: Firebase authentication failed:', error);
+            throw error;
+          }
+        } else {
+          throw new Error('Invalid OTP');
+        }
+      }
+    };
+
+    // Open OTP modal with test credentials pre-filled
+    const modal = await this.modalCtrl.create({
+      component: OtpComponent,
+      componentProps: {
+        defaultOtp: testOTP,
+        phone: testPhoneNumber,
+        countryCode: this.numberT,
+        confirmationResult: mockConfirmationResult,
+        isTestMode: true
+      },
+      swipeToClose: true
+    });
+
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    // Auth state changed listener will handle the navigation
   }
 
   async handleAuthError(error: any) {

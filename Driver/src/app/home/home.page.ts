@@ -245,7 +245,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
           },
           timestamp: Date.now()
         };
-        this.overlay.showToast('Using default location. Please enable GPS for better accuracy.', 4000);
+        this.overlay.showToast('Using default location. Please enable GPS for better accuracy.');
       }
 
       this.coordinates = coordinates;

@@ -98,7 +98,7 @@ export class LoginPage implements OnInit, OnDestroy {
    */
   applyDefaultLogin() {
     if (this.defaultLoginConfig?.enabled) {
-      console.log('🔐 Default login enabled - auto-filling credentials');
+      console.log('🔐 Test Mode enabled - auto-filling credentials');
 
       // Set country code
       if (this.defaultLoginConfig.countryCode) {
@@ -123,7 +123,7 @@ export class LoginPage implements OnInit, OnDestroy {
         localStorage.setItem('defaultOTP', this.defaultLoginConfig.otp);
       }
 
-      // Enable test mode for seamless login
+      // Set test mode flag for seamless login
       this.isInTestMode = true;
     }
   }
@@ -253,15 +253,8 @@ export class LoginPage implements OnInit, OnDestroy {
       } catch (authError) {
         console.error('Firebase authentication error:', authError);
         this.overlay.hideLoader();
-
-        // For ANY Firebase error, offer test mode - simpler approach
-        const wantsTestMode = await this.showErrorWithTestModeOption(authError.code);
-
-        if (wantsTestMode) {
-          return this.switchToTestMode();
-        } else {
-          return; // User declined test mode
-        }
+        await this.handleAuthError(authError);
+        return;
       }
 
       let storedOTP = localStorage.getItem('defaultOTP') || '';

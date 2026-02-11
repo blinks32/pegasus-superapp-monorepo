@@ -34,21 +34,21 @@
   "defaultLogin": {
     "_description": "Default login credentials for testing. Set enabled to true to auto-fill login forms.",
     "rider": {
-      "enabled": false,
+      "enabled": true,
       "countryCode": "+60",
-      "phoneNumber": "1234567890",
+      "phoneNumber": "1234567856",
       "otp": "123456"
     },
     "driver": {
-      "enabled": false,
+      "enabled": true,
       "countryCode": "+60",
-      "phoneNumber": "1234567891",
+      "phoneNumber": "1234567857",
       "otp": "123456"
     },
     "admin": {
-      "enabled": false,
+      "enabled": true,
       "countryCode": "+60",
-      "phoneNumber": "1234567892",
+      "phoneNumber": "1234567858",
       "otp": "123456"
     }
   }
