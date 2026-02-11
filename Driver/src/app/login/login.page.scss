@@ -2,6 +2,7 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-100px);
   }
@@ -11,6 +12,7 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(100px);
   }
@@ -41,7 +43,8 @@ ion-footer {
         }
       }
 
-      ion-input, ion-text {
+      ion-input,
+      ion-text {
         font-size: 1.3rem;
       }
 
@@ -52,7 +55,8 @@ ion-footer {
   }
 }
 
-ion-toolbar, ion-header {
+ion-toolbar,
+ion-header {
   height: 44px;
 }
 
@@ -65,7 +69,7 @@ ion-slides {
   height: 35vh;
   margin-bottom: 2rem;
   direction: ltr;
-  
+
   [dir="rtl"] & {
     direction: rtl;
   }
@@ -129,7 +133,7 @@ ion-select-option {
       ion-input {
         text-align: right;
       }
-      
+
       ion-button ion-icon {
         transform: scaleX(-1);
       }
@@ -142,7 +146,7 @@ ion-select-option {
     .ion-text-end {
       text-align: left;
     }
-    
+
     .ion-text-start {
       text-align: right;
     }
@@ -157,7 +161,7 @@ ion-select-option {
     font-weight: 700;
     margin-bottom: 0.5rem;
   }
-  
+
   .app-tagline {
     font-size: 1.1rem;
     opacity: 0.8;
@@ -167,37 +171,38 @@ ion-select-option {
 .modern-content {
   .phone-input-container {
     margin: 2rem 0;
-    
+
     .country-select {
       background: var(--ion-color-light);
       border-radius: 12px;
       margin-bottom: 1rem;
-      
+
       .country-button {
         display: flex;
         align-items: center;
         gap: 8px;
-        
+
         .country-flag {
           width: 24px;
           height: 24px;
           border-radius: 50%;
         }
       }
-      
+
       .phone-input {
         --padding-start: 12px;
         --background: transparent;
-        font-size: 1.1rem;
+        font-size: 1.5rem;
+        font-weight: 600;
       }
     }
   }
-  
+
   .submit-button {
     margin-top: 2rem;
     --border-radius: 12px;
     --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
-    
+
     ion-icon {
       margin-left: 8px;
     }
@@ -207,14 +212,14 @@ ion-select-option {
     display: flex;
     align-items: center;
     margin: 1.5rem 0;
-    
+
     .divider-line {
       flex: 1;
       height: 1px;
       background: var(--ion-color-medium);
       opacity: 0.3;
     }
-    
+
     .divider-text {
       padding: 0 1rem;
       color: var(--ion-color-medium);
@@ -227,12 +232,12 @@ ion-select-option {
     --border-radius: 12px;
     --border-width: 2px;
     --border-color: var(--ion-color-medium);
-    
+
     ion-icon {
       margin-right: 8px;
       color: #4285F4;
     }
-    
+
     ion-label {
       color: var(--ion-color-dark);
     }
