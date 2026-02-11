@@ -287,7 +287,11 @@ export class LoginPage implements OnInit, AfterViewInit {
           try {
             this.overlay.showLoader('Signing in...');
             const fullPhoneNumber = this.numberT + testPhoneNumber;
+
             // This is the ONLY Firebase call in test mode - when OTP is verified
+            // We ensure reCAPTCHA is cleared before this to avoid "already rendered" error
+            this.auth.clearRecaptcha();
+
             const realConfirmationResult = await this.auth.signInWithPhoneNumber(fullPhoneNumber);
             const result = await realConfirmationResult.confirm(otp);
             this.overlay.hideLoader();

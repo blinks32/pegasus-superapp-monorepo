@@ -519,24 +519,27 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   async proceedWithTestMode(phoneNumber: string, testOTP: string) {
-    // Use the correct test phone number
-    const testPhoneNumber = '1234567856';
+    // Use the correct test phone number from config
+    const testPhoneNumber = this.defaultLoginConfig?.phoneNumber || phoneNumber;
+    const testCountryCode = this.defaultLoginConfig?.countryCode || this.numberT || '+60';
 
-    // Create a PURE MOCK confirmation result - NO FIREBASE CALLS
+    console.log(`🧪 Proceeding with test mode: ${testCountryCode}${testPhoneNumber}`);
+
+    // Create a PURE MOCK confirmation result - NO FIREBASE CALLS initially
     const mockConfirmationResult = {
       confirm: async (otp: string) => {
         console.log('🧪 Test mode: Verifying OTP:', otp);
         if (otp === testOTP) {
-          // IMPORTANT: Don't call Firebase at all in test mode
-          // Return a mock user structure that matches Firebase user
           console.log('✅ Test mode: OTP verified successfully');
 
-          // For test mode, we need to actually authenticate with Firebase
-          // but only ONCE when OTP is verified, not during initial SMS request
           try {
             this.overlay.showLoader('Signing in...');
-            const fullPhoneNumber = '+60' + testPhoneNumber;
+            const fullPhoneNumber = testCountryCode + testPhoneNumber;
+
             // This is the ONLY Firebase call in test mode - when OTP is verified
+            // We ensure reCAPTCHA is cleared before this to avoid "already rendered" error
+            this.auth.clearRecaptcha();
+
             const realConfirmationResult = await this.auth.signInWithPhoneNumber(fullPhoneNumber);
             const result = await realConfirmationResult.confirm(otp);
             this.overlay.hideLoader();
@@ -559,7 +562,7 @@ export class LoginPage implements OnInit, OnDestroy {
       componentProps: {
         defaultOtp: testOTP,
         phone: testPhoneNumber,
-        countryCode: '+60',
+        countryCode: testCountryCode,
         confirmationResult: mockConfirmationResult,
         isTestMode: true
       },

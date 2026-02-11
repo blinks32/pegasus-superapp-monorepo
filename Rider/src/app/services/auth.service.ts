@@ -65,6 +65,12 @@ export class AuthService {
         this.isRecaptchaInitialized = true;
         console.log('reCAPTCHA initialized successfully');
       }).catch((error) => {
+        // If it's already rendered, we can consider it initialized
+        if (error.message && error.message.includes('already been rendered')) {
+          console.log('reCAPTCHA was already rendered, continuing...');
+          this.isRecaptchaInitialized = true;
+          return;
+        }
         console.error('reCAPTCHA render error:', error);
         this.isRecaptchaInitialized = false;
       });

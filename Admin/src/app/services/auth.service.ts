@@ -37,42 +37,65 @@ export class AuthService {
 
   // Initialize RecaptchaVerifier
   recaptcha() {
-    if (!document.getElementById('sign-in-button')) {
-      console.error('sign-in-button element not found');
-      return;
-    }
-    this.appVerifier = new RecaptchaVerifier('sign-in-button', {
-      size: 'invisible',
-      callback: (response) => {
-        console.log(response);
-      },
-      'expired-callback': () => {
-        console.log('Recaptcha expired');
+    try {
+      // Clear existing verifier if it exists
+      if (this.appVerifier) {
+        this.clearRecaptcha();
       }
-    }, this.auth);
-    this.appVerifier.render();
+
+      // Check if the container exists
+      const container = document.getElementById('sign-in-button');
+      if (!container) {
+        console.error('reCAPTCHA container not found');
+        return;
+      }
+
+      // Clear the container
+      container.innerHTML = '';
+
+      this.appVerifier = new RecaptchaVerifier('sign-in-button', {
+        size: 'invisible',
+        callback: (response) => {
+          console.log(response);
+        },
+        'expired-callback': () => {
+          console.log('Recaptcha expired');
+        }
+      }, this.auth);
+
+      // Only render on web platform
+      if (typeof window !== 'undefined' && window.document && !window['Capacitor']) {
+        this.appVerifier.render().catch(err => {
+          console.warn('reCAPTCHA render error (likely already rendered):', err);
+        });
+      }
+    } catch (error) {
+      console.error('Error initializing RecaptchaVerifier:', error);
+    }
+  }
+
+  clearRecaptcha() {
+    if (this.appVerifier) {
+      try {
+        this.appVerifier.clear();
+      } catch (error) {
+        console.error('Error clearing reCAPTCHA:', error);
+      }
+      this.appVerifier = null;
+    }
   }
 
   async signInWithPhoneNumber(phoneNumber: string) {
     try {
+      // Always ensure we have a verifier
       if (!this.appVerifier) {
-        console.error('RecaptchaVerifier not initialized');
-        throw new Error('RecaptchaVerifier not initialized');
+        this.recaptcha();
       }
       const confirmationResult = await signInWithPhoneNumber(this.auth, phoneNumber, this.appVerifier);
       this.confirmationResult = confirmationResult;
       return confirmationResult;
     } catch (e) {
       console.error('Error in signInWithPhoneNumber:', e);
-      if (e.code === 'auth/operation-not-allowed') {
-        console.error('🚫 CRITICAL: SMS Region/Operation Not Allowed');
-        console.error('SOLUTIONS: Enable Phone Auth and specific countries in Firebase Console.');
-        console.error('🔗 https://console.firebase.google.com/project/pegasus-2be94/authentication/providers');
-      } else if (e.code === 'auth/unauthorized-domain') {
-        console.error('🌐 CRITICAL: Unauthorized Domain');
-        console.error('SOLUTIONS: Add your domain to Authorized domains in Firebase Console.');
-        console.error('🔗 https://console.firebase.google.com/project/pegasus-2be94/authentication/settings');
-      }
       throw e;
     }
   }
