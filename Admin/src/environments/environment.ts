@@ -1512,8 +1512,8 @@ export const environment = {
     // Default login credentials for testing - set enabled to true to auto-fill login form
     defaultLogin: {
         'enabled': true,
-        'countryCode': '+60',
-        'phoneNumber': '1234567858',
+        'countryCode': '+234',
+        'phoneNumber': '1234567892',
         'otp': '123456'
 }
 };
