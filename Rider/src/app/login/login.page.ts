@@ -394,6 +394,12 @@ export class LoginPage implements OnInit, OnDestroy {
         errorMessage = await this.translate.get('NETWORK_ERROR').toPromise();
       } else if (error.code === 'auth/popup-blocked') {
         errorMessage = await this.translate.get('POPUP_BLOCKED').toPromise();
+      } else if (error.code === 'auth/unauthorized-domain') {
+        const title = await this.translate.get('UNAUTHORIZED_DOMAIN_TITLE').toPromise();
+        const detail = await this.translate.get('UNAUTHORIZED_DOMAIN_DETAIL').toPromise();
+        const cause = await this.translate.get('UNAUTHORIZED_DOMAIN_CAUSE').toPromise();
+        await this.overlay.showAlert(title, `${detail}\n\n${cause}`);
+        return;
       }
 
       await this.overlay.showAlert(
@@ -432,6 +438,16 @@ export class LoginPage implements OnInit, OnDestroy {
         errorTitle = await this.translate.get('INTERNAL_ERROR_TITLE').toPromise();
         errorMessage = await this.translate.get('INTERNAL_ERROR_DETAIL').toPromise();
         errorDetails = await this.translate.get('INTERNAL_ERROR_CAUSE').toPromise();
+        break;
+      case 'auth/operation-not-allowed':
+        errorTitle = await this.translate.get('REGION_NOT_ALLOWED_TITLE').toPromise();
+        errorMessage = await this.translate.get('REGION_NOT_ALLOWED_DETAIL').toPromise();
+        errorDetails = await this.translate.get('REGION_NOT_ALLOWED_CAUSE').toPromise();
+        break;
+      case 'auth/unauthorized-domain':
+        errorTitle = await this.translate.get('UNAUTHORIZED_DOMAIN_TITLE').toPromise();
+        errorMessage = await this.translate.get('UNAUTHORIZED_DOMAIN_DETAIL').toPromise();
+        errorDetails = await this.translate.get('UNAUTHORIZED_DOMAIN_CAUSE').toPromise();
         break;
       default:
         // For unknown errors, show the actual error code
@@ -598,6 +614,16 @@ export class LoginPage implements OnInit, OnDestroy {
       case 'auth/captcha-check-failed':
         errorTitle = await this.translate.get('CAPTCHA_FAILED_TITLE').toPromise();
         errorMessage = await this.translate.get('CAPTCHA_FAILED_MESSAGE').toPromise();
+        break;
+
+      case 'auth/operation-not-allowed':
+        errorTitle = await this.translate.get('REGION_NOT_ALLOWED_TITLE').toPromise();
+        errorMessage = await this.translate.get('REGION_NOT_ALLOWED_DETAIL').toPromise();
+        break;
+
+      case 'auth/unauthorized-domain':
+        errorTitle = await this.translate.get('UNAUTHORIZED_DOMAIN_TITLE').toPromise();
+        errorMessage = await this.translate.get('UNAUTHORIZED_DOMAIN_DETAIL').toPromise();
         break;
 
       default:

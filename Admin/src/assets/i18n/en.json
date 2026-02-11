@@ -67,7 +67,7 @@
   "PERSONAL_INFO": "Personal Info",
   "FIRST_NAME": "First Name",
   "LAST_NAME": "Last Name",
-  "EMAIL": "Your Email",
+  "EMAIL_ADDRESS": "Your Email",
   "SELECT_IMAGE_SOURCE": "Select Image Source",
   "CAMERA": "Camera",
   "GALLERY": "Gallery",
@@ -133,5 +133,11 @@
     "PROMOTION": "Promotion",
     "SUPPORT": "Support",
     "ABOUT": "About"
-  }
+  },
+  "REGION_NOT_ALLOWED_TITLE": "🚫 Region Not Allowed",
+  "REGION_NOT_ALLOWED_DETAIL": "SMS authentication is not enabled for your region/country in the Firebase Console.",
+  "REGION_NOT_ALLOWED_CAUSE": "📋 How to fix:\n1. Open Firebase Console\n2. Go to Authentication → Settings\n3. Enable your country in 'SMS Region Policy'\n4. Ensure Phone Auth is enabled in Providers",
+  "UNAUTHORIZED_DOMAIN_TITLE": "🌐 Unauthorized Domain",
+  "UNAUTHORIZED_DOMAIN_DETAIL": "This domain is not authorized for Firebase Authentication.",
+  "UNAUTHORIZED_DOMAIN_CAUSE": "📋 How to fix:\n1. Open Firebase Console\n2. Go to Authentication → Settings\n3. Add this domain to 'Authorized domains'"
 }

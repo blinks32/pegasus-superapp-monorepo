@@ -95,24 +95,24 @@ export class LoginPage implements OnInit, AfterViewInit {
   applyDefaultLogin() {
     if (this.defaultLoginConfig?.enabled) {
       console.log('🔐 Default login enabled - auto-filling credentials');
-      
+
       // Set country code
       if (this.defaultLoginConfig.countryCode) {
         this.CountryCode = this.defaultLoginConfig.countryCode;
         this.numberT = this.defaultLoginConfig.countryCode;
-        
+
         // Find and update flag for the country
         const country = this.CountryJson.find(c => c.dialCode === this.defaultLoginConfig.countryCode);
         if (country) {
           this.flag = country.flag;
         }
       }
-      
+
       // Set phone number
       if (this.defaultLoginConfig.phoneNumber) {
         this.form.controls['phone'].setValue(this.defaultLoginConfig.phoneNumber);
       }
-      
+
       // Store OTP for auto-fill in OTP modal
       if (this.defaultLoginConfig.otp) {
         localStorage.setItem('defaultOTP', this.defaultLoginConfig.otp);
@@ -251,25 +251,52 @@ export class LoginPage implements OnInit, AfterViewInit {
       }
     } catch (e) {
       console.error('Error during signIn:', e);
-      this.approve2 = false;
-
-      // Handle specific error cases
-      if (e.code === 'auth/invalid-app-credential' || e.code === 'auth/too-many-requests') {
-        this.CountryCode = '+60';
-        this.numberT = '+60';
-        const defaultNumbers = ['2003004001', '0164723304'];
-        const randomDefaultNumber = defaultNumbers[Math.floor(Math.random() * defaultNumbers.length)];
-        this.form.controls['phone'].setValue(randomDefaultNumber);
-        localStorage.setItem('defaultOTP', '123456');
-        this.overlay.showAlert('Daily SMS Limit Reached', `The daily SMS limit has been reached. Please use the default number +57:${randomDefaultNumber}`);
-      } else if (e.code === 'auth/invalid-phone-number') {
-        this.overlay.showAlert('Invalid Phone Number', 'Please enter a valid phone number.');
-      } else {
-        this.overlay.showAlert('Error', `Error during sign-in: ${e.message || JSON.stringify(e)}`);
-      }
-
       this.overlay.hideLoader();
+      this.approve2 = false;
+      await this.handleAuthError(e);
     }
+  }
+
+  async handleAuthError(error: any) {
+    let errorTitle = 'Error';
+    let errorMessage = '';
+    let errorDetails = '';
+
+    switch (error.code) {
+      case 'auth/invalid-phone-number':
+        errorMessage = 'Please enter a valid phone number.';
+        break;
+
+      case 'auth/too-many-requests':
+        errorTitle = '⚠️ Too Many Attempts';
+        errorMessage = 'Too many authentication attempts. Please wait 15-30 minutes and try again.';
+        break;
+
+      case 'auth/operation-not-allowed':
+        errorTitle = '🚫 Region Not Allowed';
+        errorMessage = 'SMS authentication is not enabled for your region or country in the Firebase Console.';
+        errorDetails = '📋 How to fix:\n1. Open Firebase Console\n2. Go to Authentication → Settings\n3. Enable your country in \'SMS Region Policy\'\n4. Ensure Phone Auth is enabled in Providers';
+        break;
+
+      case 'auth/unauthorized-domain':
+        errorTitle = '🌐 Unauthorized Domain';
+        errorMessage = 'This domain is not authorized for Firebase Authentication.';
+        errorDetails = '📋 How to fix:\n1. Open Firebase Console\n2. Go to Authentication → Settings\n3. Add this domain to \'Authorized domains\'';
+        break;
+
+      case 'auth/invalid-app-credential':
+      case 'auth/quota-exceeded':
+        errorTitle = '💳 SMS Quota Exceeded';
+        errorMessage = 'The daily SMS quota for phone authentication has been reached.';
+        break;
+
+      default:
+        errorMessage = `Error during sign-in: ${error.message || error.code || 'Unknown error'}`;
+        break;
+    }
+
+    const fullMessage = errorDetails ? `${errorMessage}\n\n${errorDetails}` : errorMessage;
+    await this.overlay.showAlert(errorTitle, fullMessage);
   }
 
   initializeBackButtonCustomHandler() {
@@ -344,7 +371,7 @@ export class LoginPage implements OnInit, AfterViewInit {
       // Fallback to default country code
       this.CountryCode = '+60';
       this.numberT = '+60';
-     // this.minPhoneLength = 11;
+      // this.minPhoneLength = 11;
       this.maxPhoneLength = 11;
       this.updatePhoneValidation();
     }
@@ -389,17 +416,17 @@ export class LoginPage implements OnInit, AfterViewInit {
   async signInWithGoogle() {
     try {
       this.overlay.showLoader('');
-      
+
       const result = await this.auth.signInWithGoogle();
       const user = result.user;
-      
+
       console.log('Google Sign-In successful:', user);
-      
+
       // Get user's phone number from Google profile (if available)
       const googlePhoneNumber = user.phoneNumber;
-      
+
       this.overlay.hideLoader();
-      
+
       // Check if user profile exists
       this.avatar.getUserProfile(user).subscribe(async (profile: any) => {
         if (profile && profile.Access) {
@@ -423,15 +450,17 @@ export class LoginPage implements OnInit, AfterViewInit {
         }
         this.router.navigateByUrl('/details');
       });
-      
+
     } catch (error) {
       console.error('Error during Google Sign-In:', error);
       this.overlay.hideLoader();
-      
+
       if (error.code === 'auth/popup-closed-by-user') {
         this.overlay.showAlert('Sign-In Cancelled', 'You closed the sign-in popup. Please try again.');
       } else if (error.code === 'auth/network-request-failed') {
         this.overlay.showAlert('Network Error', 'Please check your internet connection and try again.');
+      } else if (error.code === 'auth/unauthorized-domain') {
+        this.overlay.showAlert('🌐 Unauthorized Domain', 'This domain is not authorized for Firebase Authentication.\n\n📋 How to fix:\n1. Open Firebase Console\n2. Go to Authentication → Settings\n3. Add this domain to \'Authorized domains\'');
       } else {
         this.overlay.showAlert('Error', `Google Sign-In failed: ${error.message || JSON.stringify(error)}`);
       }

@@ -94,7 +94,7 @@ export class AuthService {
       console.log('📱 Attempting to sign in with phone number:', phoneNumber);
       console.log('🔐 reCAPTCHA initialized:', this.isRecaptchaInitialized);
       console.log('🌐 Platform:', navigator.userAgent);
-      
+
       const confirmationResult = await signInWithPhoneNumber(this.auth, phoneNumber, this.appVerifier);
       this.confirmationResult = confirmationResult;
       console.log('✅ Phone authentication successful');
@@ -111,7 +111,7 @@ export class AuthService {
       console.error('🌐 User Agent:', navigator.userAgent);
       console.error('🔐 reCAPTCHA Status:', this.isRecaptchaInitialized);
       console.error('⏰ Timestamp:', new Date().toISOString());
-      
+
       // Detailed error analysis
       if (e.code === 'auth/invalid-app-credential') {
         console.error('');
@@ -156,13 +156,40 @@ export class AuthService {
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         console.error('Check internet connectivity');
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      } else if (e.code === 'auth/operation-not-allowed') {
+        console.error('');
+        console.error('🚫 CRITICAL: SMS Region/Operation Not Allowed');
+        console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.error('Firebase SMS authentication is not fully enabled.');
+        console.error('');
+        console.error('✅ SOLUTIONS:');
+        console.error('1. Enable Phone Auth in Firebase Console');
+        console.error('2. Enable specific countries/regions in Phone Auth settings');
+        console.error('3. Check if your project has a billing account (some regions require it)');
+        console.error('');
+        console.error('🔗 Phone Auth Settings:');
+        console.error('https://console.firebase.google.com/project/pegasus-2be94/authentication/providers');
+        console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      } else if (e.code === 'auth/unauthorized-domain') {
+        console.error('');
+        console.error('🌐 CRITICAL: Unauthorized Domain');
+        console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.error('This domain is not authorized for Firebase Auth.');
+        console.error('');
+        console.error('✅ SOLUTIONS:');
+        console.error('1. Go to Firebase Console > Authentication > Settings');
+        console.error('2. Add your domain (e.g., rider-mono.vercel.app) to "Authorized domains"');
+        console.error('');
+        console.error('🔗 Authorized Domains Settings:');
+        console.error('https://console.firebase.google.com/project/pegasus-2be94/authentication/settings');
+        console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       }
-      
+
       console.error('═══════════════════════════════════════');
-      
+
       // Reset reCAPTCHA on error
       this.isRecaptchaInitialized = false;
-      throw(e);
+      throw (e);
     }
   }
 
@@ -227,7 +254,7 @@ export class AuthService {
       const user = result?.user;
       console.log(user);
     } catch (e) {
-      throw(e?.message);
+      throw (e?.message);
     }
   }
 

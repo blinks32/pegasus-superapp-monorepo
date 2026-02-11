@@ -26,7 +26,7 @@ export class AuthService {
   appVerifier: RecaptchaVerifier;
   confirmationResult: any;
 
-  constructor(private auth: Auth) {}
+  constructor(private auth: Auth) { }
 
   // Initialize the auth listener
   initAuthListener() {
@@ -64,6 +64,15 @@ export class AuthService {
       return confirmationResult;
     } catch (e) {
       console.error('Error in signInWithPhoneNumber:', e);
+      if (e.code === 'auth/operation-not-allowed') {
+        console.error('🚫 CRITICAL: SMS Region/Operation Not Allowed');
+        console.error('SOLUTIONS: Enable Phone Auth and specific countries in Firebase Console.');
+        console.error('🔗 https://console.firebase.google.com/project/pegasus-2be94/authentication/providers');
+      } else if (e.code === 'auth/unauthorized-domain') {
+        console.error('🌐 CRITICAL: Unauthorized Domain');
+        console.error('SOLUTIONS: Add your domain to Authorized domains in Firebase Console.');
+        console.error('🔗 https://console.firebase.google.com/project/pegasus-2be94/authentication/settings');
+      }
       throw e;
     }
   }
@@ -117,7 +126,7 @@ export class AuthService {
       const user = result?.user;
       console.log(user);
     } catch (e) {
-      throw(e?.message);
+      throw (e?.message);
     }
   }
 

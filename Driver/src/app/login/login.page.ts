@@ -98,24 +98,24 @@ export class LoginPage implements OnInit {
   applyDefaultLogin() {
     if (this.defaultLoginConfig?.enabled) {
       console.log('🔐 Default login enabled - auto-filling credentials');
-      
+
       // Set country code
       if (this.defaultLoginConfig.countryCode) {
         this.CountryCode = this.defaultLoginConfig.countryCode;
         this.numberT = this.defaultLoginConfig.countryCode;
-        
+
         // Find and update flag for the country
         const country = this.CountryJson.find(c => c.dialCode === this.defaultLoginConfig.countryCode);
         if (country) {
           this.flag = country.flag;
         }
       }
-      
+
       // Set phone number
       if (this.defaultLoginConfig.phoneNumber) {
         this.form.controls['phone'].setValue(this.defaultLoginConfig.phoneNumber);
       }
-      
+
       // Store OTP for auto-fill in OTP modal
       if (this.defaultLoginConfig.otp) {
         localStorage.setItem('defaultOTP', this.defaultLoginConfig.otp);
@@ -165,16 +165,16 @@ export class LoginPage implements OnInit {
   async signInWithGoogle() {
     try {
       this.overlay.showLoader('');
-      
+
       const result = await this.auth.signInWithGoogle();
       const user = result.user;
-      
+
       if (user) {
         // Check if driver document exists in database
         const driverData = await this.avatar.checkDriverExistsByUid(user.uid);
-        
+
         this.overlay.hideLoader();
-        
+
         if (driverData) {
           // Driver document exists - login normally
           console.log('Existing driver found, navigating to tabs');
@@ -189,14 +189,20 @@ export class LoginPage implements OnInit {
     } catch (error) {
       console.error('Google sign-in error:', error);
       this.overlay.hideLoader();
-      
+
       let errorMessage = await this.translate.get('GOOGLE_SIGNIN_ERROR').toPromise();
       if (error.code === 'auth/popup-closed-by-user') {
         errorMessage = await this.translate.get('SIGNIN_CANCELLED').toPromise();
       } else if (error.code === 'auth/network-request-failed') {
         errorMessage = await this.translate.get('NETWORK_ERROR').toPromise();
+      } else if (error.code === 'auth/unauthorized-domain') {
+        const title = await this.translate.get('UNAUTHORIZED_DOMAIN_TITLE').toPromise();
+        const detail = await this.translate.get('UNAUTHORIZED_DOMAIN_DETAIL').toPromise();
+        const cause = await this.translate.get('UNAUTHORIZED_DOMAIN_CAUSE').toPromise();
+        await this.overlay.showAlert(title, `${detail}\n\n${cause}`);
+        return;
       }
-      
+
       this.overlay.showAlert(
         await this.translate.get('ERROR').toPromise(),
         errorMessage || 'Failed to sign in with Google'
@@ -244,9 +250,9 @@ export class LoginPage implements OnInit {
           try {
             // Check if driver document exists in database
             const driverData = await this.avatar.checkDriverExistsByUid(user.uid);
-            
+
             this.overlay.hideLoader();
-            
+
             if (driverData) {
               // Driver document exists - login normally
               console.log('Existing driver found, navigating to tabs');
@@ -267,21 +273,52 @@ export class LoginPage implements OnInit {
       });
     } catch (e) {
       console.error('Error during signIn:', e);
-      this.CountryCode = '+234';
-      this.numberT = '+234';
-      const defaultNumbers = ['9060427830', '9060427830'];
-      const randomDefaultNumber = defaultNumbers[Math.floor(Math.random() * defaultNumbers.length)];
-      this.form.controls['phone'].setValue(randomDefaultNumber);
-      localStorage.setItem('defaultOTP', '123456');
-
-      this.overlay.showAlert(
-        await this.translate.get('DAILY_SMS_LIMIT').toPromise(),
-        await this.translate.get('USE_DEFAULT_NUMBER').toPromise() + `: +234:${randomDefaultNumber}`
-      );
-
       this.overlay.hideLoader();
       this.approve2 = false;
+      await this.handleAuthError(e);
     }
+  }
+
+  async handleAuthError(error: any) {
+    let errorTitle = await this.translate.get('ERROR').toPromise();
+    let errorMessage = '';
+    let errorDetails = '';
+
+    switch (error.code) {
+      case 'auth/invalid-phone-number':
+        errorMessage = await this.translate.get('MOBILE_INVALID').toPromise();
+        break;
+
+      case 'auth/too-many-requests':
+        errorTitle = await this.translate.get('TOO_MANY_REQUESTS_TITLE').toPromise() || '⚠️ Too Many Attempts';
+        errorMessage = 'Too many authentication attempts. Please wait 15-30 minutes and try again.';
+        break;
+
+      case 'auth/operation-not-allowed':
+        errorTitle = await this.translate.get('REGION_NOT_ALLOWED_TITLE').toPromise();
+        errorMessage = await this.translate.get('REGION_NOT_ALLOWED_DETAIL').toPromise();
+        errorDetails = await this.translate.get('REGION_NOT_ALLOWED_CAUSE').toPromise();
+        break;
+
+      case 'auth/unauthorized-domain':
+        errorTitle = await this.translate.get('UNAUTHORIZED_DOMAIN_TITLE').toPromise();
+        errorMessage = await this.translate.get('UNAUTHORIZED_DOMAIN_DETAIL').toPromise();
+        errorDetails = await this.translate.get('UNAUTHORIZED_DOMAIN_CAUSE').toPromise();
+        break;
+
+      case 'auth/invalid-app-credential':
+      case 'auth/quota-exceeded':
+        errorTitle = await this.translate.get('SMS_QUOTA_TITLE').toPromise() || '💳 SMS Quota Exceeded';
+        errorMessage = 'The daily SMS quota has been reached.';
+        break;
+
+      default:
+        errorMessage = `${await this.translate.get('SIGN_IN_ERROR').toPromise() || 'Error during sign-in:'} ${error.code || error.message || 'Unknown error'}`;
+        break;
+    }
+
+    const fullMessage = errorDetails ? `${errorMessage}\n\n${errorDetails}` : errorMessage;
+    await this.overlay.showAlert(errorTitle, fullMessage);
   }
 
   initializeBackButtonCustomHandler() {
@@ -344,7 +381,7 @@ export class LoginPage implements OnInit {
     }
   }
 
-   async changeLanguage(lang: string) {
+  async changeLanguage(lang: string) {
     console.log('Changing language to:', lang);
     try {
       // Set the language immediately

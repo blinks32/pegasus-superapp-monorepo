@@ -216,5 +216,11 @@
   "SIGNIN_CANCELLED": "Log masuk dibatalkan.",
   "NETWORK_ERROR": "Ralat rangkaian. Sila periksa sambungan anda.",
   "ERROR": "Ralat",
-  "CONTINUE": "Teruskan"
+  "CONTINUE": "Teruskan",
+  "REGION_NOT_ALLOWED_TITLE": "🚫 Rantau Tidak Dibenarkan",
+  "REGION_NOT_ALLOWED_DETAIL": "Pengesahan SMS tidak diaktifkan untuk rantau/negara anda dalam Konsol Firebase.",
+  "REGION_NOT_ALLOWED_CAUSE": "📋 Cara penyelesaian:\n1. Buka Konsol Firebase\n2. Pergi ke Authentication → Settings\n3. Benarkan negara anda dalam 'SMS Region Policy'\n4. Pastikan Phone Auth diaktifkan dalam Providers",
+  "UNAUTHORIZED_DOMAIN_TITLE": "🌐 Domain Tidak Dibenarkan",
+  "UNAUTHORIZED_DOMAIN_DETAIL": "Domain ini tidak dibenarkan untuk Pengesahan Firebase.",
+  "UNAUTHORIZED_DOMAIN_CAUSE": "📋 Cara penyelesaian:\n1. Buka Konsol Firebase\n2. Pergi ke Authentication → Settings\n3. Tambah domain ini ke dalam 'Authorized domains'"
 }
