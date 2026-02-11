@@ -187,49 +187,93 @@ export class HomePage implements AfterViewInit, OnDestroy {
   async ngAfterViewInit() {
     try {
       this.EnterBookingStage();
-      
+
       // Check and request geolocation permissions
       const permissionStatus = await Geolocation.checkPermissions();
-      
+
       if (permissionStatus.location !== 'granted') {
         // Show alert explaining why we need location access
         await this.showLocationPermissionAlert();
         const requestResult = await Geolocation.requestPermissions();
-        
+
         if (requestResult.location !== 'granted') {
           throw new Error('Location permission is required to use this app');
         }
       }
 
-      const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+      let coordinates;
+      try {
+        // Prefer native navigator.geolocation on web for better reliability
+        if (!this.platform.is('hybrid') && navigator.geolocation) {
+          console.log('Using native web geolocation');
+          coordinates = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                resolve({
+                  coords: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    accuracy: position.coords.accuracy,
+                    altitude: position.coords.altitude,
+                    altitudeAccuracy: position.coords.altitudeAccuracy,
+                    heading: position.coords.heading,
+                    speed: position.coords.speed
+                  },
+                  timestamp: position.timestamp
+                });
+              },
+              (error) => reject(error),
+              { timeout: 10000, enableHighAccuracy: true }
+            );
+          });
+        } else {
+          console.log('Using Capacitor geolocation');
+          coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000 });
+        }
+      } catch (geoError) {
+        console.warn('Geolocation failed, trying fallback:', geoError);
+        // Fallback to default (Kuala Lumpur)
+        coordinates = {
+          coords: {
+            latitude: 3.1390,
+            longitude: 101.6869,
+            accuracy: 0,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null
+          },
+          timestamp: Date.now()
+        };
+        this.overlay.showToast('Using default location. Please enable GPS for better accuracy.', 4000);
+      }
+
       this.coordinates = coordinates;
       await this.initializeNetworkMonitoring();
 
-      
-
       await this.fetchOnlineState();
-      
+
       await this.map.createMap(this.mapRef.nativeElement, coordinates);
       this.mapy = true;
 
       this.initializeBackButtonCustomHandler();
-  
+
       this.LatLng = {
         lat: coordinates.coords.latitude,
         lng: coordinates.coords.longitude,
       };
       this.database.updateDriverLocation(this.LatLng);
-  
+
       this.DestinationLatLng = {
         lat: coordinates.coords.latitude,
         lng: coordinates.coords.longitude,
       };
-  
+
       this.database.getEarnings().subscribe(async (d) => {
         const earnings = Number(d.Earnings ?? 0);
         this.earnings = Number.isFinite(earnings) ? Number(earnings.toFixed(2)) : 0;
       });
-  
+
       this.database.getCards().subscribe(async (d) => {
         this.cards = d;
         this.approve = false;
@@ -240,35 +284,36 @@ export class HomePage implements AfterViewInit, OnDestroy {
           }
         });
       });
-  
+
       await this.handleDriverRequestSnapshot();
-  
+
       // Check if there's an active ride to restore
       await this.restoreActiveRide();
-  
+
       this.actualLocation = this.map.actualLocation;
       this.locationAddress = this.map.locationAddress;
-  
+
       this.map.newMap.setOnCameraIdleListener(() => {
         this.ngZone.run(() => {
           this.showResetLocationButton = true;
         });
       });
 
-      
+
     } catch (e) {
+      console.error('Error in Driver ngAfterViewInit:', e);
       if (e.code === 1) { // Permission denied error code
         await this.handleLocationPermissionDenied();
-      } else {
-        this.overlay.showAlert('Error', e.message || 'An unexpected error occurred');
+      } else if (e.message !== 'Location permission is required to use this app') {
+        this.overlay.showAlert('Initialization Error', e.message || 'An unexpected error occurred');
       }
     }
-  
+
     // Start polling position
     this.startPollingPosition();
-  
+
     // Start background geolocation for mobile devices
-   await this.checkPlatform();
+    await this.checkPlatform();
   }
 
 
@@ -374,21 +419,29 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
   async startPollingPosition() {
     const pollInterval = 5000; // Polling interval in milliseconds
-  
+
     const updatePosition = async () => {
       try {
-        const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+        let position;
+        if (!this.platform.is('hybrid') && navigator.geolocation) {
+          position = await new Promise<any>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+          });
+        } else {
+          position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 5000 });
+        }
+
         this.DriverLatLng = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
         this.database.updateDriverLocation(this.DriverLatLng);
       } catch (error) {
-        console.error('Error getting position:', error);
+        // console.error('Error getting position during polling:', error);
       }
       setTimeout(updatePosition, pollInterval); // Poll every pollInterval milliseconds
     };
-  
+
     updatePosition();
   }
 
@@ -399,19 +452,19 @@ export class HomePage implements AfterViewInit, OnDestroy {
       const driverDocRef = doc(this.firestore, 'Drivers', user.uid);
       const driverDoc = await getDoc(driverDocRef);
       const driverData = driverDoc.data();
-  
+
       if (driverData && driverData.currentRequestId) {
         const requestRef = doc(this.firestore, 'Request', driverData.currentRequestId);
         const requestDoc = await getDoc(requestRef);
         const requestData = requestDoc.data();
-  
+
         if (requestData && requestData.status !== 'done' && requestData.status !== 'cancelled') {
           // Restore the active ride state
           console.log('Restoring active ride with status:', requestData.status);
           this.riderInfo = requestData;
           this.requestID = driverData.currentRequestId;
           this.lastHandledState = requestData.status;
-          
+
           // Restore the ride based on its current status
           await this.restoreRideState(requestData);
         } else {
@@ -427,10 +480,10 @@ export class HomePage implements AfterViewInit, OnDestroy {
   async restoreRideState(requestData) {
     try {
       console.log('Restoring ride state for status:', requestData.status);
-      
+
       // Set accepted state
       this.acceptedState = true;
-      
+
       switch (requestData.status) {
         case 'pending':
           // Restore pending state (waiting for driver to accept)
@@ -443,7 +496,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
           await this.getDistanceandDirections();
           this.map.newMap.enableCurrentLocation(false);
           break;
-          
+
         case 'confirmed':
           // Restore tracking stage (driver going to pick up rider)
           await this.getRiderLocation(requestData.Rider_id);
@@ -457,7 +510,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
           await this.database.updateOnlineState(stayOnlineConfirmed);
           if (stayOnlineConfirmed) await this.database.updateAvailableForSharing(true);
           break;
-          
+
         case 'started':
           // Restore driving to destination stage (rider is in car)
           this.DestinationLatLng = {
@@ -470,12 +523,12 @@ export class HomePage implements AfterViewInit, OnDestroy {
           await this.database.updateOnlineState(stayOnlineStarted);
           if (stayOnlineStarted) await this.database.updateAvailableForSharing(true);
           break;
-          
+
         default:
           console.warn('Unknown ride status to restore:', requestData.status);
           break;
       }
-      
+
       console.log('Ride state restored successfully');
     } catch (error) {
       console.error('Error restoring ride state:', error);
@@ -486,7 +539,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
   async startBackgroundGeolocation() {
     try {
       const info = await Device.getInfo();
-      
+
       // Only proceed with background geolocation setup on mobile devices
       if (info.platform === 'ios' || info.platform === 'android') {
         if (!window.BackgroundGeolocation) {
@@ -533,28 +586,28 @@ export class HomePage implements AfterViewInit, OnDestroy {
       this.startPollingPosition();
     }
   }
-  
+
   async stopBackgroundGeolocation() {
     const info = await Device.getInfo();
     if ((info.platform === 'ios' || info.platform === 'android') && window.BackgroundGeolocation) {
       window.BackgroundGeolocation.stop();
     }
   }
-  
+
 
   getRiderLocation(driverId: string): void {
     this.database.getRiderLocation(driverId)
-    .then(location => {
-      this.riderLocation = location;
-      this.DestinationLatLng = {
-        lat: this.riderLocation.lat,
-        lng: this.riderLocation.lng,
-      };
-      console.log(this.riderLocation); // For testing purposes
-    })
-    .catch(error => {
-      console.error('Error fetching driver location:', error);
-    });
+      .then(location => {
+        this.riderLocation = location;
+        this.DestinationLatLng = {
+          lat: this.riderLocation.lat,
+          lng: this.riderLocation.lng,
+        };
+        console.log(this.riderLocation); // For testing purposes
+      })
+      .catch(error => {
+        console.error('Error fetching driver location:', error);
+      });
   }
 
 
@@ -570,13 +623,13 @@ export class HomePage implements AfterViewInit, OnDestroy {
           this.driverData = driverDoc.data();
           if (this.driverData && this.driverData.currentRequestId) {
             const requestRef = doc(this.firestore, 'Request', this.driverData.currentRequestId);
-            
+
             // Unsubscribe from previous listener to prevent duplicates
             if (this.driverRequestUnsubscribe) {
               this.driverRequestUnsubscribe();
               this.driverRequestUnsubscribe = null;
             }
-            
+
             this.driverRequestUnsubscribe = onSnapshot(requestRef, async (doc) => {
               console.log("It happened Here", doc.data());
               this.riderInfo = doc.data();
@@ -612,56 +665,56 @@ export class HomePage implements AfterViewInit, OnDestroy {
   }
 
 
-  
+
   async handlePendingState(doco) {
     try {
 
-    console.log('Handling the pending state:', doco);
-    const userDocRef = doc(this.firestore, `Riders`, doco.Rider_id);
-  
-    const docSnapshot = await getDoc(userDocRef);
-  
-    if (docSnapshot.exists()) {
-      console.log("I'm here!!!!!!!!!!");
-  
-      if (!this.acceptedState) {
-        if (!this.countdownStarted) {
-          this.countdownStarted = true; // Flag to ensure countdown starts only once
-           
-          // Initial state setup
-          this.EnterConfirmStage();
-          this.cash = !doco.card;
+      console.log('Handling the pending state:', doco);
+      const userDocRef = doc(this.firestore, `Riders`, doco.Rider_id);
 
-          this.DestinationLatLng = {
-            lat: this.riderInfo.Des_lat,
-            lng: this.riderInfo.Des_lng,
-          };
-  
-          this.getDistanceandDirections();
-          this.map.newMap.enableCurrentLocation(false);
-  
-          // Start the countdown watcher
-          this.watchCountdown(doco);
+      const docSnapshot = await getDoc(userDocRef);
+
+      if (docSnapshot.exists()) {
+        console.log("I'm here!!!!!!!!!!");
+
+        if (!this.acceptedState) {
+          if (!this.countdownStarted) {
+            this.countdownStarted = true; // Flag to ensure countdown starts only once
+
+            // Initial state setup
+            this.EnterConfirmStage();
+            this.cash = !doco.card;
+
+            this.DestinationLatLng = {
+              lat: this.riderInfo.Des_lat,
+              lng: this.riderInfo.Des_lng,
+            };
+
+            this.getDistanceandDirections();
+            this.map.newMap.enableCurrentLocation(false);
+
+            // Start the countdown watcher
+            this.watchCountdown(doco);
+          }
         }
       }
+    } catch (e) {
+      this.overlay.showAlert('Confirm Error', e);
     }
-  } catch (e) {
-    this.overlay.showAlert('Confirm Error', e);
   }
-  }
-  
-  
+
+
   watchCountdown(doco) {
     const requestRef = doc(this.firestore, 'Request', doco.requestId);
     this.requestID = doco.requestId;
-    
+
     const countdownWatcher = onSnapshot(requestRef, async (doc) => {
       if (doc.exists()) {
         const data = doc.data();
         const currentCountdown = data.countDown;
-  
+
         console.log('Current countdown:', currentCountdown);
-  
+
         if (currentCountdown <= 1) {
           if (this.auth.currentUser) {
             await this.clearCurrentRequestId(this.auth.currentUser.uid);
@@ -677,52 +730,52 @@ export class HomePage implements AfterViewInit, OnDestroy {
         console.error('Ride request document does not exist.');
       }
     });
-  
+
     this.countdownWatcher = countdownWatcher; // Store the unsubscribe function if needed
   }
-  
-  
 
-  
-async UpdateCountDown(time, requestId) {
-  try {
-    const requestDocRef = doc(this.firestore, "Request", requestId);
-    await updateDoc(requestDocRef, { countDown: time });
-    return true;
-  } catch (e) {
-    console.log(e);
-    return null;
-  }
-}
 
-async startCountdown(initialTime, requestId) {
-  let timeRemaining = initialTime;
 
-  const updateCountdown = async () => {
-    if (timeRemaining > 0) {
-      await this.UpdateCountDown(timeRemaining, requestId);
-     // this.updatePieChart(timeRemaining, initialTime);
-      timeRemaining--;
-      setTimeout(updateCountdown, 1000); // Update every second
+
+  async UpdateCountDown(time, requestId) {
+    try {
+      const requestDocRef = doc(this.firestore, "Request", requestId);
+      await updateDoc(requestDocRef, { countDown: time });
+      return true;
+    } catch (e) {
+      console.log(e);
+      return null;
     }
-  };
+  }
 
-  updateCountdown();
-}
+  async startCountdown(initialTime, requestId) {
+    let timeRemaining = initialTime;
 
-  
+    const updateCountdown = async () => {
+      if (timeRemaining > 0) {
+        await this.UpdateCountDown(timeRemaining, requestId);
+        // this.updatePieChart(timeRemaining, initialTime);
+        timeRemaining--;
+        setTimeout(updateCountdown, 1000); // Update every second
+      }
+    };
 
-  
+    updateCountdown();
+  }
+
+
+
+
   async completeRideAndProcessPayment(doc) {
     // Complete the ride, process payment, and update ride history
     const rideData = doc;
     console.log("This is the ride data: ", rideData)
     await this.processPayment(rideData);
     await this.updateRideHistory(rideData);
-    
-    
+
+
   }
-  
+
   async processPayment(rideData) {
     // Logic to process payment
     console.log('Processing payment for ride:', rideData);
@@ -731,7 +784,7 @@ async startCountdown(initialTime, requestId) {
     const amt = rideData.price - Drivershare;
     await this.database.updateEarnings(amt + this.earnings)
   }
-  
+
   async updateRideHistory(rideData) {
     // Logic to update ride history
     console.log('Updating ride history for ride:', rideData);
@@ -739,7 +792,7 @@ async startCountdown(initialTime, requestId) {
     await this.database.createHistory(rideData);
 
   }
-  
+
   // ==================== RIDE SHARING METHODS ====================
 
   /**
@@ -781,14 +834,14 @@ async startCountdown(initialTime, requestId) {
 
       this.isSharedRideMode = true;
       this.sharedRidePassengers = this.currentSharedRide.passengers;
-      
+
       // Set current waypoint immediately
       this.currentWaypoint = this.rideSharingService.getNextWaypoint(this.currentSharedRide);
       console.log('Initial currentWaypoint:', this.currentWaypoint);
-      
+
       // Subscribe to shared ride updates
       this.rideSharingService.subscribeToSharedRide(this.currentSharedRide.sharedRideId);
-      
+
       // Subscribe to shared ride observable
       this.rideSharingService.getCurrentSharedRide().subscribe(sharedRide => {
         if (sharedRide) {
@@ -851,9 +904,9 @@ async startCountdown(initialTime, requestId) {
   startMatchPolling(): void {
     // Stop any existing polling
     this.stopMatchPolling();
-    
+
     console.log('Starting match polling every 15 seconds...');
-    
+
     // Poll every 15 seconds for new match candidates
     this.matchPollingSubscription = interval(15000).subscribe(() => {
       if (this.isSharedRideMode && this.currentSharedRide) {
@@ -904,7 +957,7 @@ async startCountdown(initialTime, requestId) {
 
     try {
       this.overlay.showLoader('Adding passenger...');
-      
+
       // Get the full rider info from the request
       const requestDoc = await getDoc(doc(this.firestore, 'Request', candidate.requestId));
       if (!requestDoc.exists()) {
@@ -938,7 +991,7 @@ async startCountdown(initialTime, requestId) {
 
       // Remove from candidates list
       this.matchCandidates = this.matchCandidates.filter(c => c.requestId !== candidate.requestId);
-      
+
       // Update map with new waypoints
       await this.updateSharedRideWaypoints();
 
@@ -987,8 +1040,8 @@ async startCountdown(initialTime, requestId) {
     for (const waypoint of this.currentSharedRide.route.waypoints) {
       if (waypoint.completed) continue;
 
-      const iconUrl = waypoint.type === 'pickup' 
-        ? 'assets/icon/pickup-marker.png' 
+      const iconUrl = waypoint.type === 'pickup'
+        ? 'assets/icon/pickup-marker.png'
         : 'assets/icon/dropoff-marker.png';
 
       try {
@@ -1013,9 +1066,9 @@ async startCountdown(initialTime, requestId) {
 
     try {
       const waypointIndex = this.currentSharedRide.route.waypoints.findIndex(
-        wp => wp.riderId === this.currentWaypoint.riderId && 
-             wp.type === this.currentWaypoint.type &&
-             !wp.completed
+        wp => wp.riderId === this.currentWaypoint.riderId &&
+          wp.type === this.currentWaypoint.type &&
+          !wp.completed
       );
 
       if (waypointIndex === -1) return;
@@ -1038,14 +1091,14 @@ async startCountdown(initialTime, requestId) {
         const requestRef = doc(this.firestore, 'Request', waypointResult.requestId);
         if (waypointResult.type === 'pickup') {
           // Update request status to 'started' for pickup
-          await updateDoc(requestRef, { 
+          await updateDoc(requestRef, {
             status: 'started',
             pickedUpAt: new Date().toISOString()
           });
           console.log(`Updated Request ${waypointResult.requestId} to started for rider ${waypointResult.riderId}`);
         } else if (waypointResult.type === 'dropoff') {
           // Update request status to 'done' for dropoff
-          await updateDoc(requestRef, { 
+          await updateDoc(requestRef, {
             status: 'done',
             droppedOffAt: new Date().toISOString()
           });
@@ -1057,12 +1110,12 @@ async startCountdown(initialTime, requestId) {
         if (passenger?.requestId) {
           const requestRef = doc(this.firestore, 'Request', passenger.requestId);
           if (completedWaypointType === 'pickup') {
-            await updateDoc(requestRef, { 
+            await updateDoc(requestRef, {
               status: 'started',
               pickedUpAt: new Date().toISOString()
             });
           } else if (completedWaypointType === 'dropoff') {
-            await updateDoc(requestRef, { 
+            await updateDoc(requestRef, {
               status: 'done',
               droppedOffAt: new Date().toISOString()
             });
@@ -1083,7 +1136,7 @@ async startCountdown(initialTime, requestId) {
         // Dropped off a passenger but more waypoints remain
         const remainingDropoffs = remainingWaypoints.filter(wp => wp.type === 'dropoff').length - 1;
         const remainingPickups = remainingWaypoints.filter(wp => wp.type === 'pickup').length;
-        
+
         let message = `${completedRiderName} dropped off! `;
         if (remainingPickups > 0) {
           message += `${remainingPickups} pickup(s) remaining. `;
@@ -1091,7 +1144,7 @@ async startCountdown(initialTime, requestId) {
         if (remainingDropoffs > 0) {
           message += `${remainingDropoffs} more dropoff(s) to go.`;
         }
-        
+
         const toast = await this.toastController.create({
           message: message,
           duration: 4000,
@@ -1113,14 +1166,14 @@ async startCountdown(initialTime, requestId) {
 
       // Update local state
       this.currentWaypoint = this.rideSharingService.getNextWaypoint(this.currentSharedRide);
-      
+
       // Update map
       await this.updateSharedRideWaypoints();
 
       // Navigate to next waypoint if exists
       if (this.currentWaypoint) {
         await this.navigateToWaypoint(this.currentWaypoint);
-        
+
         // Notify driver of next action
         const nextAction = this.currentWaypoint.type === 'pickup' ? 'pick up' : 'drop off';
         const nextToast = await this.toastController.create({
@@ -1141,10 +1194,10 @@ async startCountdown(initialTime, requestId) {
    */
   async navigateToWaypoint(waypoint: Waypoint): Promise<void> {
     const destination = { lat: waypoint.lat, lng: waypoint.lng };
-    
+
     // Update destination display
     this.riderDestination = waypoint.address;
-    
+
     // Clear existing polyline
     if (this.newPoly) {
       await this.clearPolyline(this.newPoly);
@@ -1223,7 +1276,7 @@ async startCountdown(initialTime, requestId) {
       for (const markerId of this.waypointMarkers) {
         try {
           await this.map.newMap.removeMarker(markerId);
-        } catch (e) {}
+        } catch (e) { }
       }
       this.waypointMarkers = [];
 
@@ -1246,7 +1299,7 @@ async startCountdown(initialTime, requestId) {
       );
 
       await this.updateSharedRideWaypoints();
-      
+
       const toast = await this.toastController.create({
         message: 'Passenger removed from ride',
         duration: 2000,
@@ -1267,7 +1320,7 @@ async startCountdown(initialTime, requestId) {
       currentRequestId: deleteField()
     });
   }
-  
+
   async handleConfirmedState(doc) {
     try {
       await this.ResetState();
@@ -1280,19 +1333,19 @@ async startCountdown(initialTime, requestId) {
 
       // Show a more specific message
       this.overlay.showLoader('Navigating to rider...');
-      
+
       // Check if we should stay online for ride sharing
       // Use rideSharingEnabled as primary check since isSharedRideMode may not be set yet
       const shouldStayOnline = this.rideSharingEnabled || (this.isSharedRideMode && !!this.currentSharedRide);
       console.log('handleConfirmedState - rideSharingEnabled:', this.rideSharingEnabled, 'isSharedRideMode:', this.isSharedRideMode, 'shouldStayOnline:', shouldStayOnline);
-      
+
       // Pre-fetch data and setup markers concurrently
       await Promise.all([
         this.handleDriverToRider(this.DriverLatLng, this.DestinationLatLng),
         this.database.updateOnlineState(shouldStayOnline), // Stay online if sharing enabled
         shouldStayOnline ? this.database.updateAvailableForSharing(true) : Promise.resolve()
       ]);
-      
+
       // If ridesharing is enabled, look for matching passengers
       if (shouldStayOnline) {
         console.log('Shared ride mode active - searching for matching passengers...');
@@ -1308,13 +1361,13 @@ async startCountdown(initialTime, requestId) {
       this.overlay.showAlert('Error', 'Failed to initialize navigation');
     }
   }
-  
-  
-  
+
+
+
   async handleStartedState(doc) {
     try {
       await this.ResetState();
-      
+
       this.DestinationLatLng = {
         lat: doc.Des_lat,
         lng: doc.Des_lng,
@@ -1322,18 +1375,18 @@ async startCountdown(initialTime, requestId) {
 
       // Show a more specific message
       this.overlay.showLoader('Starting trip...');
-      
+
       // Check if we should stay online for ride sharing
       const shouldStayOnline = this.rideSharingEnabled || (this.isSharedRideMode && !!this.currentSharedRide);
       console.log('handleStartedState - rideSharingEnabled:', this.rideSharingEnabled, 'isSharedRideMode:', this.isSharedRideMode, 'shouldStayOnline:', shouldStayOnline);
-      
+
       // Pre-fetch data and setup markers concurrently
       await Promise.all([
         this.handleRiderToDestination(this.DriverLatLng, this.DestinationLatLng),
         this.database.updateOnlineState(shouldStayOnline), // Stay online if sharing enabled
         shouldStayOnline ? this.database.updateAvailableForSharing(true) : Promise.resolve()
       ]);
-      
+
       // If ridesharing is enabled, start the shared ride and look for more matches
       if (this.isSharedRideMode && this.currentSharedRide) {
         console.log('Trip started in shared ride mode - starting shared ride and looking for matches...');
@@ -1348,18 +1401,18 @@ async startCountdown(initialTime, requestId) {
       this.overlay.showAlert('Error', 'Failed to start trip');
     }
   }
-  
+
   async handleStoppedState(doc) {
     // Clear the ride from driver's current requests
     if (this.auth.currentUser) {
       await this.clearCurrentRequestId(this.auth.currentUser.uid);
     }
-    
+
     // Unsubscribe from the current request listener
     if (this.driverRequestUnsubscribe) {
       this.driverRequestUnsubscribe();
     }
-    
+
     // Clean up shared ride state if in shared ride mode
     if (this.isSharedRideMode && this.currentSharedRide) {
       console.log('Cleaning up shared ride state...');
@@ -1372,7 +1425,7 @@ async startCountdown(initialTime, requestId) {
       this.matchCandidates = [];
       this.showMatchCandidates = false;
     }
-    
+
     // Clear availableForSharing flag
     await this.database.updateAvailableForSharing(false);
 
@@ -1388,7 +1441,7 @@ async startCountdown(initialTime, requestId) {
     await this.completeRideAndProcessPayment(doc);
     await this.database.updateOnlineState(true);
     this.map.newMap.enableCurrentLocation(true);
-    
+
     // Reset ride states to allow new ride requests
     this.acceptedState = false;
     this.lastHandledState = null;
@@ -1398,7 +1451,7 @@ async startCountdown(initialTime, requestId) {
   async showTripSummary(doc) {
     // Use this.requestID if available, otherwise try to get it from the trip data
     const requestIdToUse = this.requestID || this.driverData?.currentRequestId || doc.requestId;
-    
+
     const modal = await this.modalCtrl.create({
       component: TripSummaryComponent,
       componentProps: {
@@ -1410,9 +1463,9 @@ async startCountdown(initialTime, requestId) {
     });
 
     await modal.present();
-    
+
     const { data } = await modal.onDidDismiss();
-    
+
     // After modal is dismissed, return to home
     this.EnterBookingStage();
     await this.ReturnHome();
@@ -1420,11 +1473,11 @@ async startCountdown(initialTime, requestId) {
 
   async handleCancelledState(data) {
     console.log(`Ride was cancelled by ${data.canceledBy} for reason: ${data.cancellationReason}`);
-  
+
     if (data.canceledBy == 'rider') {
       this.overlay.showAlert('Cancelled', 'Rider cancelled');
-    } 
-    
+    }
+
     // Clean up shared ride state if in shared ride mode
     if (this.isSharedRideMode && this.currentSharedRide) {
       console.log('Cleaning up shared ride state after cancellation...');
@@ -1444,12 +1497,12 @@ async startCountdown(initialTime, requestId) {
     this.ClearRide();
     this.removed = true;
     console.log('Ride is cancelled.');
-    
+
     // Reset all ride states to allow new ride requests
     this.acceptedState = false;
     this.lastHandledState = null;
     this.countdownStarted = false;
-    
+
     // Clear currentRequestId in driverData
     const driverDocRef = doc(this.firestore, 'Drivers', this.auth.currentUser.uid);
     await updateDoc(driverDocRef, { currentRequestId: null });
@@ -1460,17 +1513,17 @@ async startCountdown(initialTime, requestId) {
 
   async EnterChat(): Promise<void> {
     const options: ModalOptions = {
-        component: EnrouteChatComponent,
-        componentProps: {
-            userId: this.requestID,
-            message: ""
-        },
-        swipeToClose: true,
+      component: EnrouteChatComponent,
+      componentProps: {
+        userId: this.requestID,
+        message: ""
+      },
+      swipeToClose: true,
     };
-    
+
     const modal = await this.modalCtrl.create(options);
     return await modal.present();
-    }
+  }
 
 
   startTimer(sec) {
@@ -1501,7 +1554,7 @@ async startCountdown(initialTime, requestId) {
   async AcceptRide() {
     try {
       this.acceptedState = true;
-      
+
       // Initialize shared ride mode BEFORE updating status
       // This ensures isSharedRideMode is set when handleConfirmedState runs
       await this.checkRideSharingEnabled();
@@ -1509,7 +1562,7 @@ async startCountdown(initialTime, requestId) {
         console.log('Ridesharing enabled - initializing shared ride mode');
         await this.initializeSharedRide(this.riderInfo);
       }
-      
+
       // Now update the request status (this triggers handleConfirmedState)
       const requestRef = doc(this.firestore, 'Request', this.driverData.currentRequestId);
       await updateDoc(requestRef, { status: 'confirmed' });
@@ -1533,21 +1586,21 @@ async startCountdown(initialTime, requestId) {
     try {
       this.canShowButton = false;
       this.overlay.showLoader('Picking Up..');
-      
+
       // In shared ride mode, use completeCurrentWaypoint if waypoint is available
       if (this.isSharedRideMode && this.currentSharedRide && this.currentWaypoint) {
         await this.completeCurrentWaypoint();
         this.overlay.hideLoader();
         return;
       }
-      
+
       // For non-shared rides or when currentWaypoint is not set, update the primary request
       const requestRef = doc(this.firestore, 'Request', this.driverData.currentRequestId);
-      await updateDoc(requestRef, { 
+      await updateDoc(requestRef, {
         status: 'started',
         pickedUpAt: new Date().toISOString()
       });
-      
+
       // If in shared ride mode, also update the shared ride's first passenger
       if (this.isSharedRideMode && this.currentSharedRide) {
         const firstWaypointIndex = this.currentSharedRide.route.waypoints.findIndex(
@@ -1560,7 +1613,7 @@ async startCountdown(initialTime, requestId) {
           );
         }
       }
-      
+
       this.overlay.hideLoader();
     } catch (e) {
       this.overlay.hideLoader();
@@ -1571,21 +1624,21 @@ async startCountdown(initialTime, requestId) {
   async DropOff() {
     try {
       this.overlay.showLoader('Dropping Off..');
-      
+
       // In shared ride mode, use completeCurrentWaypoint if waypoint is available
       if (this.isSharedRideMode && this.currentSharedRide && this.currentWaypoint) {
         await this.completeCurrentWaypoint();
         this.overlay.hideLoader();
         return;
       }
-      
+
       // For non-shared rides or when currentWaypoint is not set, update the primary request
       const requestRef = doc(this.firestore, 'Request', this.driverData.currentRequestId);
-      await updateDoc(requestRef, { 
+      await updateDoc(requestRef, {
         status: 'done',
         droppedOffAt: new Date().toISOString()
       });
-      
+
       // If in shared ride mode, also complete the shared ride's dropoff waypoint
       if (this.isSharedRideMode && this.currentSharedRide) {
         const dropoffWaypointIndex = this.currentSharedRide.route.waypoints.findIndex(
@@ -1598,7 +1651,7 @@ async startCountdown(initialTime, requestId) {
           );
         }
       }
-      
+
       this.overlay.hideLoader();
     } catch (e) {
       this.overlay.hideLoader();
@@ -1623,7 +1676,7 @@ async startCountdown(initialTime, requestId) {
       this.overlay.showAlert('Error', 'Failed to fetch online state.');
     }
   }
-  
+
 
 
 
@@ -1636,12 +1689,12 @@ async startCountdown(initialTime, requestId) {
       let isApproved = this.driverData?.isApproved;
 
       //if (isApproved === undefined) {
-        const currentUser = this.auth.currentUser;
-        if (currentUser) {
-          const driverDocRef = doc(this.firestore, 'Drivers', currentUser.uid);
-          const driverDoc = await getDoc(driverDocRef);
-          isApproved = driverDoc.data()?.isApproved ?? false;
-        }
+      const currentUser = this.auth.currentUser;
+      if (currentUser) {
+        const driverDocRef = doc(this.firestore, 'Drivers', currentUser.uid);
+        const driverDoc = await getDoc(driverDocRef);
+        isApproved = driverDoc.data()?.isApproved ?? false;
+      }
       //}
       if (isApproved === false) {
         console.log('Driver approval pending.');
@@ -1660,7 +1713,7 @@ async startCountdown(initialTime, requestId) {
       this.cdr.detectChanges();
     }
   }
-  
+
   async SwitchOff() {
     try {
       this.approve = true;
@@ -1676,8 +1729,8 @@ async startCountdown(initialTime, requestId) {
       this.cdr.detectChanges();
     }
   }
-  
-  
+
+
   private async clearPrevMarkers() {
     try {
 
@@ -1686,59 +1739,59 @@ async startCountdown(initialTime, requestId) {
         await this.clearMarker(this.animatedMarker);
         this.animatedMarker = null;
       }
-  
+
       if (this.routeUpdateSubscription) {
         this.routeUpdateSubscription.unsubscribe();
       }
-       // Clear other markers
-       if (this.rider_marker) {
+      // Clear other markers
+      if (this.rider_marker) {
         await this.clearMarker(this.rider_marker);
         this.rider_marker = null;
       }
-  
+
       // Clear other markers
       if (this.driver_marker) {
         await this.clearMarker(this.driver_marker);
         this.driver_marker = null;
       }
-  
+
       // Clear other markers
       if (this.destinationMarker) {
         await this.clearMarker(this.destinationMarker);
         this.destinationMarker = null;
       }
 
-       // Clear other markers
-       if (this.driver_marker1) {
+      // Clear other markers
+      if (this.driver_marker1) {
         await this.clearMarker(this.driver_marker1);
         this.driver_marker1 = null;
       }
-  
+
       // Clear other markers
       if (this.destinationMarker1) {
         await this.clearMarker(this.destinationMarker1);
         this.destinationMarker1 = null;
       }
-  
+
       // Clear other markers
       if (this.marker1) {
         await this.clearMarker(this.marker1);
         this.marker1 = null;
       }
-  
+
       if (this.marker2) {
         await this.clearMarker(this.marker2);
         this.marker2 = null;
       }
-  
-      
-  
+
+
+
     } catch (e) {
       console.error('Error clearing markers:', e);
     }
   }
-  
-  
+
+
   private async clearMarker(marker) {
     if (marker && this.map && this.map.newMap) {
       try {
@@ -1757,9 +1810,9 @@ async startCountdown(initialTime, requestId) {
       console.warn('Cannot clear marker: map or marker is null/undefined');
     }
   }
-  
-  
-  
+
+
+
   async clearPolyline(polyline) {
     if (polyline && this.map && this.map.newMap) {
       try {
@@ -1778,9 +1831,9 @@ async startCountdown(initialTime, requestId) {
       }
     }
   }
-  
-  async ResetState(){
-    try{
+
+  async ResetState() {
+    try {
       // Unsubscribe from route updates if active
       if (this.routeUpdateSubscription) {
         this.routeUpdateSubscription.unsubscribe();
@@ -1790,12 +1843,12 @@ async startCountdown(initialTime, requestId) {
 
       // Clear previous markers
       await this.clearPrevMarkers();
-  
+
       // Clear any existing polylines
       if (this.newPoly) {
         await this.clearPolyline(this.newPoly);
       }
-      
+
       // Reset distance and duration variables
       this.distance = null;
       this.duration = null;
@@ -1803,29 +1856,29 @@ async startCountdown(initialTime, requestId) {
       this.driverToRiderDuration = null;
       this.riderToDestinationDistance = null;
       this.riderToDestinationDuration = null;
-  
+
       const availableHeight = 1024;
-  
+
       if (this.map && this.map.newMap) {
         this.map.newMap.enableTouch();
       }
-  
+
       // // Start watching the user's position
       // this.startPollingPosition();
-      
-    }catch(e){
+
+    } catch (e) {
       console.error('Error in ResetState:', e);
       throw new Error(e);
     }
   }
-  
-  
-  
+
+
+
 
   async getDistanceandDirections() {
     try {
       if (!this.canStart) {
-       
+
 
         console.log('LatLng:', this.DriverLatLng);
 
@@ -1884,23 +1937,23 @@ async startCountdown(initialTime, requestId) {
       this.riderToDestinationDistance = null;
       this.riderToDestinationDuration = null;
       this.canShowButton = false;
-      
+
       // Clear countdown state completely
       clearInterval(this.countdownInterval);
       this.countdownInterval = null;
       this.countdownStarted = false;
       this.rideLostShown = false;
-      
+
       // Reset ride acceptance state to allow new ride requests
       this.acceptedState = false;
       this.lastHandledState = null;
-      
+
       // Unsubscribe from countdown watcher
       if (this.countdownWatcher) {
         this.countdownWatcher();
         this.countdownWatcher = null;
       }
-      
+
       // Clear request listener
       if (this.driverRequestUnsubscribe) {
         this.driverRequestUnsubscribe();
@@ -1909,11 +1962,11 @@ async startCountdown(initialTime, requestId) {
 
       await this.ResetState();
       this.EnterBookingStage();
-      
+
       if (this.map && this.map.newMap && this.LatLng) {
         // Re-enable current location tracking
         await this.map.newMap.enableCurrentLocation(true);
-        
+
         await this.map.newMap.setCamera({
           animate: true,
           animationDuration: 500,
@@ -1921,19 +1974,19 @@ async startCountdown(initialTime, requestId) {
           coordinate: this.LatLng,
         });
       }
-      
-       // Re-enable touch on map
-       if (this.map && this.map.newMap) {
-         this.map.newMap.enableTouch();
-       }
-      
-       // Update online state and re-subscribe to listeners
-       await this.database.updateOnlineState(true);
-       await this.fetchOnlineState();
-       await this.handleDriverRequestSnapshot();
-       this.removed = false;
-       
-       console.log('Successfully returned home - ready for next ride');
+
+      // Re-enable touch on map
+      if (this.map && this.map.newMap) {
+        this.map.newMap.enableTouch();
+      }
+
+      // Update online state and re-subscribe to listeners
+      await this.database.updateOnlineState(true);
+      await this.fetchOnlineState();
+      await this.handleDriverRequestSnapshot();
+      this.removed = false;
+
+      console.log('Successfully returned home - ready for next ride');
     } catch (e) {
       console.error('Error in ReturnHome:', e);
       this.overlay.showAlert('Error', 'Failed to return home');
@@ -1976,9 +2029,9 @@ async startCountdown(initialTime, requestId) {
     });
     await actionSheet.present();
   }
-  
+
   async cancelRide(reason: string) {
-   
+
     this.driverCleared = true;
     this.overlay.showLoader('Cancelling Ride..');
     const rideRef = doc(this.firestore, 'Request', this.driverData.currentRequestId);
@@ -1989,16 +2042,16 @@ async startCountdown(initialTime, requestId) {
       cancellationReason: reason,
       canceledBy: 'driver'
     });
-     // Create a new document in the cancelledRides collection
-     const cancelledRideRef = doc(collection(this.firestore, 'CancelledRides'));
-     await setDoc(cancelledRideRef, {
-       ...rideData,
-       status: 'cancelled',
-       cancellationReason: reason,
-       canceledBy: 'rider',
-       cancelledAt: serverTimestamp(),
-       originalRequestId: this.requestID
-     });
+    // Create a new document in the cancelledRides collection
+    const cancelledRideRef = doc(collection(this.firestore, 'CancelledRides'));
+    await setDoc(cancelledRideRef, {
+      ...rideData,
+      status: 'cancelled',
+      cancellationReason: reason,
+      canceledBy: 'rider',
+      cancelledAt: serverTimestamp(),
+      originalRequestId: this.requestID
+    });
     const toast = await this.toastController.create({
       message: 'Ride has been cancelled.',
       duration: 2000
@@ -2022,10 +2075,10 @@ async startCountdown(initialTime, requestId) {
   async createAndAddMarkers(loc, des) {
     const markerSize = { width: 30, height: 30 };
     const iconAnchor = { x: 10, y: 0 }; // Center bottom of the icon
-  
+
     try {
       this.map.newMap.disableTouch();
-  
+
       // Add start marker
       this.marker1 = await this.map.newMap.addMarker({
         coordinate: loc,
@@ -2035,7 +2088,7 @@ async startCountdown(initialTime, requestId) {
         iconAnchor: iconAnchor,
         iconOrigin: { x: 1, y: 0 },
       });
-  
+
       // Add destination marker
       this.marker2 = await this.map.newMap.addMarker({
         coordinate: des,
@@ -2045,51 +2098,51 @@ async startCountdown(initialTime, requestId) {
         iconAnchor: iconAnchor,
         iconOrigin: { x: 1, y: 0 },
       });
-  
+
       // Calculate the center point between the start and destination
       const locs = [
         { geoCode: { latitude: loc.lat, longitude: loc.lng } },
         { geoCode: { latitude: des.lat, longitude: des.lng } },
       ];
-  
+
       const center = this.map.calculateCenter(locs);
-  
+
       // Calculate the bounds
       const bounds = new google.maps.LatLngBounds();
       bounds.extend(new google.maps.LatLng(loc.lat, loc.lng));
       bounds.extend(new google.maps.LatLng(des.lat, des.lng));
-  
+
       // Set map height before calculating zoom level
       const availableHeight = this.mapRef.nativeElement.offsetHeight;
-  
+
       // Prepare map dimensions for calculating zoom level
       const mapDim = {
         height: availableHeight,
         width: this.mapRef.nativeElement.offsetWidth,
       };
-  
+
       // Calculate zoom level
       const zoomLevel = this.map.getBoundsZoomLevel(bounds, mapDim);
 
       console.log('Start:', loc.lat, loc.lng);
       console.log('Destination:', des.lat, des.lng);
-  
+
       // Adjust zoom level to ensure both markers are visible with padding
       // Reduce by 0.5-1 to add padding around markers
       const adjustedZoomLevel = Math.max(zoomLevel - 0.8, 10); // Min zoom of 10
       console.log('Calculated zoom:', zoomLevel, 'Adjusted zoom:', adjustedZoomLevel);
-  
+
       await this.map.setCameraToLocation(
         { lat: center.latitude, lng: center.longitude },
         adjustedZoomLevel,
         this.map.calculateBearing(loc, des)
       );
-  
 
-  
+
+
       // Add polyline between the start and destination
       await this.addPolyline(loc, des);
-  
+
     } catch (error) {
       console.error('Error adding markers and polyline:', error);
     }
@@ -2097,308 +2150,308 @@ async startCountdown(initialTime, requestId) {
 
 
   // Interval in milliseconds for updating the route
-UPDATE_INTERVAL = 10000; // Update every 10 seconds
+  UPDATE_INTERVAL = 10000; // Update every 10 seconds
 
-async handleDriverToRider(driverLatLng, riderLatLng) {
-  const markerSize = { width: 30, height: 30 };
-  const iconAnchor = { x: 10, y: 0 }; // Center bottom of the icon
-  let stageTransitioned = false;
+  async handleDriverToRider(driverLatLng, riderLatLng) {
+    const markerSize = { width: 30, height: 30 };
+    const iconAnchor = { x: 10, y: 0 }; // Center bottom of the icon
+    let stageTransitioned = false;
 
-  try {
-    // Add driver marker at the starting position
-    const driverMarker = await this.map.newMap.addMarker({
-      coordinate: driverLatLng,
-      iconUrl: 'assets/icon/car.png',
-      title: 'Driver',
-      iconSize: markerSize,
-      iconAnchor: iconAnchor,
-      iconOrigin: { x: 2, y: 0 },
-    });
-    this.driver_marker = driverMarker;
+    try {
+      // Add driver marker at the starting position
+      const driverMarker = await this.map.newMap.addMarker({
+        coordinate: driverLatLng,
+        iconUrl: 'assets/icon/car.png',
+        title: 'Driver',
+        iconSize: markerSize,
+        iconAnchor: iconAnchor,
+        iconOrigin: { x: 2, y: 0 },
+      });
+      this.driver_marker = driverMarker;
 
-    // Add rider marker at the destination position
-    const riderMarker = await this.map.newMap.addMarker({
-      coordinate: riderLatLng,
-      iconUrl: this.database.user.photoURL, // Change this to your rider icon URL
-      title: 'Rider',
-      iconSize: markerSize,
-      iconAnchor: iconAnchor,
-      iconOrigin: { x: 2, y: 0 },
-    });
-    this.rider_marker = riderMarker;
+      // Add rider marker at the destination position
+      const riderMarker = await this.map.newMap.addMarker({
+        coordinate: riderLatLng,
+        iconUrl: this.database.user.photoURL, // Change this to your rider icon URL
+        title: 'Rider',
+        iconSize: markerSize,
+        iconAnchor: iconAnchor,
+        iconOrigin: { x: 2, y: 0 },
+      });
+      this.rider_marker = riderMarker;
 
-    // Function to update route, duration, and distance
-    const updateRoute = async () => {
-      // Skip initial guard until we've transitioned into tracking
-      if (!this.trackingStage && stageTransitioned) {
-        console.log('No longer in tracking stage, stopping route updates');
-        if (this.routeUpdateSubscription) {
-          this.routeUpdateSubscription.unsubscribe();
-        }
-        return;
-      }
-
-      // Use current driver location for dynamic updates
-      const currentDriverLocation = this.DriverLatLng || driverLatLng;
-
-      const request = {
-        origin: currentDriverLocation,
-        destination: riderLatLng,
-        travelMode: google.maps.TravelMode.DRIVING,
-      };
-
-      this.geocode.directions.route(request, async (response, status) => {
-        if (status === 'OK') {
-          const path = response.routes[0].overview_path.map(latlng => ({
-            lat: latlng.lat(),
-            lng: latlng.lng()
-          }));
-          
-          // Update these specific variables for driver-to-rider stage
-          this.driverToRiderDuration = response.routes[0].legs[0].duration.text;
-          this.driverToRiderDistance = response.routes[0].legs[0].distance.text;
-          const distanceInMeters = response.routes[0].legs[0].distance.value;
-          
-          // Also update the general variables for backward compatibility
-          this.duration = this.driverToRiderDuration;
-          this.distance = this.driverToRiderDistance;
-
-          console.log(`Driving to Rider - Duration: ${this.driverToRiderDuration}, Distance: ${this.driverToRiderDistance}`);
-
-          // Enable pickup button when driver is within 100 meters of rider
-          if (distanceInMeters <= 100) {
-            this.canShowButton = true;
-            console.log('Driver is close to rider - enabling pickup button');
-          } else {
-            this.canShowButton = false;
+      // Function to update route, duration, and distance
+      const updateRoute = async () => {
+        // Skip initial guard until we've transitioned into tracking
+        if (!this.trackingStage && stageTransitioned) {
+          console.log('No longer in tracking stage, stopping route updates');
+          if (this.routeUpdateSubscription) {
+            this.routeUpdateSubscription.unsubscribe();
           }
+          return;
+        }
 
-          // Use current driver location for centering
-          const currentDriverLocation = this.DriverLatLng || driverLatLng;
-          const locs = [
-            { geoCode: { latitude: currentDriverLocation.lat, longitude: currentDriverLocation.lng } },
-            { geoCode: { latitude: riderLatLng.lat, longitude: riderLatLng.lng } },
-          ];
+        // Use current driver location for dynamic updates
+        const currentDriverLocation = this.DriverLatLng || driverLatLng;
 
-          const center = this.map.calculateCenter(locs);
+        const request = {
+          origin: currentDriverLocation,
+          destination: riderLatLng,
+          travelMode: google.maps.TravelMode.DRIVING,
+        };
 
-          const bounds = new google.maps.LatLngBounds();
-          bounds.extend(new google.maps.LatLng(currentDriverLocation.lat, currentDriverLocation.lng));
-          bounds.extend(new google.maps.LatLng(riderLatLng.lat, riderLatLng.lng));
-  
-        
-          const availableHeight = this.mapRef.nativeElement.offsetHeight;
-  
-          // Prepare map dimensions for calculating zoom level
-          const mapDim = {
-            height: availableHeight,
-            width: this.mapRef.nativeElement.offsetWidth,
-          };
-  
-          // Calculate zoom level
-          const zoomLevel = this.map.getBoundsZoomLevel(bounds, mapDim);
-  
-          // Adjust zoom level to ensure visibility with padding
-          const adjustedZoomLevel = Math.max(zoomLevel - 0.8, 11); // Min zoom of 11 for closer view
-          console.log('Driver to Rider - Calculated zoom:', zoomLevel, 'Adjusted:', adjustedZoomLevel);
-  
-          await this.map.setCameraToLocation(
-            { lat: center.latitude, lng: center.longitude },
-            adjustedZoomLevel,
-            this.map.calculateBearing(currentDriverLocation, riderLatLng)
-          );
-  
+        this.geocode.directions.route(request, async (response, status) => {
+          if (status === 'OK') {
+            const path = response.routes[0].overview_path.map(latlng => ({
+              lat: latlng.lat(),
+              lng: latlng.lng()
+            }));
 
-          // Update polyline for the route
-          if (this.newPoly) {
-            await this.clearPolyline(this.newPoly);
-           }
-           await this.addPolyline(currentDriverLocation, riderLatLng);
+            // Update these specific variables for driver-to-rider stage
+            this.driverToRiderDuration = response.routes[0].legs[0].duration.text;
+            this.driverToRiderDistance = response.routes[0].legs[0].distance.text;
+            const distanceInMeters = response.routes[0].legs[0].distance.value;
+
+            // Also update the general variables for backward compatibility
+            this.duration = this.driverToRiderDuration;
+            this.distance = this.driverToRiderDistance;
+
+            console.log(`Driving to Rider - Duration: ${this.driverToRiderDuration}, Distance: ${this.driverToRiderDistance}`);
+
+            // Enable pickup button when driver is within 100 meters of rider
+            if (distanceInMeters <= 100) {
+              this.canShowButton = true;
+              console.log('Driver is close to rider - enabling pickup button');
+            } else {
+              this.canShowButton = false;
+            }
+
+            // Use current driver location for centering
+            const currentDriverLocation = this.DriverLatLng || driverLatLng;
+            const locs = [
+              { geoCode: { latitude: currentDriverLocation.lat, longitude: currentDriverLocation.lng } },
+              { geoCode: { latitude: riderLatLng.lat, longitude: riderLatLng.lng } },
+            ];
+
+            const center = this.map.calculateCenter(locs);
+
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(new google.maps.LatLng(currentDriverLocation.lat, currentDriverLocation.lng));
+            bounds.extend(new google.maps.LatLng(riderLatLng.lat, riderLatLng.lng));
+
+
+            const availableHeight = this.mapRef.nativeElement.offsetHeight;
+
+            // Prepare map dimensions for calculating zoom level
+            const mapDim = {
+              height: availableHeight,
+              width: this.mapRef.nativeElement.offsetWidth,
+            };
+
+            // Calculate zoom level
+            const zoomLevel = this.map.getBoundsZoomLevel(bounds, mapDim);
+
+            // Adjust zoom level to ensure visibility with padding
+            const adjustedZoomLevel = Math.max(zoomLevel - 0.8, 11); // Min zoom of 11 for closer view
+            console.log('Driver to Rider - Calculated zoom:', zoomLevel, 'Adjusted:', adjustedZoomLevel);
+
+            await this.map.setCameraToLocation(
+              { lat: center.latitude, lng: center.longitude },
+              adjustedZoomLevel,
+              this.map.calculateBearing(currentDriverLocation, riderLatLng)
+            );
+
+
+            // Update polyline for the route
+            if (this.newPoly) {
+              await this.clearPolyline(this.newPoly);
+            }
+            await this.addPolyline(currentDriverLocation, riderLatLng);
 
             // Call EnterTrackingStage after determining duration and distance
-          if (!stageTransitioned) {
-            this.EnterTrackingStage();
-            stageTransitioned = true;
-            this.overlay.hideLoader();
+            if (!stageTransitioned) {
+              this.EnterTrackingStage();
+              stageTransitioned = true;
+              this.overlay.hideLoader();
+            }
+
+            // Animate the driver marker along the path to the rider
+            await this.animateMarker(this.driver_marker, path, 'assets/icon/car.png');
+          } else {
+            console.error('Direction ERROR:', response);
+            this.overlay.showAlert('Direction ERROR', JSON.stringify(response));
           }
-
-          // Animate the driver marker along the path to the rider
-          await this.animateMarker(this.driver_marker, path, 'assets/icon/car.png');
-        } else {
-          console.error('Direction ERROR:', response);
-          this.overlay.showAlert('Direction ERROR', JSON.stringify(response));
-        }
-      });
-    };
-
-    // Call updateRoute immediately to show initial route
-    await updateRoute();
-
-    // Start updating the route periodically
-    const routeUpdate$ = interval(this.UPDATE_INTERVAL).pipe(
-      switchMap(() => updateRoute())
-    );
-
-    // Subscribe to the interval observable to start updating
-    this.routeUpdateSubscription = routeUpdate$.subscribe();
-
-    // Cleanup subscription when the component or context is destroyed
-    // Call routeUpdateSubscription.unsubscribe() when needed
-
-  } catch (error) {
-    console.error('Error handling driver to rider:', error);
-  }
-}
-
-async handleRiderToDestination(driverLatLng, destinationLatLng) {
-  const markerSize = { width: 30, height: 30 };
-  const iconAnchor = { x: 10, y: 0 }; // Center bottom of the icon
-  let stageTransitioned = false;
-
-  try {
-    // Update driver marker to driver's current position
-    const driverMarker = await this.map.newMap.addMarker({
-      coordinate: driverLatLng,
-      iconUrl: 'assets/icon/car.png',
-      title: 'Driver',
-      iconSize: markerSize,
-      iconAnchor: iconAnchor,
-      iconOrigin: { x: 0, y: 0 },
-    });
-    this.driver_marker1 = driverMarker;
-
-    // Add destination marker
-    const destinationMarker = await this.map.newMap.addMarker({
-      coordinate: destinationLatLng,
-      iconUrl: 'assets/icon/flag.png',
-      title: 'Destination',
-      iconSize: markerSize,
-      iconAnchor: iconAnchor,
-      iconOrigin: { x: 0, y: 0 },
-    });
-    this.destinationMarker1 = destinationMarker;
-
-    // Function to update route, duration, and distance
-    const updateRoute = async () => {
-      // Skip initial guard until navigation stage is active
-      if (!this.drivingToDestinationStage && stageTransitioned) {
-        console.log('No longer in driving to destination stage, stopping route updates');
-        if (this.routeUpdateSubscription) {
-          this.routeUpdateSubscription.unsubscribe();
-        }
-        return;
-      }
-
-      // Use current driver location for dynamic updates
-      const currentDriverLocation = this.DriverLatLng || driverLatLng;
-
-      const request = {
-        origin: currentDriverLocation,
-        destination: destinationLatLng,
-        travelMode: google.maps.TravelMode.DRIVING,
+        });
       };
 
-      this.geocode.directions.route(request, async (response, status) => {
-        if (status === 'OK') {
-          const path = response.routes[0].overview_path.map(latlng => ({
-            lat: latlng.lat(),
-            lng: latlng.lng()
-          }));
-          
-          // Update these specific variables for rider-to-destination stage
-          this.riderToDestinationDuration = response.routes[0].legs[0].duration.text;
-          this.riderToDestinationDistance = response.routes[0].legs[0].distance.text;
-          
-          // Also update the general variables for backward compatibility
-          this.duration = this.riderToDestinationDuration;
-          this.distance = this.riderToDestinationDistance;
+      // Call updateRoute immediately to show initial route
+      await updateRoute();
 
-          console.log(`Driving to Destination - Duration: ${this.riderToDestinationDuration}, Distance: ${this.riderToDestinationDistance}`);
+      // Start updating the route periodically
+      const routeUpdate$ = interval(this.UPDATE_INTERVAL).pipe(
+        switchMap(() => updateRoute())
+      );
 
-          // Use current driver location for centering
-          const currentDriverLocation = this.DriverLatLng || driverLatLng;
-          const locs = [
-            { geoCode: { latitude: currentDriverLocation.lat, longitude: currentDriverLocation.lng } },
-            { geoCode: { latitude: destinationLatLng.lat, longitude: destinationLatLng.lng } },
-          ];
+      // Subscribe to the interval observable to start updating
+      this.routeUpdateSubscription = routeUpdate$.subscribe();
 
-          const center = this.map.calculateCenter(locs);
+      // Cleanup subscription when the component or context is destroyed
+      // Call routeUpdateSubscription.unsubscribe() when needed
 
-          const bounds = new google.maps.LatLngBounds();
-          bounds.extend(new google.maps.LatLng(currentDriverLocation.lat, currentDriverLocation.lng));
-          bounds.extend(new google.maps.LatLng(destinationLatLng.lat, destinationLatLng.lng));
-
-          const availableHeight = this.mapRef.nativeElement.offsetHeight;
-
-          // Prepare map dimensions for calculating zoom level
-          const mapDim = {
-            height: availableHeight,
-            width: this.mapRef.nativeElement.offsetWidth,
-          };
-
-          // Calculate zoom level
-          const zoomLevel = this.map.getBoundsZoomLevel(bounds, mapDim);
-
-          // Adjust zoom level to ensure visibility with padding
-          const adjustedZoomLevel = Math.max(zoomLevel - 0.8, 11); // Min zoom of 11
-          console.log('Rider to Destination - Calculated zoom:', zoomLevel, 'Adjusted:', adjustedZoomLevel);
-          
-          await this.map.setCameraToLocation(
-            { lat: center.latitude, lng: center.longitude },
-            adjustedZoomLevel,
-            this.map.calculateBearing(currentDriverLocation, destinationLatLng)
-          );
-  
-
-
-          // Update polyline for the route
-          if (this.newPoly) {
-            await this.clearPolyline(this.newPoly);
-          }
-          await this.addPolyline(currentDriverLocation, destinationLatLng);
-
-          // Call EnterDrivingToDestinationStage after determining duration and distance
-          if (!stageTransitioned) {
-            this.EnterDrivingToDestinationStage();
-            stageTransitioned = true;
-            this.overlay.hideLoader();
-          }
-
-          // Animate the driver marker along the path to the destination
-          await this.animateMarker(this.driver_marker, path, 'assets/icon/car.png');
-        } else {
-          console.error('Direction ERROR:', response);
-          this.overlay.showAlert('Direction ERROR', JSON.stringify(response));
-        }
-      });
-    };
-
-    // Call updateRoute immediately to show initial route
-    await updateRoute();
-
-    // Start updating the route periodically
-    const routeUpdate$ = interval(this.UPDATE_INTERVAL).pipe(
-      switchMap(() => updateRoute())
-    );
-
-    // Subscribe to the interval observable to start updating
-    this.routeUpdateSubscription = routeUpdate$.subscribe();
-
-
-  } catch (error) {
-    console.error('Error handling rider to destination:', error);
+    } catch (error) {
+      console.error('Error handling driver to rider:', error);
+    }
   }
-}
-  
-  
+
+  async handleRiderToDestination(driverLatLng, destinationLatLng) {
+    const markerSize = { width: 30, height: 30 };
+    const iconAnchor = { x: 10, y: 0 }; // Center bottom of the icon
+    let stageTransitioned = false;
+
+    try {
+      // Update driver marker to driver's current position
+      const driverMarker = await this.map.newMap.addMarker({
+        coordinate: driverLatLng,
+        iconUrl: 'assets/icon/car.png',
+        title: 'Driver',
+        iconSize: markerSize,
+        iconAnchor: iconAnchor,
+        iconOrigin: { x: 0, y: 0 },
+      });
+      this.driver_marker1 = driverMarker;
+
+      // Add destination marker
+      const destinationMarker = await this.map.newMap.addMarker({
+        coordinate: destinationLatLng,
+        iconUrl: 'assets/icon/flag.png',
+        title: 'Destination',
+        iconSize: markerSize,
+        iconAnchor: iconAnchor,
+        iconOrigin: { x: 0, y: 0 },
+      });
+      this.destinationMarker1 = destinationMarker;
+
+      // Function to update route, duration, and distance
+      const updateRoute = async () => {
+        // Skip initial guard until navigation stage is active
+        if (!this.drivingToDestinationStage && stageTransitioned) {
+          console.log('No longer in driving to destination stage, stopping route updates');
+          if (this.routeUpdateSubscription) {
+            this.routeUpdateSubscription.unsubscribe();
+          }
+          return;
+        }
+
+        // Use current driver location for dynamic updates
+        const currentDriverLocation = this.DriverLatLng || driverLatLng;
+
+        const request = {
+          origin: currentDriverLocation,
+          destination: destinationLatLng,
+          travelMode: google.maps.TravelMode.DRIVING,
+        };
+
+        this.geocode.directions.route(request, async (response, status) => {
+          if (status === 'OK') {
+            const path = response.routes[0].overview_path.map(latlng => ({
+              lat: latlng.lat(),
+              lng: latlng.lng()
+            }));
+
+            // Update these specific variables for rider-to-destination stage
+            this.riderToDestinationDuration = response.routes[0].legs[0].duration.text;
+            this.riderToDestinationDistance = response.routes[0].legs[0].distance.text;
+
+            // Also update the general variables for backward compatibility
+            this.duration = this.riderToDestinationDuration;
+            this.distance = this.riderToDestinationDistance;
+
+            console.log(`Driving to Destination - Duration: ${this.riderToDestinationDuration}, Distance: ${this.riderToDestinationDistance}`);
+
+            // Use current driver location for centering
+            const currentDriverLocation = this.DriverLatLng || driverLatLng;
+            const locs = [
+              { geoCode: { latitude: currentDriverLocation.lat, longitude: currentDriverLocation.lng } },
+              { geoCode: { latitude: destinationLatLng.lat, longitude: destinationLatLng.lng } },
+            ];
+
+            const center = this.map.calculateCenter(locs);
+
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(new google.maps.LatLng(currentDriverLocation.lat, currentDriverLocation.lng));
+            bounds.extend(new google.maps.LatLng(destinationLatLng.lat, destinationLatLng.lng));
+
+            const availableHeight = this.mapRef.nativeElement.offsetHeight;
+
+            // Prepare map dimensions for calculating zoom level
+            const mapDim = {
+              height: availableHeight,
+              width: this.mapRef.nativeElement.offsetWidth,
+            };
+
+            // Calculate zoom level
+            const zoomLevel = this.map.getBoundsZoomLevel(bounds, mapDim);
+
+            // Adjust zoom level to ensure visibility with padding
+            const adjustedZoomLevel = Math.max(zoomLevel - 0.8, 11); // Min zoom of 11
+            console.log('Rider to Destination - Calculated zoom:', zoomLevel, 'Adjusted:', adjustedZoomLevel);
+
+            await this.map.setCameraToLocation(
+              { lat: center.latitude, lng: center.longitude },
+              adjustedZoomLevel,
+              this.map.calculateBearing(currentDriverLocation, destinationLatLng)
+            );
+
+
+
+            // Update polyline for the route
+            if (this.newPoly) {
+              await this.clearPolyline(this.newPoly);
+            }
+            await this.addPolyline(currentDriverLocation, destinationLatLng);
+
+            // Call EnterDrivingToDestinationStage after determining duration and distance
+            if (!stageTransitioned) {
+              this.EnterDrivingToDestinationStage();
+              stageTransitioned = true;
+              this.overlay.hideLoader();
+            }
+
+            // Animate the driver marker along the path to the destination
+            await this.animateMarker(this.driver_marker, path, 'assets/icon/car.png');
+          } else {
+            console.error('Direction ERROR:', response);
+            this.overlay.showAlert('Direction ERROR', JSON.stringify(response));
+          }
+        });
+      };
+
+      // Call updateRoute immediately to show initial route
+      await updateRoute();
+
+      // Start updating the route periodically
+      const routeUpdate$ = interval(this.UPDATE_INTERVAL).pipe(
+        switchMap(() => updateRoute())
+      );
+
+      // Subscribe to the interval observable to start updating
+      this.routeUpdateSubscription = routeUpdate$.subscribe();
+
+
+    } catch (error) {
+      console.error('Error handling rider to destination:', error);
+    }
+  }
+
+
 
   async animateMarker(marker, path, iconUrl) {
     const markerSize = { width: 50, height: 50 };
     const iconAnchor = { x: 25, y: 50 }; // Center bottom of the icon
-  
+
     const moveMarker = async (i) => {
       if (i >= path.length || !this.map || !this.map.newMap) return;
-  
+
       // Safely remove old marker before adding new one
       if (marker) {
         try {
@@ -2408,10 +2461,10 @@ async handleRiderToDestination(driverLatLng, destinationLatLng) {
         }
       }
 
-      const coordinate = path[i] instanceof google.maps.LatLng ? 
-                         { lat: path[i].lat(), lng: path[i].lng() } : 
-                         { lat: path[i].lat, lng: path[i].lng };
-      
+      const coordinate = path[i] instanceof google.maps.LatLng ?
+        { lat: path[i].lat(), lng: path[i].lng() } :
+        { lat: path[i].lat, lng: path[i].lng };
+
       try {
         marker = await this.map.newMap.addMarker({
           coordinate: coordinate,
@@ -2421,19 +2474,19 @@ async handleRiderToDestination(driverLatLng, destinationLatLng) {
           iconAnchor: iconAnchor,
           iconOrigin: { x: 0, y: 0 },
         });
-        
+
         requestAnimationFrame(() => moveMarker(i + 1));
       } catch (error) {
         console.error('Error adding marker during animation:', error);
       }
     };
-  
+
     await moveMarker(0);
-  
+
     // Store the last position of the animated marker
     this.animatedMarker = marker;
   }
-  
+
 
 
   async addPolyline(loc: { lat: number, lng: number }, des: { lat: number, lng: number }): Promise<(LatLng | LatLngLiteral)[]> {
@@ -2448,7 +2501,7 @@ async handleRiderToDestination(driverLatLng, destinationLatLng) {
           geodesic: true
         }
       ];
-  
+
       this.newPoly = await this.map.newMap.addPolylines(polylines);
       return path as (LatLng | LatLngLiteral)[];
     } catch (e) {

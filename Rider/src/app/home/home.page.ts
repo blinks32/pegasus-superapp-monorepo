@@ -967,12 +967,9 @@ export class HomePage implements AfterViewInit {
     try {
       let coordinates;
 
-      if (this.platform.is('capacitor')) {
-        coordinates = await Geolocation.getCurrentPosition({
-          timeout: 10000
-        });
-      } else {
-        // Web fallback
+      // Prefer native navigator.geolocation on web for better reliability
+      if (!this.platform.is('hybrid') && navigator.geolocation) {
+        console.log('Using native web geolocation');
         coordinates = await new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -990,8 +987,14 @@ export class HomePage implements AfterViewInit {
               });
             },
             (error) => reject(error),
-            { timeout: 10000 }
+            { timeout: 10000, enableHighAccuracy: true }
           );
+        });
+      } else {
+        console.log('Using Capacitor geolocation');
+        coordinates = await Geolocation.getCurrentPosition({
+          timeout: 10000,
+          enableHighAccuracy: true
         });
       }
 
@@ -1005,13 +1008,13 @@ export class HomePage implements AfterViewInit {
       console.log('Geolocation initialized:', this.LatLng);
 
       this.startPollingPosition();
+      return true;
     } catch (error) {
       console.error('Error initializing geolocation:', error);
       this.overlay.hideLoader();
-      await this.overlay.showAlert(
-        'Location Error',
-        'Unable to get your location. Please check your device settings and try again.'
-      );
+
+      // Don't show alert here, wait for initializeMap to show a consolidated one if needed
+      return false;
     }
   }
 
@@ -1022,18 +1025,9 @@ export class HomePage implements AfterViewInit {
         this.overlay.hideLoader();
         clearInterval(this.permissionCheckInterval);
         // Try to get the current position again if permissions are granted
-        const coordinates = await Geolocation.getCurrentPosition();
-        this.coordinates = coordinates;
-        this.LatLng = {
-          lat: coordinates.coords.latitude,
-          lng: coordinates.coords.longitude,
-        };
-        console.log('Geolocation initialized:', this.LatLng);
-
-        // Start polling the user's position
-        this.startPollingPosition();
+        await this.initializeGeolocation();
       }
-    }, 1000); // Check every second
+    }, 2000); // Check every 2 seconds
   }
 
 
@@ -1041,17 +1035,18 @@ export class HomePage implements AfterViewInit {
     let lastLatLng = { lat: null, lng: null };
     let lastAddress = null;
 
+    if (this.pollingInterval) clearInterval(this.pollingInterval);
+
     this.pollingInterval = setInterval(async () => {
       try {
         let position;
 
-        if (this.platform.is('capacitor')) {
-          position = await Geolocation.getCurrentPosition();
-        } else {
-          // Web fallback
-          position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
+        if (!this.platform.is('hybrid') && navigator.geolocation) {
+          position = await new Promise<any>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
           });
+        } else {
+          position = await Geolocation.getCurrentPosition({ timeout: 5000 });
         }
 
         const newLatLng = {
@@ -1059,6 +1054,9 @@ export class HomePage implements AfterViewInit {
           lng: position.coords.longitude,
         };
 
+        if (this.LatLng && this.LatLng.lat === newLatLng.lat && this.LatLng.lng === newLatLng.lng) return;
+
+        this.LatLng = newLatLng;
         await this.database.updateLocation(newLatLng);
 
         if (this.hasSignificantLocationChange(lastLatLng, newLatLng, 50)) { // Check if moved at least 50 meters
@@ -1076,23 +1074,18 @@ export class HomePage implements AfterViewInit {
                 lastAddress = this.locationAddress;
               }
             }
-          } else {
-            console.log('Unable to update location address');
           }
         }
 
         if (this.networkService.isConnected() && !this.stopPolling) {
           const center: [number, number] = [newLatLng.lat, newLatLng.lng];
-          const radiusInM = 8000; // Example radius in meters
+          const radiusInM = 8000;
           await this.fetchAndDisplayDrivers(center, radiusInM);
-        } else {
-          console.log('No network connection.', this.stopPolling);
         }
       } catch (err) {
-        console.error('Error getting position:', err);
-        // Reduce error alerts by not showing specific errors repeatedly
+        // Silently handle polling errors to avoid spamming the console
       }
-    }, 3000); // Poll every 3 seconds for more responsive location updates
+    }, 5000);
   }
 
   hasSignificantLocationChange(oldLatLng, newLatLng, minDistance) {
@@ -1119,20 +1112,19 @@ export class HomePage implements AfterViewInit {
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval);
       this.pollingInterval = null;
-      console.log('Stopped polling position.');
-    } else {
-      console.log('No polling to stop.');
     }
   }
 
   async initializeMap() {
     try {
-      // Ensure coordinates are available before creating map
-
+      // If coordinates weren't fetched by initializeGeolocation, use fallback and show ONE notification
       if (!this.coordinates || !this.coordinates.coords) {
-        await this.overlay.showAlert('Coordinates not available, using default location', '');
         console.warn('Coordinates not available, using default location');
-        // Use default coordinates (Kuala Lumpur, Malaysia)
+
+        // Show a single, helpful toast or alert instead of multiple intrusive ones
+        this.overlay.showToast('Using default location. Please enable GPS for better accuracy.', 4000);
+
+        // Default to Kuala Lumpur
         this.coordinates = {
           coords: {
             latitude: 3.1390,
@@ -1145,6 +1137,8 @@ export class HomePage implements AfterViewInit {
           },
           timestamp: Date.now()
         };
+
+        this.LatLng = { lat: 3.1390, lng: 101.6869 };
       }
 
       await this.map.createMap(this.mapRef.nativeElement, this.coordinates);
