@@ -1,44 +1,35 @@
 {
   "$schema": "./app-config.schema.json",
-  "_instructions": "Edit this file with your API keys. No coding required! See SETUP_GUIDE.md for help.",
-  
+  "_instructions": "Edit this file with your NON-SECRET API keys. For secrets (Stripe Secret, etc.), use app-secrets.json",
   "firebase": {
-    "apiKey": "YOUR_FIREBASE_API_KEY",
-    "authDomain": "YOUR_PROJECT_ID.firebaseapp.com",
-    "projectId": "YOUR_PROJECT_ID",
-    "storageBucket": "YOUR_PROJECT_ID.firebasestorage.app",
-    "messagingSenderId": "YOUR_SENDER_ID",
-    "appId": "YOUR_APP_ID"
+    "apiKey": "AIzaSyA5ShOlRI8493ovNQ4e--utZawgmjc3x0g",
+    "authDomain": "pegasus-2be94.firebaseapp.com",
+    "projectId": "pegasus-2be94",
+    "storageBucket": "pegasus-2be94.firebasestorage.app",
+    "messagingSenderId": "459110381543",
+    "appId": "1:459110381543:android:ba2071e2cea27c5cdfaf42"
   },
-
   "googleMaps": {
-    "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+    "apiKey": "AIzaSyCTYjoPhLcshZVuEdr-amopUuVMy8lyEmA"
   },
-
   "onesignal": {
-    "appId": "YOUR_ONESIGNAL_APP_ID",
-    "restApiKey": "YOUR_ONESIGNAL_REST_API_KEY",
+    "appId": "ba7d77ed-1525-416c-9ac5-7b5d36e68740",
     "androidChannelId": ""
   },
-
   "fcm": {
-    "serverKey": "YOUR_FCM_SERVER_KEY",
-    "senderId": "YOUR_FCM_SENDER_ID"
+    "senderId": "187797802273"
   },
-
   "payment": {
-    "serverUrl": "https://your-payment-server.vercel.app/",
-    "stripePublishableKey": "YOUR_STRIPE_PUBLISHABLE_KEY"
+    "serverUrl": "https://payment-service-pi.vercel.app/",
+    "stripePublishableKey": "pk_test_YOUR_ACTUAL_PUBLISHABLE_KEY"
   },
-
   "app": {
-    "name": "My Ride App",
+    "name": "Pegasus Super App",
     "defaultCurrency": "USD",
     "defaultCountryCode": "US",
     "supportEmail": "support@example.com",
     "supportPhone": "+1234567890"
   },
-
   "defaultLogin": {
     "_description": "Default login credentials for testing. Set enabled to true to auto-fill login forms.",
     "rider": {

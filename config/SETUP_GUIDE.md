@@ -6,7 +6,9 @@ This guide walks you through setting up all the required API keys and configurat
 
 1. Open `config/app-config.json`
 2. Replace the placeholder values with your actual API keys
-3. The apps (Driver, Rider, Admin) will automatically use these values
+// turbo
+3. From the root directory, run: `npm run sync`
+4. The apps (Driver, Rider, Admin, and PaymentServer) will automatically be updated with these values
 
 ---
 

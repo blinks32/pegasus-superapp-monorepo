@@ -35,7 +35,7 @@ const razorpay = new Razorpay({
 
 // Use CORS middleware
 app.use(cors({
-  origin: 'http://localhost:8101' // Replace with your client's origin
+  origin: 'http://localhost:8101' // Rplace with your client's origin
 }));
 
 app.use(bodyParser.json());

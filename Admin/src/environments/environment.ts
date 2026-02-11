@@ -5,25 +5,25 @@
 export const environment = {
     production: false,
      firebase: {
-        apiKey: 'AIzaSyCtmbyzHwFRUoyCj4Fdjyt2qsPOCBSMenk',
-        authDomain: 'pegasus-2be94.firebaseapp.com',
-        projectId: 'pegasus-2be94',
-        storageBucket: 'pegasus-2be94.appspot.com',
-        messagingSenderId: '187797802273',
-        appId: ''
-    },
+        'apiKey': 'AIzaSyA5ShOlRI8493ovNQ4e--utZawgmjc3x0g',
+        'authDomain': 'pegasus-2be94.firebaseapp.com',
+        'projectId': 'pegasus-2be94',
+        'storageBucket': 'pegasus-2be94.firebasestorage.app',
+        'messagingSenderId': '459110381543',
+        'appId': '1:459110381543:android:ba2071e2cea27c5cdfaf42'
+},
     apiKey: 'AIzaSyCTYjoPhLcshZVuEdr-amopUuVMy8lyEmA',
     mapApiKey: 'AIzaSyBo7-gJUXqt25TEz7G-Gn6Ctdf7YsG54RY',
     onesignal: {
-        appId: 'ba7d77ed-1525-416c-9ac5-7b5d36e68740',
-        restApiKey: 'YTM3ODgyMzQtNjg1ZC00YTQwLWJmNjItNTA4M2VkMmY3MDdl',
-        android_channel_id: ''
-    },
+        'appId': 'ba7d77ed-1525-416c-9ac5-7b5d36e68740',
+        'restApiKey': 'YTM3ODgyMzQtNjg1ZC00YTQwLWJmNjItNTA4M2VkMmY3MDdl',
+        'android_channel_id': ''
+},
     fcm: {
         serverKey: '',
         senderId: '187797802273'
     },
-    serverUrl: "https://payment-server-wheat.vercel.app/",
+    serverUrl: 'https://payment-service-pi.vercel.app/',
     CountryJson: [
         {
             "name": "Afghanistan",

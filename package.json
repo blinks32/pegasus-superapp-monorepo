@@ -1,0 +1,14 @@
+{
+    "name": "pegasus-monorepo",
+    "version": "1.0.0",
+    "description": "Monorepo for Rider, Driver, and Admin apps with Payment Server",
+    "scripts": {
+        "sync": "node scripts/sync-config.js",
+        "start:rider": "cd Rider && npm start",
+        "start:driver": "cd Driver && npm start",
+        "start:admin": "cd Admin && npm start",
+        "start:server": "cd PaymentServer && npm start"
+    },
+    "author": "",
+    "license": "ISC"
+}

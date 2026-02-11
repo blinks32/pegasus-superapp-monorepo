@@ -3,23 +3,23 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-    production: true,
+    production: false,
     firebase: {
-        apiKey: 'AIzaSyA5ShOlRI8493ovNQ4e--utZawgmjc3x0g',
-        authDomain: 'pegasus-2be94.firebaseapp.com',
-        projectId: 'pegasus-2be94',
-        storageBucket: 'pegasus-2be94.firebasestorage.app',
-        messagingSenderId: '459110381543',
-        appId: '1:459110381543:android:ba2071e2cea27c5cdfaf42'
-    },
+        'apiKey': 'AIzaSyA5ShOlRI8493ovNQ4e--utZawgmjc3x0g',
+        'authDomain': 'pegasus-2be94.firebaseapp.com',
+        'projectId': 'pegasus-2be94',
+        'storageBucket': 'pegasus-2be94.firebasestorage.app',
+        'messagingSenderId': '459110381543',
+        'appId': '1:459110381543:android:ba2071e2cea27c5cdfaf42'
+},
     apiKey: 'AIzaSyCTYjoPhLcshZVuEdr-amopUuVMy8lyEmA',
     onesignal: {
-        appId: 'YOUR_ONESIGNAL_APP_ID',
-        restApiKey: 'YOUR_ONESIGNAL_REST_API_KEY',
-        android_channel_id: 'YOUR_ANDROID_CHANNEL_ID'
-    },
+        'appId': 'ba7d77ed-1525-416c-9ac5-7b5d36e68740',
+        'restApiKey': 'YTM3ODgyMzQtNjg1ZC00YTQwLWJmNjItNTA4M2VkMmY3MDdl',
+        'android_channel_id': ''
+},
     onesignalServerUrl: "http://localhost:3000/send-notification",
-    serverUrl: "https://payment-service-pi.vercel.app/",
+    serverUrl: 'https://payment-service-pi.vercel.app/',
     CountryJson: [
         {
             "name": "Afghanistan",

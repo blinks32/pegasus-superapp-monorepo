@@ -19,6 +19,7 @@
 .env.*.local
 **/.env
 **/.env.*
+config/app-secrets.json
 
 # IDE
 **/.vscode/
