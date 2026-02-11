@@ -6,6 +6,7 @@ import { AlertController, Platform, MenuController } from '@ionic/angular';
 import { filter } from 'rxjs/operators';
 import { NavigationEnd } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -14,16 +15,16 @@ import { Auth } from '@angular/fire/auth';
 })
 export class AppComponent implements OnInit {
   public appPages = [
-    { title: 'Dashboard', url: '/home', icon: 'home', color: 'primary' },
-    { title: 'All Trips', url: '/history', icon: 'cellular', color: 'primary' },
-    { title: 'Drivers', url: '/drivers', icon: 'car', color: 'primary' },
-    { title: 'Riders', url: '/customers', icon: 'person', color: 'primary' },
-    { title: 'Car Types', url: '/cartypes', icon: 'car-sport', color: 'primary' },
-    { title: 'Prices', url: '/prices', icon: 'cash', color: 'primary' },
-    { title: 'Documents', url: '/documents', icon: 'document-text', color: 'primary' },
-    { title: 'Live Support', url: '/support', icon: 'chatbubbles', color: 'primary' },
-    { title: 'Payout', url: '/payout', icon: 'wallet', color: 'primary' },
-    { title: 'General Settings', url: '/general-settings', icon: 'settings', color: 'primary' },
+    { title: 'MENU.HOME', url: '/home', icon: 'home', color: 'primary' },
+    { title: 'MENU.HISTORY', url: '/history', icon: 'cellular', color: 'primary' },
+    { title: 'MENU.DRIVERS', url: '/drivers', icon: 'car', color: 'primary' },
+    { title: 'MENU.RIDERS', url: '/customers', icon: 'person', color: 'primary' },
+    { title: 'MENU.CARTYPES', url: '/cartypes', icon: 'car-sport', color: 'primary' },
+    { title: 'MENU.PRICES', url: '/prices', icon: 'cash', color: 'primary' },
+    { title: 'MENU.DOCUMENTS', url: '/documents', icon: 'document-text', color: 'primary' },
+    { title: 'MENU.SUPPORT', url: '/support', icon: 'chatbubbles', color: 'primary' },
+    { title: 'MENU.PAYOUT', url: '/payout', icon: 'wallet', color: 'primary' },
+    { title: 'MENU.SETTINGS', url: '/general-settings', icon: 'settings', color: 'primary' },
     // { title: 'Rider App', url: '/rider-app', icon: 'phone-portrait', color: 'primary' },
     // { title: 'Driver App', url: '/driver-app', icon: 'phone-landscape', color: 'primary' },
   ];
@@ -39,7 +40,8 @@ export class AppComponent implements OnInit {
     private alertController: AlertController,
     private platform: Platform,
     private menuCtrl: MenuController,
-    private auth: Auth
+    private auth: Auth,
+    private translate: TranslateService
   ) {
     this.isMobile = this.platform.is('mobile');
   }
@@ -47,7 +49,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // Check initial route for menu visibility
     this.checkMenuVisibility();
-    
+
     // Handle initial navigation based on auth state
     this.auth.onAuthStateChanged((user) => {
       if (!user) {
@@ -69,12 +71,12 @@ export class AppComponent implements OnInit {
       while (route.firstChild) {
         route = route.firstChild;
       }
-      
+
       // Check if menu should be enabled for this route
       this.menuEnabled = route.snapshot.data?.['menuEnabled'] ?? false;
-      
+
       console.log('Route changed:', event.url, 'Menu enabled:', this.menuEnabled);
-      
+
       // If we're at the root route, redirect to login
       if (this.router.url === '/') {
         this.router.navigate(['/login']);
@@ -94,15 +96,15 @@ export class AppComponent implements OnInit {
 
   async logout() {
     const alert = await this.alertController.create({
-      header: 'Logout',
-      message: 'Are you sure you want to logout?',
+      header: this.translate.instant('MENU.LOGOUT_CONFIRM_TITLE'),
+      message: this.translate.instant('MENU.LOGOUT_CONFIRM_MESSAGE'),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translate.instant('CANCEL'),
           role: 'cancel'
         },
         {
-          text: 'Logout',
+          text: this.translate.instant('MENU.LOGOUT'),
           handler: () => {
             this.performLogout();
           }
@@ -129,7 +131,7 @@ export class AppComponent implements OnInit {
     while (route.firstChild) {
       route = route.firstChild;
     }
-    
+
     // Check if menu should be enabled for this route
     this.menuEnabled = route.snapshot.data?.['menuEnabled'] ?? false;
     console.log('Initial route check:', this.router.url, 'Menu enabled:', this.menuEnabled);

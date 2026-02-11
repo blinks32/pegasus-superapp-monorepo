@@ -9,16 +9,18 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
-import { provideAuth, getAuth, FacebookAuthProvider, GoogleAuthProvider} from '@angular/fire/auth';
+import { provideAuth, getAuth, FacebookAuthProvider, GoogleAuthProvider } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { Capacitor } from '@capacitor/core';
 import { indexedDBLocalPersistence, initializeAuth } from 'firebase/auth';
 import { getApp } from 'firebase/app';
 import { OtpComponent } from './otp/otp.component';
-import { NgOtpInputModule } from  'ng-otp-input';
-import {Client} from "@googlemaps/google-maps-services-js";
-import { HttpClientModule } from '@angular/common/http';
+import { NgOtpInputModule } from 'ng-otp-input';
+import { Client } from "@googlemaps/google-maps-services-js";
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CartypeComponent } from './cartype/cartype.component';
 import { DocumentsComponent } from './documents/documents.component';
@@ -30,6 +32,10 @@ import { RiderComponent } from './rider/rider.component';
 import { CountrySearchModalComponent } from './country-search-modal/country-search-modal.component';
 import { AlertController } from '@ionic/angular';
 import { GlobalErrorHandler } from './global-error-handler';
+
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [AppComponent, CountrySearchModalComponent, OtpComponent, CartypeComponent, DocumentsComponent, PricesComponent, SupportComponent, DriverComponent, DriverDocumentsComponent, RiderComponent],
@@ -85,16 +91,30 @@ import { GlobalErrorHandler } from './global-error-handler';
         throw error;
       }
     }),
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      }
+    }),
     BrowserAnimationsModule,
   ],
   providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, 
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
-    GoogleAuthProvider, 
-    FacebookAuthProvider, 
-    Client, 
+    GoogleAuthProvider,
+    FacebookAuthProvider,
+    Client,
     AlertController
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(translate: TranslateService) {
+    translate.setDefaultLang('en');
+    const savedLang = localStorage.getItem('preferred_language') || 'en';
+    translate.use(savedLang);
+  }
+}

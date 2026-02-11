@@ -5,15 +5,17 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { PayoutPageRoutingModule } from './payout-routing.module';
 import { PayoutPage } from './payout.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PayoutPageRoutingModule
+    PayoutPageRoutingModule,
+    TranslateModule.forChild()
   ],
   declarations: [PayoutPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class PayoutPageModule {}
+export class PayoutPageModule { }

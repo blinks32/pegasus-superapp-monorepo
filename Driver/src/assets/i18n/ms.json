@@ -44,6 +44,23 @@
       "UPLOAD_PHOTO": "Muat naik gambar profil",
       "TAP_TO_UPLOAD": "Ketuk untuk muat naik imej lesen"
     },
+    "DOCUMENTS": {
+      "TITLE": "Dokumen Diperlukan",
+      "UPLOAD": "Muat Naik",
+      "EDIT": "Edit",
+      "VIEW": "Lihat",
+      "NO_DOCUMENTS": "Tiada dokumen diperlukan",
+      "MISSING_REQUIREMENTS": "Sila lengkapkan yang berikut:",
+      "FORM_INCOMPLETE": "Medan borang tidak lengkap",
+      "PROFILE_PHOTO_REQUIRED": "Gambar profil diperlukan",
+      "LICENSE_PHOTO_REQUIRED": "Gambar lesen diperlukan",
+      "STATUS": {
+        "NOT_SUBMITTED": "Belum Dihantar",
+        "PENDING": "Sedang Disemak",
+        "APPROVED": "Diluluskan",
+        "REJECTED": "Ditolak"
+      }
+    },
     "BUTTONS": {
       "SUBMIT": "Hantar",
       "CAMERA": "Kamera",

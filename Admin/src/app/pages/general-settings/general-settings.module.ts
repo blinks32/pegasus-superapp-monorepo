@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { GeneralSettingsPageRoutingModule } from './general-settings-routing.module';
 
 import { GeneralSettingsPage } from './general-settings.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    GeneralSettingsPageRoutingModule
+    GeneralSettingsPageRoutingModule,
+    TranslateModule.forChild()
   ],
   declarations: [GeneralSettingsPage]
 })
-export class GeneralSettingsPageModule {}
+export class GeneralSettingsPageModule { }

@@ -10,12 +10,12 @@
                   <img [src]="avatar.profile?.imageUrl || 'assets/default-avatar.png'" alt="Profile Picture">
                 </ion-avatar>
               </ion-col>
-                <ion-col (click)="gotoProfile()" class="profile-info">
+              <ion-col (click)="gotoProfile()" class="profile-info">
                 <ion-title size="small">{{ avatar.profile?.name || 'User Name' }}</ion-title>
                 <ion-text color="medium">
                   <ion-title size="small">Administrator</ion-title>
                 </ion-text>
-                </ion-col>
+              </ion-col>
               <ion-col size="auto" *ngIf="!isMobile">
                 <ion-button fill="clear" (click)="toggleMenu()">
                   <ion-icon slot="icon-only" [name]="isMenuCollapsed ? 'chevron-forward' : 'chevron-back'"></ion-icon>
@@ -31,7 +31,7 @@
               <ion-item [routerLink]="[p.url]" routerDirection="root" routerLinkActive="selected" detail="false">
                 <ion-icon [name]="p.icon" slot="start" [color]="p.color"></ion-icon>
                 <ion-text color="dark">
-                  <ion-title size="small">{{ p.title }}</ion-title>
+                  <ion-title size="small">{{ p.title | translate }}</ion-title>
                 </ion-text>
               </ion-item>
             </ion-menu-toggle>

@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { DocumentsPageRoutingModule } from './documents-routing.module';
 
 import { DocumentsPage } from './documents.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DocumentsPageRoutingModule
+    DocumentsPageRoutingModule,
+    TranslateModule.forChild()
   ],
   declarations: [DocumentsPage]
 })
-export class DocumentsPageModule {}
+export class DocumentsPageModule { }
