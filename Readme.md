@@ -279,12 +279,77 @@ defaultLogin: {
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
 | Maps not loading | Check API key restrictions and enabled APIs |
 | Auth not working | Verify Firebase Auth providers are enabled |
+| **"Permission Denied"** | This common error happens when Firestore Security Rules are not configured. See the **[Firestore Security Rules](#firestore-security-rules)** section below. |
 | Push notifications failing | Check platform certificates (APNs for iOS) |
 | Payments failing | Ensure payment server URL is correct and accessible |
+
+---
+
+## 🌍 Multi-Language Support
+
+The ecosystem supports multiple languages out of the box:
+- **English (Default)**: Used as the primary language and fallback for missing keys.
+- **Malay (Bahasa Melayu)**: Full translation support for Rider, Driver, and Admin apps.
+
+### How to add a new language:
+1. Create a JSON file (e.g., `fr.json`) in the `assets/i18n/` directory of the desired app.
+2. Add the language key to the `TranslateModule` configuration in `app.module.ts`.
+
+---
+
+## 🔒 Firestore Security Rules
+
+When setting up a new Firebase project, your app will fail with **"Missing or insufficient permissions"** unless you deploy the correct Security Rules. 
+
+Navigate to **Firebase Console > Firestore Database > Rules** and use this boilerplate:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Rider Profiles
+    match /Riders/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Driver Profiles
+    match /Drivers/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Ride Requests
+    match /Request/{requestId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Admin Access
+    match /Admins/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Public Collections (e.g. App Config, Blog)
+    match /Blogs/{blogId} {
+      allow read: if true;
+    }
+  }
+}
+```
+
+---
+
+## 🔄 Configuration Synchronization
+
+This monorepo uses a **centralized configuration system**. 
+
+1. **NEVER** edit `environment.ts` files directly in sub-projects.
+2. **ALWAYS** edit `config/app-config.json`.
+3. After every change, run:
+   ```bash
+   npm run sync
+   ```
+This ensures your Firebase keys, Payment URLs, and Google Maps keys are perfectly synced across all platforms (Web, Android, iOS, and Backend).
 
 ## Need Help?
 
