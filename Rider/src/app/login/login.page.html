@@ -74,7 +74,7 @@
         </div>
 
         <!-- Submit Button -->
-        <ion-button class="submit-btn" shape="round" size="large" type="submit" [disabled]="!form.get('phone').valid"
+        <ion-button class="submit-btn" shape="round" size="large" type="button" [disabled]="!form.get('phone').valid"
           color="primary" (click)="signIn()" expand="block">
           <span *ngIf="!approve2">{{ 'CONTINUE' | translate }}</span>
           <ion-icon *ngIf="!approve2" slot="end" name="arrow-forward-outline"></ion-icon>

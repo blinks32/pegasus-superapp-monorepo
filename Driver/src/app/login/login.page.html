@@ -55,7 +55,7 @@
             <ion-icon name="information-circle-outline"></ion-icon>
             <span>TEST VERSION: Only the default number can be used.</span>
           </div>
-          <ion-button class="submit-button" shape="round" size="large" type="submit"
+          <ion-button class="submit-button" shape="round" size="large" type="button"
             [disabled]="!form.get('phone').valid" (click)="signIn()" expand="block">
             <ion-label *ngIf="!approve2">{{ 'CONTINUE' | translate }}</ion-label>
             <ion-icon *ngIf="!approve2" name="arrow-forward-outline"></ion-icon>

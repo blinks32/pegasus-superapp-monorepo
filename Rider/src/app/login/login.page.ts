@@ -243,8 +243,6 @@ export class LoginPage implements OnInit, OnDestroy {
         console.log('🧪 Test mode active - bypassing Firebase');
         this.overlay.hideLoader();
         const testOTP = localStorage.getItem('defaultOTP') || '123456';
-        // Reset test mode flag for next attempt
-        this.isInTestMode = false;
         return this.proceedWithTestMode(this.form.value.phone, testOTP);
       }
 
