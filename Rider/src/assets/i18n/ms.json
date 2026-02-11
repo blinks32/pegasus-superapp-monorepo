@@ -222,6 +222,8 @@
   "ARABIC": "Arab",
   "MALAY": "Melayu",
   "OR": "atau",
+  "OR_CONTINUE_WITH": "Atau log masuk dengan",
+  "CONTINUE_WITH_GOOGLE": "Teruskan dengan Google",
   "SIGN_IN_WITH_GOOGLE": "Log masuk dengan Google",
   "GOOGLE_SIGN_IN_ERROR": "Gagal log masuk dengan Google. Sila cuba lagi.",
   "POPUP_BLOCKED": "Pop-up telah disekat. Sila benarkan pop-up untuk laman ini dan cuba lagi.",

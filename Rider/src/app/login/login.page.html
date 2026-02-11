@@ -76,6 +76,21 @@
           <ion-icon *ngIf="!approve2" slot="end" name="arrow-forward-outline"></ion-icon>
           <ion-spinner *ngIf="approve2" name="crescent"></ion-spinner>
         </ion-button>
+
+        <!-- Divider -->
+        <div class="divider-container">
+          <div class="divider-line"></div>
+          <span class="divider-text">{{ 'OR_CONTINUE_WITH' | translate }}</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Google Login Button -->
+        <ion-button class="google-btn" expand="block" shape="round" fill="outline" 
+          (click)="signInWithGoogle()" [disabled]="isGoogleSigningIn">
+          <ion-icon *ngIf="!isGoogleSigningIn" slot="start" name="logo-google" class="google-icon"></ion-icon>
+          <span *ngIf="!isGoogleSigningIn">{{ 'CONTINUE_WITH_GOOGLE' | translate }}</span>
+          <ion-spinner *ngIf="isGoogleSigningIn" name="crescent"></ion-spinner>
+        </ion-button>
       </form>
     </div>
   </div>

@@ -217,6 +217,8 @@
   "ENGLISH": "English",
   "MALAY": "Malay",
   "OR": "or",
+  "OR_CONTINUE_WITH": "Or continue with",
+  "CONTINUE_WITH_GOOGLE": "Continue with Google",
   "SIGN_IN_WITH_GOOGLE": "Sign in with Google",
   "GOOGLE_SIGN_IN_ERROR": "Failed to sign in with Google. Please try again.",
   "POPUP_BLOCKED": "Pop-up was blocked. Please allow pop-ups for this site and try again.",

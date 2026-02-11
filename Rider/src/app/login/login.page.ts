@@ -80,6 +80,11 @@ export class LoginPage implements OnInit, OnDestroy {
     // Load saved language from Preferences
     await this.loadLanguage();
 
+    // Auto-detect user country for phone number code if not in test/default login mode
+    if (!this.defaultLoginConfig?.enabled) {
+      await this.detectUserCountry();
+    }
+
     // Initialize reCAPTCHA after a short delay to ensure DOM is ready
     setTimeout(() => {
       this.auth.recaptcha();
@@ -94,12 +99,12 @@ export class LoginPage implements OnInit, OnDestroy {
   applyDefaultLogin() {
     if (this.defaultLoginConfig?.enabled) {
       console.log('🔐 Default login enabled - auto-filling credentials');
-      
+
       // Set country code
       if (this.defaultLoginConfig.countryCode) {
         this.CountryCode = this.defaultLoginConfig.countryCode;
         this.numberT = this.defaultLoginConfig.countryCode;
-        
+
         // Find and update flag for the country
         const country = this.CountryJson.find(c => c.dialCode === this.defaultLoginConfig.countryCode);
         if (country) {
@@ -107,17 +112,17 @@ export class LoginPage implements OnInit, OnDestroy {
           this.updateFlag(country.isoCode);
         }
       }
-      
+
       // Set phone number
       if (this.defaultLoginConfig.phoneNumber) {
         this.form.controls['phone'].setValue(this.defaultLoginConfig.phoneNumber);
       }
-      
+
       // Store OTP for auto-fill in OTP modal
       if (this.defaultLoginConfig.otp) {
         localStorage.setItem('defaultOTP', this.defaultLoginConfig.otp);
       }
-      
+
       // Enable test mode for seamless login
       this.isInTestMode = true;
     }
@@ -353,10 +358,10 @@ export class LoginPage implements OnInit, OnDestroy {
         // Extract country code and phone number
         const phoneNumber = user.phoneNumber;
         // Try to match with known country codes
-        const matchedCountry = this.CountryJson.find(country => 
+        const matchedCountry = this.CountryJson.find(country =>
           phoneNumber.startsWith(country.dialCode)
         );
-        
+
         if (matchedCountry) {
           this.CountryCode = matchedCountry.dialCode;
           this.numberT = matchedCountry.dialCode;
@@ -374,9 +379,9 @@ export class LoginPage implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Google sign-in error:', error);
       await this.overlay.hideLoader();
-      
+
       let errorMessage = await this.translate.get('GOOGLE_SIGN_IN_ERROR').toPromise();
-      
+
       if (error.code === 'auth/popup-closed-by-user') {
         // User closed the popup, no need to show error
         this.isGoogleSigningIn = false;
@@ -390,7 +395,7 @@ export class LoginPage implements OnInit, OnDestroy {
       } else if (error.code === 'auth/popup-blocked') {
         errorMessage = await this.translate.get('POPUP_BLOCKED').toPromise();
       }
-      
+
       await this.overlay.showAlert(
         await this.translate.get('ERROR').toPromise(),
         errorMessage
@@ -518,7 +523,7 @@ export class LoginPage implements OnInit, OnDestroy {
           // IMPORTANT: Don't call Firebase at all in test mode
           // Return a mock user structure that matches Firebase user
           console.log('✅ Test mode: OTP verified successfully');
-          
+
           // For test mode, we need to actually authenticate with Firebase
           // but only ONCE when OTP is verified, not during initial SMS request
           try {
@@ -606,7 +611,7 @@ export class LoginPage implements OnInit, OnDestroy {
   async navigateAfterLogin(user: any) {
     try {
       console.log('Navigating after login for user:', user?.uid);
-      
+
       if (!user || !user.uid) {
         console.error('Invalid user object, redirecting to details');
         this.router.navigateByUrl('/details', { replaceUrl: true });
@@ -736,11 +741,11 @@ export class LoginPage implements OnInit, OnDestroy {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       const countryCode = data.country;
       const matchingCountry = this.CountryJson.find(
