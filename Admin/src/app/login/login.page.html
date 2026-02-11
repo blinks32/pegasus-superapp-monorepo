@@ -30,7 +30,7 @@
 
       <div class="test-mode-notice" *ngIf="isInTestMode">
         <ion-icon name="information-circle-outline"></ion-icon>
-        <span>{{ 'TEST_MODE_NOTICE' | translate }}</span>
+        <span>TEST VERSION: Only the default number can be used.</span>
       </div>
       <ion-text class="error" *ngIf="!form.get('phone').valid && form.get('phone').touched">
         <p *ngIf="form.get('phone').hasError('required')">
