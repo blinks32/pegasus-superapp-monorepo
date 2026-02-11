@@ -400,6 +400,23 @@ form.modern-form {
     transform: translateY(-2px);
   }
 
+  .test-mode-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(var(--ion-color-warning-rgb), 0.1);
+    color: var(--ion-color-warning-shade);
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    font-weight: 500;
+
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+
   ion-item {
     --background: rgba(244, 245, 248, 0.8);
     --border-radius: 12px;

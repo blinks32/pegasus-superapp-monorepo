@@ -49,6 +49,11 @@
               </ion-text>
             </ion-text>
           </div>
+
+          <div class="test-mode-notice" *ngIf="isInTestMode">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>{{ 'TEST_MODE_NOTICE' | translate }}</span>
+          </div>
           <ion-button class="submit-button" shape="round" size="large" type="submit"
             [disabled]="!form.get('phone').valid" (click)="signIn()" expand="block">
             <ion-label *ngIf="!approve2">{{ 'CONTINUE' | translate }}</ion-label>

@@ -87,6 +87,7 @@
   "UNAUTHORIZED_DOMAIN_DETAIL": "This domain is not authorized for Firebase Authentication.",
   "UNAUTHORIZED_DOMAIN_CAUSE": "📋 How to fix:\n1. Open Firebase Console\n2. Go to Authentication → Settings\n3. Add this domain to 'Authorized domains'",
   "TEST_MODE_OFFER": "Would you like to use Test Mode to continue?",
+  "TEST_MODE_NOTICE": "TEST VERSION: Only the default number can be used.",
   "CLOSE": "Close",
   "USE_TEST_MODE": "Use Test Mode",
   "OK": "OK",

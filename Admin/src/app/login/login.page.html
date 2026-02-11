@@ -27,6 +27,11 @@
           [attr.maxlength]="maxPhoneLength" (ionFocus)="Show()" (ionBlur)="Hide()" class="phone-input">
         </ion-input>
       </ion-item>
+
+      <div class="test-mode-notice" *ngIf="isInTestMode">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <span>{{ 'TEST_MODE_NOTICE' | translate }}</span>
+      </div>
       <ion-text class="error" *ngIf="!form.get('phone').valid && form.get('phone').touched">
         <p *ngIf="form.get('phone').hasError('required')">
           Please enter the Mobile Number

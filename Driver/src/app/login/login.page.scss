@@ -169,6 +169,23 @@ ion-select-option {
 }
 
 .modern-content {
+  .test-mode-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(var(--ion-color-warning-rgb), 0.1);
+    color: var(--ion-color-warning-shade);
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin: 1rem 0;
+    font-size: 14px;
+    font-weight: 500;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
   .phone-input-container {
     margin: 2rem 0;
 

@@ -7,15 +7,15 @@
 
 .app-title {
   text-align: center;
-  
+
   h1 {
     font-size: 32px;
     font-weight: 700;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
     color: var(--ion-color-primary);
   }
-  
+
   .tagline {
     font-size: 14px;
     color: var(--ion-color-medium);
@@ -40,11 +40,11 @@
 .slider-container {
   flex: 0 0 auto;
   margin: 20px 0;
-  
+
   swiper-container {
     height: 280px;
   }
-  
+
   ion-img {
     width: 100%;
     height: 100%;
@@ -61,12 +61,30 @@
   padding-bottom: 80px;
 }
 
+// Test Mode Notice
+.test-mode-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(var(--ion-color-warning-rgb), 0.1);
+  color: var(--ion-color-warning-shade);
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 500;
+
+  ion-icon {
+    font-size: 18px;
+  }
+}
+
 // Phone Input Card
 .phone-input-card {
   margin: 0 0 24px 0;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  
+
   .card-content {
     padding: 16px;
   }
@@ -82,7 +100,7 @@
   padding: 4px;
   border: 2px solid transparent;
   transition: all 0.3s ease;
-  
+
   &:focus-within {
     border-color: var(--ion-color-primary);
     background: var(--ion-color-light-tint);
@@ -101,15 +119,15 @@
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 110px;
-  
+
   &:hover {
     background: var(--ion-color-light-shade);
   }
-  
+
   &:active {
     transform: scale(0.98);
   }
-  
+
   .country-flag {
     width: 28px;
     height: 28px;
@@ -117,13 +135,13 @@
     object-fit: cover;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
-  
+
   .country-code {
     font-size: 16px;
     font-weight: 600;
     color: var(--ion-color-dark);
   }
-  
+
   .dropdown-icon {
     font-size: 16px;
     color: var(--ion-color-medium);
@@ -133,7 +151,7 @@
 // Phone Input Wrapper
 .phone-input-wrapper {
   flex: 1;
-  
+
   .phone-input {
     --padding-start: 12px;
     --padding-end: 12px;
@@ -150,7 +168,7 @@
 .validation-error {
   margin-top: 12px;
   padding: 0 4px;
-  
+
   small {
     font-size: 13px;
     display: block;
@@ -168,22 +186,22 @@
   text-transform: none;
   letter-spacing: 0.3px;
   box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
-  
+
   &:not([disabled]) {
     &:hover {
       --box-shadow: 0 6px 16px rgba(var(--ion-color-primary-rgb), 0.4);
     }
-    
+
     &:active {
       transform: scale(0.98);
     }
   }
-  
+
   ion-icon {
     font-size: 22px;
     margin-left: 8px;
   }
-  
+
   ion-spinner {
     --color: white;
   }
@@ -194,13 +212,13 @@
   display: flex;
   align-items: center;
   margin: 20px 0;
-  
+
   .divider-line {
     flex: 1;
     height: 1px;
     background: var(--ion-color-medium-tint);
   }
-  
+
   .divider-text {
     padding: 0 16px;
     color: var(--ion-color-medium);
@@ -221,24 +239,24 @@
   --color: #3c4043;
   border: 1px solid #dadce0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  
+
   &:not([disabled]) {
     &:hover {
       --background: #f8f9fa;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
-    
+
     &:active {
       transform: scale(0.98);
     }
   }
-  
+
   .google-icon {
     font-size: 22px;
     margin-right: 8px;
     color: #4285f4;
   }
-  
+
   ion-spinner {
     --color: #4285f4;
   }
@@ -247,21 +265,21 @@
 // Language FAB
 .language-fab {
   margin: 0 16px 16px 0;
-  
+
   ion-fab-button {
     --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    
+
     ion-icon {
       font-size: 24px;
     }
   }
-  
+
   ion-fab-list {
     ion-fab-button {
       width: 48px;
       height: 48px;
       margin: 8px 0;
-      
+
       ion-img {
         width: 28px;
         height: 28px;
@@ -274,7 +292,7 @@
 // Footer
 ion-footer {
   background: transparent;
-  
+
   #recaptcha-container {
     position: fixed;
     bottom: 10px;
@@ -288,6 +306,7 @@ ion-footer {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-100px);
   }
@@ -297,6 +316,7 @@ ion-footer {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(100px);
   }
@@ -315,14 +335,14 @@ ion-footer {
   .input-wrapper {
     flex-direction: row-reverse;
   }
-  
+
   .country-select-btn {
     .country-flag {
       margin-left: 8px;
       margin-right: 0;
     }
   }
-  
+
   .submit-btn {
     ion-icon {
       margin-right: 8px;
@@ -336,17 +356,17 @@ ion-footer {
 @media (max-width: 360px) {
   .app-title h1 {
     font-size: 28px;
-   
+
   }
-  
+
   .slider-container swiper-container {
     height: 220px;
   }
-  
+
   .country-select-btn {
     min-width: 95px;
     padding: 10px 12px;
-    
+
     .country-flag {
       width: 24px;
       height: 24px;

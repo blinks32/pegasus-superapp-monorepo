@@ -67,6 +67,11 @@
           </ion-card-content>
         </ion-card>
 
+        <div class="test-mode-notice" *ngIf="isInTestMode">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <span>{{ 'TEST_MODE_NOTICE' | translate }}</span>
+        </div>
+
         <!-- Submit Button -->
         <ion-button class="submit-btn" shape="round" size="large" type="submit" [disabled]="!form.get('phone').valid"
           color="primary" (click)="signIn()" expand="block">
