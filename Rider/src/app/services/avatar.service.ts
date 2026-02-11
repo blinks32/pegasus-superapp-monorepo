@@ -204,7 +204,7 @@ export class AvatarService {
 
 
   getCards(): Observable<Card[]> {
-    const userDocRef = collection(this.firestore, `Riders/${this.auth.currentUser.uid}/Cards`);
+    const userDocRef = collection(this.firestore, `Riders/${this.auth.currentUser.uid}/cards`);
     return collectionData(userDocRef) as Observable<Card[]>;
   }
 

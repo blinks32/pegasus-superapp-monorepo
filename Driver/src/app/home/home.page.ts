@@ -254,7 +254,12 @@ export class HomePage implements AfterViewInit, OnDestroy {
       await this.fetchOnlineState();
 
       await this.map.createMap(this.mapRef.nativeElement, coordinates);
-      this.mapy = true;
+      this.ngZone.run(() => {
+        this.mapy = true;
+        this.actualLocation = this.map.actualLocation;
+        this.locationAddress = this.map.locationAddress;
+        console.log('Driver map initialized with address:', this.locationAddress);
+      });
 
       this.initializeBackButtonCustomHandler();
 
@@ -289,9 +294,6 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
       // Check if there's an active ride to restore
       await this.restoreActiveRide();
-
-      this.actualLocation = this.map.actualLocation;
-      this.locationAddress = this.map.locationAddress;
 
       this.map.newMap.setOnCameraIdleListener(() => {
         this.ngZone.run(() => {

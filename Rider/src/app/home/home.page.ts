@@ -1142,8 +1142,12 @@ export class HomePage implements AfterViewInit {
       }
 
       await this.map.createMap(this.mapRef.nativeElement, this.coordinates);
-      this.mapy = true;
-      this.actualLocation = this.map.actualLocation;
+      this.ngZone.run(() => {
+        this.mapy = true;
+        this.actualLocation = this.map.actualLocation;
+        this.locationAddress = this.map.locationAddress;
+        console.log('Map initialized with address:', this.locationAddress);
+      });
       // console.log('Map initialized:', this.actualLocation, this.locationAddress);
     } catch (error) {
       this.overlay.showAlert('Error initializing map:', error);

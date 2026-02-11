@@ -301,9 +301,7 @@ The ecosystem supports multiple languages out of the box:
 
 ## 🔒 Firestore Security Rules
 
-When setting up a new Firebase project, your app will fail with **"Missing or insufficient permissions"** unless you deploy the correct Security Rules. 
-
-Navigate to **Firebase Console > Firestore Database > Rules** and use this boilerplate:
+To fix the "Missing or insufficient permissions" error, deploy these rules in your Firebase Console:
 
 ```javascript
 rules_version = '2';
@@ -312,26 +310,70 @@ service cloud.firestore {
     // Rider Profiles
     match /Riders/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Rider Cards subcollection
+      match /cards/{cardId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Rider known places
+      match /KnownPlaces/{placeId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
-    
+
     // Driver Profiles
     match /Drivers/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null; // Riders need to see drivers on map
     }
-    
+
+    // Admin Profiles
+    match /Admins/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
     // Ride Requests
     match /Request/{requestId} {
+      allow read, write, update: if request.auth != null;
+      
+      // Request messages
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+
+    // Support Messages
+    match /Messages/{userId} {
+      allow read, write: if request.auth != null && (request.auth.uid == userId || exists(/databases/$(database)/documents/Admins/$(request.auth.uid)));
+      
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null && (request.auth.uid == userId || exists(/databases/$(database)/documents/Admins/$(request.auth.uid)));
+      }
+    }
+
+    // Ride History
+    match /RideHistory/{historyId} {
       allow read, write: if request.auth != null;
     }
     
-    // Admin Access
-    match /Admins/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
+    match /users/{userId}/rideHistory/{historyId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Global Collections
+    match /Settings/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && exists(/databases/$(database)/documents/Admins/$(request.auth.uid));
     }
     
-    // Public Collections (e.g. App Config, Blog)
-    match /Blogs/{blogId} {
+    match /Blogs/{document=**} {
       allow read: if true;
+      allow write: if request.auth != null && exists(/databases/$(database)/documents/Admins/$(request.auth.uid));
+    }
+    
+    match /paystackAuthCodes/{authCode} {
+      allow read, write: if request.auth != null;
     }
   }
 }
