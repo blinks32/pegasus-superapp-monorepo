@@ -34,7 +34,8 @@
                 <ion-icon name="chevron-down-outline"></ion-icon>
               </ion-button>
               <ion-input class="phone-input" formControlName="phone" [placeholder]="'MOBILE_NUMBER' | translate"
-                type="tel" minlength="10" maxlength="11" (ionFocus)="Show()" (ionBlur)="Hide()">
+                type="tel" [readonly]="isInTestMode" minlength="10" maxlength="11" (ionFocus)="Show()"
+                (ionBlur)="Hide()">
               </ion-input>
             </ion-item>
             <ion-text class="ion-text-center" *ngIf="!form.get('phone').valid && form.get('phone').touched">

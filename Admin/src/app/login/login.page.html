@@ -23,8 +23,8 @@
           {{ defaultCountryCode ||CountryCode }}
         </ion-button>
         <div id="sign-in-button"></div>
-        <ion-input formControlName="phone" placeholder="Mobile Number" type="tel" [attr.maxlength]="maxPhoneLength"
-          (ionFocus)="Show()" (ionBlur)="Hide()" class="phone-input">
+        <ion-input formControlName="phone" placeholder="Mobile Number" type="tel" [readonly]="isInTestMode"
+          [attr.maxlength]="maxPhoneLength" (ionFocus)="Show()" (ionBlur)="Hide()" class="phone-input">
         </ion-input>
       </ion-item>
       <ion-text class="error" *ngIf="!form.get('phone').valid && form.get('phone').touched">
