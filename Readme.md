@@ -1,4 +1,88 @@
-# App Configuration Guide
+# Pegasus SuperApp Monorepo
+
+Welcome to the **Pegasus SuperApp Monorepo**. This project contains a comprehensive ride-sharing ecosystem, including mobile applications for Riders and Drivers, a powerful Administration Dashboard, and a dedicated Payment Server.
+
+Built with **Ionic Framework**, **Angular**, and **Capacitor**, this monorepo is designed for scalability and ease of deployment.
+
+---
+
+## 🏗 Project Structure
+
+- **Rider App** (`/Rider`): Mobile application for users to book rides.
+- **Driver App** (`/Driver`): Mobile application for drivers to accept and manage trips.
+- **Admin Dashboard** (`/Admin`): Web-based portal for system administrators to manage users, rides, and settings.
+- **Payment Server** (`/PaymentServer`): Node.js server handling Stripe, Paystack, and other payment integrations.
+- **Config** (`/config`): Centralized configuration for all applications.
+
+---
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** (v18.x or later recommended)
+- **npm** (comes with Node.js)
+- **Ionic CLI**: `npm install -g @ionic/cli`
+- **Native SDKs** (for mobile development):
+  - **Android Studio** for Android builds.
+  - **Xcode** (macOS only) for iOS builds.
+
+---
+
+## 🚀 Installation & Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd IONIC
+```
+
+### 2. Install Dependencies
+
+You need to install dependencies for the root and each sub-project:
+
+```bash
+# Install root dependencies
+npm install
+
+# Install sub-project dependencies
+cd Rider && npm install && cd ..
+cd Driver && npm install && cd ..
+cd Admin && npm install && cd ..
+cd PaymentServer && npm install && cd ..
+```
+
+### 3. Configure the Apps
+
+Follow the **[Configuration Guide](#app-configuration-guide)** below to set up your Firebase, Google Maps, and payment keys in `config/app-config.json`.
+
+### 4. Sync Configurations
+
+Once your `app-config.json` is ready, run the sync script to propagate these settings to all applications:
+
+```bash
+npm run sync
+```
+
+---
+
+## 💻 Running the Applications
+
+From the root directory, you can start each application using the following commands:
+
+| Application | Command | Default URL |
+|-------------|---------|-------------|
+| **Rider App** | `npm run start:rider` | http://localhost:8100 |
+| **Driver App** | `npm run start:driver` | http://localhost:4200 |
+| **Admin Dashboard** | `npm run start:admin` | http://localhost:4201* |
+| **Payment Server** | `npm run start:server` | http://localhost:3000 |
+
+*\*Note: Admin app will default to 4200 but will prompt for another port if Driver is already running. You can specify a port using `ng serve --port 4201`.*
+
+---
+
+# ⚙️ App Configuration Guide
 
 This guide walks you through setting up all the required API keys and configurations for your ride-sharing app.
 
@@ -6,7 +90,6 @@ This guide walks you through setting up all the required API keys and configurat
 
 1. Open `config/app-config.json`
 2. Replace the placeholder values with your actual API keys
-// turbo
 3. From the root directory, run: `npm run sync`
 4. The apps (Driver, Rider, Admin, and PaymentServer) will automatically be updated with these values
 
