@@ -18,7 +18,7 @@
 
     <form [formGroup]="form" class="modern-form">
       <ion-item>
-        <ion-button class="country-code-btn" fill="clear" (click)="openCountrySearchModal()">
+        <ion-button class="country-code-btn" fill="clear" (click)="openCountrySearchModal()" [disabled]="isInTestMode">
           <ion-icon name="globe-outline"></ion-icon>
           {{ defaultCountryCode ||CountryCode }}
         </ion-button>

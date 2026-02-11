@@ -28,7 +28,8 @@
           <div id="sign-in-button"></div>
           <div class="phone-input-container">
             <ion-item lines="none" class="country-select">
-              <ion-button fill="clear" class="country-button" (click)="openCountrySearchModal()">
+              <ion-button fill="clear" class="country-button" (click)="openCountrySearchModal()"
+                [disabled]="isInTestMode">
                 <img [src]="flag" class="country-flag" />
                 {{ CountryCode }}
                 <ion-icon name="chevron-down-outline"></ion-icon>

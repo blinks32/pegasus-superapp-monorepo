@@ -36,7 +36,8 @@
           <ion-card-content class="card-content">
             <div class="input-wrapper">
               <!-- Country Code Button -->
-              <button type="button" class="country-select-btn" (click)="openCountrySearchModal()">
+              <button type="button" class="country-select-btn" (click)="openCountrySearchModal()"
+                [disabled]="isInTestMode">
                 <img *ngIf="!flagLoadError" [src]="flag" class="country-flag" alt="country flag"
                   (error)="onFlagLoadError()">
                 <span *ngIf="flagLoadError" class="country-flag-emoji">{{ flagEmoji }}</span>
