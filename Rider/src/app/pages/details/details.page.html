@@ -5,7 +5,7 @@
         <h1>{{ 'PERSONAL_INFO' | translate }}</h1>
       </ion-label>
     </ion-list-header>
-  
+
     <ion-item-group class="ion-margin-horizontal">
       <!-- <div class="preview">
         <ion-avatar (click)="presentImageSourceActionSheet()">
@@ -23,46 +23,39 @@
       <form [formGroup]="form">
 
         <div class="ion-margin-vertical">
-          <ion-item class="ion-margin" [class.ion-invalid]="form.get('fullname')?.invalid && form.get('fullname')?.touched">
-            <ion-input 
-              formControlName="fullname" 
-              [placeholder]="'FIRST_NAME' | translate" 
-              type="text"
-              minlength="1"
+          <ion-item class="ion-margin"
+            [class.ion-invalid]="form.get('fullname')?.invalid && form.get('fullname')?.touched">
+            <ion-input formControlName="fullname" [placeholder]="'FIRST_NAME' | translate" type="text" minlength="1"
               maxlength="200">
             </ion-input>
           </ion-item>
-          <ion-note color="danger" class="ion-margin-horizontal ion-padding-start" *ngIf="form.get('fullname')?.invalid && form.get('fullname')?.touched">
+          <ion-note color="danger" class="ion-margin-horizontal ion-padding-start"
+            *ngIf="form.get('fullname')?.invalid && form.get('fullname')?.touched">
             <span *ngIf="form.get('fullname')?.errors?.['required']">{{ 'FIRST_NAME_REQUIRED' | translate }}</span>
             <span *ngIf="form.get('fullname')?.errors?.['minlength']">{{ 'FIRST_NAME_MIN_LENGTH' | translate }}</span>
             <span *ngIf="form.get('fullname')?.errors?.['maxlength']">{{ 'FIRST_NAME_MAX_LENGTH' | translate }}</span>
           </ion-note>
 
-          <ion-item class="ion-margin" [class.ion-invalid]="form.get('lastname')?.invalid && form.get('lastname')?.touched">
-            <ion-input 
-              formControlName="lastname" 
-              [placeholder]="'LAST_NAME' | translate" 
-              type="text"
-              minlength="1"
+          <ion-item class="ion-margin"
+            [class.ion-invalid]="form.get('lastname')?.invalid && form.get('lastname')?.touched">
+            <ion-input formControlName="lastname" [placeholder]="'LAST_NAME' | translate" type="text" minlength="1"
               maxlength="200">
             </ion-input>
           </ion-item>
-          <ion-note color="danger" class="ion-margin-horizontal ion-padding-start" *ngIf="form.get('lastname')?.invalid && form.get('lastname')?.touched">
+          <ion-note color="danger" class="ion-margin-horizontal ion-padding-start"
+            *ngIf="form.get('lastname')?.invalid && form.get('lastname')?.touched">
             <span *ngIf="form.get('lastname')?.errors?.['required']">{{ 'LAST_NAME_REQUIRED' | translate }}</span>
             <span *ngIf="form.get('lastname')?.errors?.['minlength']">{{ 'LAST_NAME_MIN_LENGTH' | translate }}</span>
             <span *ngIf="form.get('lastname')?.errors?.['maxlength']">{{ 'LAST_NAME_MAX_LENGTH' | translate }}</span>
           </ion-note>
 
           <ion-item class="ion-margin" [class.ion-invalid]="form.get('email')?.invalid && form.get('email')?.touched">
-            <ion-input 
-              formControlName="email" 
-              [placeholder]="'EMAIL_PLACEHOLDER' | translate" 
-              type="email"
-              minlength="1"
-              maxlength="200">
+            <ion-input formControlName="email" [placeholder]="'EMAIL_PLACEHOLDER' | translate" type="email"
+              [readonly]="user?.email" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
-          <ion-note color="danger" class="ion-margin-horizontal ion-padding-start" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+          <ion-note color="danger" class="ion-margin-horizontal ion-padding-start"
+            *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
             <span *ngIf="form.get('email')?.errors?.['email']">{{ 'EMAIL_INVALID' | translate }}</span>
             <span *ngIf="form.get('email')?.errors?.['maxlength']">{{ 'EMAIL_MAX_LENGTH' | translate }}</span>
           </ion-note>
@@ -73,7 +66,8 @@
       <!-- Placeholder for reCAPTCHA -->
       <div id="recaptcha-container"></div>
 
-      <ion-button shape="round" size="large" type="submit" [disabled]="!form.valid" color="primary" (click)="updateProfile()" expand="block">
+      <ion-button shape="round" size="large" type="submit" [disabled]="!form.valid" color="primary"
+        (click)="updateProfile()" expand="block">
         <ion-label *ngIf="!approve2">{{ 'CONTINUE' | translate }}</ion-label>
         <ion-icon *ngIf="!approve2" color='light' slot="end" name="arrow-forward"></ion-icon>
         <ion-progress-bar *ngIf="approve2" color='light' type="indeterminate"></ion-progress-bar>
@@ -99,10 +93,10 @@
     </ion-fab-button>
     <ion-fab-list side="top">
       <ion-fab-button (click)="changeLanguage('en')" color="light" size="small">
-            <ion-text>EN</ion-text>
+        <ion-text>EN</ion-text>
       </ion-fab-button>
       <ion-fab-button (click)="changeLanguage('ms')" color="light" size="small">
-            <ion-text>MS</ion-text>
+        <ion-text>MS</ion-text>
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>

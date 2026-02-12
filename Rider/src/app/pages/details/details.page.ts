@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Auth, updateEmail, updateProfile, User, signInWithPopup, reauthenticateWithCredential, signInWithPhoneNumber, sendEmailVerification } from '@angular/fire/auth';
+import { Auth, updateProfile, User, signInWithPopup, reauthenticateWithCredential, signInWithPhoneNumber } from '@angular/fire/auth';
 import { GoogleAuthProvider, RecaptchaVerifier, PhoneAuthProvider, EmailAuthProvider } from 'firebase/auth';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -74,11 +74,11 @@ export class DetailsPage implements OnInit {
         resultType: CameraResultType.Base64,
         source: source,
       });
-  
+
       if (image) {
         const loading = await this.loadingController.create();
         await loading.present();
-  
+
         if (!this.avatar.profile?.uid) {
           loading.dismiss();
           const alert = await this.alertController.create({
@@ -89,11 +89,11 @@ export class DetailsPage implements OnInit {
           await alert.present();
           return;
         }
-  
+
         try {
           const result = await this.avatar.uploadImage(image, this.avatar.profile.uid);
           loading.dismiss();
-  
+
           if (!result) {
             const alert = await this.alertController.create({
               header: 'Upload failed',
@@ -148,7 +148,7 @@ export class DetailsPage implements OnInit {
 
   async handleBackButton() {
     try {
-        await this.showExitConfirmation();
+      await this.showExitConfirmation();
     } catch (error) {
       console.error('Error handling back button:', error);
     }
@@ -173,7 +173,7 @@ export class DetailsPage implements OnInit {
     });
     await alert.present();
   }
-  
+
 
 
   async presentImageSourceActionSheet() {
@@ -224,10 +224,10 @@ export class DetailsPage implements OnInit {
           const image = {
             base64String: e.target.result.split(',')[1]
           };
-  
+
 
           const result = await this.avatar.uploadImage(image as Photo, this.avatar.profile.uid);
-  
+
           if (!result) {
             const alert = await this.alertController.create({
               header: 'Upload failed',
@@ -250,188 +250,11 @@ export class DetailsPage implements OnInit {
     };
     input.click();
   }
-  
 
-  async reauthenticateWithPhoneNumber(): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        const user = this.authy.currentUser;
-        if (!user) throw new Error('User not authenticated');
-  
-        console.log('Creating reCAPTCHA container');
-        const recaptchaContainerId = 'recaptcha-container';
-        let recaptchaContainer = document.getElementById(recaptchaContainerId);
-        if (!recaptchaContainer) {
-          recaptchaContainer = document.createElement('div');
-          recaptchaContainer.id = recaptchaContainerId;
-          document.body.appendChild(recaptchaContainer);
-        } else {
-          recaptchaContainer.innerHTML = ''; // Clear any existing content
-        }
-  
-        console.log('Initializing reCAPTCHA verifier');
-        const recaptchaVerifier = new RecaptchaVerifier(recaptchaContainerId, {}, this.authy);
-        const phoneNumber = user.phoneNumber;
-  
-        if (!phoneNumber) {
-          throw new Error('User phone number is missing');
-        }
-  
-        let verificationResult;
-        try {
-          console.log('Attempting to sign in with phone number');
-          verificationResult = await signInWithPhoneNumber(this.authy, phoneNumber, recaptchaVerifier);
-          console.log('Verification result:', verificationResult);
-        } catch (error) {
-          console.error('Error during signInWithPhoneNumber', error);
-          
-          let errorMessage = await this.translate.get('SIGN_IN_ERROR').toPromise();
-          
-          // Handle specific error codes
-          if (error.code === 'auth/invalid-phone-number') {
-            errorMessage = await this.translate.get('MOBILE_INVALID').toPromise();
-          } else if (error.code === 'auth/network-request-failed') {
-            errorMessage = await this.translate.get('NETWORK_ERROR').toPromise();
-          } else if (error.code === 'auth/too-many-requests') {
-            errorMessage = await this.translate.get('PLEASE_WAIT').toPromise();
-          }
-          
-          this.overlay.showAlert(
-            await this.translate.get('ERROR').toPromise(),
-            errorMessage
-          );
-          reject(error);
-          return;
-        }
-  
-        if (!verificationResult.verificationId) {
-          throw new Error('Verification ID is missing in the verification result');
-        }
-  
-        const storedOTP = localStorage.getItem('defaultOTP');
-        const userVerificationCode = storedOTP;
-        console.log("This is number: " + userVerificationCode)
-  
-        console.log('Prompting user for verification code');
-        const alert = await this.alertController.create({
-          header: 'Verification',
-          inputs: [
-            {
-              name: 'verificationCode',
-              type: 'text',
-              placeholder: 'Enter verification code',
-              value: userVerificationCode // Set default value if isRandom is true
-            }
-          ],
-          buttons: [
-            {
-              text: 'Cancel',
-              role: 'cancel',
-              handler: () => {
-                console.log('Verification cancelled');
-                reject(new Error('Verification cancelled'));
-              }
-            },
-            {
-              text: 'Verify',
-              handler: async (data) => {
-                const verificationCode = data.verificationCode;
-                if (!verificationCode) {
-                  reject(new Error('Verification code is required'));
-                  return;
-                }
-                try {
-                  console.log('Attempting to verify phone number with verification code');
-                  const phoneCredential = PhoneAuthProvider.credential(verificationResult.verificationId, verificationCode);
-                  await reauthenticateWithCredential(user, phoneCredential);
-                  localStorage.removeItem('defaultOTP');
-                  await this.updateProfile();
-                  console.log('User re-authenticated with phone number');
-                  resolve();
-                } catch (error) {
-                  console.error('Error verifying phone number', error);
-                  reject(error);
-                }
-              }
-            }
-          ]
-        });
-        await alert.present();
-  
-      } catch (error) {
-        console.error('Error during phone re-authentication', error);
-        this.overlay.showAlert('Error', error.message || 'An error occurred during phone re-authentication');
-        reject(error);
-      }
-    });
-  }
 
-  // Try to re-authenticate the user using available methods.
-  // Returns true if re-authentication succeeded, false otherwise.
-  async reauthenticateUser(): Promise<boolean> {
-    try {
-      const user = this.authy.currentUser;
-      if (!user) return false;
 
-      // Prefer phone-based re-authentication if phoneNumber exists
-      if (user.phoneNumber) {
-        try {
-          await this.reauthenticateWithPhoneNumber();
-          return true;
-        } catch (e) {
-          console.error('Phone re-authentication failed', e);
-          // continue to password fallback
-        }
-      }
 
-      // If user has an email, prompt for password to re-authenticate
-      if (user.email) {
-        return await new Promise<boolean>(async (resolve) => {
-          const alert = await this.alertController.create({
-            header: 'Re-authenticate',
-            inputs: [
-              {
-                name: 'password',
-                type: 'password',
-                placeholder: 'Enter your password'
-              }
-            ],
-            buttons: [
-              {
-                text: 'Cancel',
-                role: 'cancel',
-                handler: () => resolve(false)
-              },
-              {
-                text: 'Verify',
-                handler: async (data) => {
-                  try {
-                    const credential = EmailAuthProvider.credential(user.email!, data.password);
-                    await reauthenticateWithCredential(user, credential);
-                    resolve(true);
-                  } catch (err) {
-                    console.error('Password re-authentication failed', err);
-                    this.overlay.showAlert(await this.translate.get('ERROR').toPromise(), err.message || await this.translate.get('GENERIC_ERROR').toPromise());
-                    resolve(false);
-                  }
-                }
-              }
-            ]
-          });
-          await alert.present();
-        });
-      }
 
-      return false;
-    } catch (e) {
-      console.error('reauthenticateUser error', e);
-      return false;
-    }
-  }
-  
-  
-  
-  
 
   async updateProfile() {
     try {
@@ -452,89 +275,8 @@ export class DetailsPage implements OnInit {
           photoURL: this.imageUrl,
         });
 
-        // Check if email is provided before attempting to update it
-        if (this.form.value.email && user.email !== this.form.value.email) {
-          // Show confirmation dialog for email change
-          const alert = await this.alertController.create({
-            header: await this.translate.get('EMAIL_CHANGE').toPromise(),
-            message: await this.translate.get('EMAIL_CHANGE_VERIFY').toPromise(),
-            buttons: [
-              {
-                text: await this.translate.get('CANCEL').toPromise(),
-                role: 'cancel'
-              },
-              {
-                text: await this.translate.get('CONTINUE').toPromise(),
-                handler: async () => {
-                  try {
-                    await updateEmail(user, this.form.value.email);
-                    // Send verification email
-                    await sendEmailVerification(user);
-
-                    // Show success message
-                    await this.alertController.create({
-                      header: await this.translate.get('EMAIL_VERIFICATION_SENT').toPromise(),
-                      message: await this.translate.get('CHECK_EMAIL').toPromise(),
-                      buttons: ['OK']
-                    }).then(alert => alert.present());
-                  } catch (error) {
-                    if (error && error.code === 'auth/requires-recent-login') {
-                      const reauthOk = await this.reauthenticateUser();
-                      if (reauthOk) {
-                        try {
-                          const freshUser = this.authy.currentUser;
-                          if (freshUser) {
-                            await updateEmail(freshUser, this.form.value.email);
-                            await sendEmailVerification(freshUser);
-                            await this.alertController.create({
-                              header: await this.translate.get('EMAIL_VERIFICATION_SENT').toPromise(),
-                              message: await this.translate.get('CHECK_EMAIL').toPromise(),
-                              buttons: ['OK']
-                            }).then(a => a.present());
-                          }
-                        } catch (err2) {
-                          console.error('Failed to update email after reauthentication', err2);
-                          this.overlay.showAlert(await this.translate.get('ERROR').toPromise(), err2.message || await this.translate.get('GENERIC_ERROR').toPromise());
-                          return;
-                        }
-                      } else {
-                        // Re-authentication failed or was cancelled by the user.
-                        this.overlay.showAlert(await this.translate.get('ERROR').toPromise(), await this.translate.get('PLEASE_WAIT').toPromise());
-                        return;
-                      }
-                    } else {
-                      this.overlay.showAlert(await this.translate.get('ERROR').toPromise(), error?.message || await this.translate.get('GENERIC_ERROR').toPromise());
-                      return;
-                    }
-                  }
-
-                  // Only create/update avatar and navigate after email handling completes
-                  try {
-                    await this.avatar.createUser(
-                      `${this.form.value.fullname} ${this.form.value.lastname}`,
-                      this.form.value.email,
-                      this.imageUrl,
-                      user.phoneNumber,
-                      user.uid
-                    );
-                    this.approve2 = false;
-                    this.router.navigateByUrl('home');
-                    console.log('Profile updated');
-                  } catch (createErr) {
-                    console.error('Error creating/updating avatar after email change', createErr);
-                    this.overlay.showAlert(await this.translate.get('ERROR').toPromise(), createErr?.message || await this.translate.get('GENERIC_ERROR').toPromise());
-                    this.approve2 = false;
-                  }
-                }
-              }
-            ]
-          });
-          await alert.present();
-          // Stop further execution here; avatar.createUser will be handled in the alert handler.
-          return;
-        }
-
-        // No email change required — proceed to create/update avatar and navigate
+        // Always proceed to create/update avatar and navigate
+        // No more email change verification flow to avoid friction
         await this.avatar.createUser(
           `${this.form.value.fullname} ${this.form.value.lastname}`,
           this.form.value.email,
@@ -555,8 +297,6 @@ export class DetailsPage implements OnInit {
           await this.translate.get('ERROR').toPromise(),
           await this.translate.get('EMAIL_IN_USE').toPromise()
         );
-      } else if (e.code === 'auth/requires-recent-login') {
-        this.reauthenticateWithPhoneNumber();
       } else {
         this.overlay.showAlert(
           await this.translate.get('ERROR').toPromise(),
@@ -565,34 +305,34 @@ export class DetailsPage implements OnInit {
       }
     }
   }
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 
   async signInWithGoogle() {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(this.authy, provider);
       const user = result.user;
-  
+
       if (user) {
         this.imageUrl = user.photoURL || ''; // Update imageUrl with photoURL from Google
-  
+
         this.form.patchValue({
           fullname: user.displayName?.split(' ')[0] || '',
           lastname: user.displayName?.split(' ')[1] || '',
           email: user.email || ''
         });
-  
+
         console.log("User signed in with Google", user);
         console.log("Email:", user.email);
         console.log("Display Name:", user.displayName);
         console.log("Photo URL:", user.photoURL);
-  
+
         // Call updateProfile to update user details in Firebase
         await this.updateProfile();
       }
@@ -601,7 +341,7 @@ export class DetailsPage implements OnInit {
       this.overlay.showAlert('Sign-in failed', 'There was a problem signing in with Google.');
     }
   }
-  
+
   changeLanguage(lang: string) {
     this.translate.use(lang);
     localStorage.setItem('language', lang);
