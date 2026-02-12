@@ -30,26 +30,41 @@ export class AuthService {
   }
 
   // Initialize RecaptchaVerifier
-  recaptcha() {
+  async recaptcha() {
     try {
       // Clear existing verifier if it exists
       if (this.appVerifier) {
-        this.appVerifier.clear();
+        try {
+          this.appVerifier.clear();
+        } catch (e) {
+          console.warn('Error clearing old reCAPTCHA:', e);
+        }
         this.appVerifier = null;
         this.isRecaptchaInitialized = false;
+        // Small delay to allow DOM/library to stabilize
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
 
       // Check if the container exists
-      const container = document.getElementById('sign-in-button');
+      let container = document.getElementById('sign-in-button');
       if (!container) {
-        console.error('reCAPTCHA container not found');
+        console.error('reCAPTCHA container (sign-in-button) not found in DOM');
         return;
       }
 
-      // Clear the container
-      container.innerHTML = '';
+      // NUCLEAR OPTION: Replace the element itself to break all internal library references
+      const parent = container.parentElement;
+      if (parent) {
+        const newContainer = document.createElement('div');
+        newContainer.id = 'sign-in-button';
+        parent.replaceChild(newContainer, container);
+        container = newContainer;
+      } else {
+        container.innerHTML = '';
+      }
 
-      this.appVerifier = new RecaptchaVerifier('sign-in-button', {
+      console.log('🛡️ Re-initializing reCAPTCHA on fresh element');
+      this.appVerifier = new RecaptchaVerifier(container, {
         size: 'invisible',
         callback: (response) => {
           console.log('reCAPTCHA verified:', response);
@@ -61,11 +76,12 @@ export class AuthService {
         }
       }, this.auth);
 
-      this.appVerifier.render().then(() => {
+      try {
+        await this.appVerifier.render();
         this.isRecaptchaInitialized = true;
-        console.log('reCAPTCHA initialized successfully');
-      }).catch((error) => {
-        // If it's already rendered, we can consider it initialized
+        console.log('✅ reCAPTCHA initialized successfully');
+      } catch (error) {
+        // If it's already rendered despite our reset, we can consider it initialized
         if (error.message && error.message.includes('already been rendered')) {
           console.log('reCAPTCHA was already rendered, continuing...');
           this.isRecaptchaInitialized = true;
@@ -73,7 +89,7 @@ export class AuthService {
         }
         console.error('reCAPTCHA render error:', error);
         this.isRecaptchaInitialized = false;
-      });
+      }
     } catch (error) {
       console.error('reCAPTCHA initialization error:', error);
       this.isRecaptchaInitialized = false;
@@ -85,7 +101,7 @@ export class AuthService {
       // Ensure reCAPTCHA is initialized
       if (!this.appVerifier || !this.isRecaptchaInitialized) {
         console.log('🔄 reCAPTCHA not initialized, initializing now...');
-        this.recaptcha();
+        await this.recaptcha();
         // Wait for initialization
         await new Promise(resolve => setTimeout(resolve, 1000));
       }

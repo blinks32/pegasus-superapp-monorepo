@@ -25,6 +25,7 @@ export class AuthService {
 
   appVerifier: RecaptchaVerifier;
   confirmationResult: any;
+  private isRecaptchaInitialized = false;
 
   constructor(private auth: Auth) { }
 
@@ -36,24 +37,40 @@ export class AuthService {
   }
 
   // Initialize RecaptchaVerifier
-  recaptcha() {
+  async recaptcha() {
     try {
       // Clear existing verifier if it exists
       if (this.appVerifier) {
-        this.clearRecaptcha();
+        try {
+          this.appVerifier.clear();
+        } catch (e) {
+          console.warn('Error clearing old reCAPTCHA:', e);
+        }
+        this.appVerifier = null;
+        // Small delay to allow DOM/library to stabilize
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
 
       // Check if the container exists
-      const container = document.getElementById('sign-in-button');
+      let container = document.getElementById('sign-in-button');
       if (!container) {
-        console.error('reCAPTCHA container not found');
+        console.error('reCAPTCHA container (sign-in-button) not found in DOM');
         return;
       }
 
-      // Clear the container
-      container.innerHTML = '';
+      // NUCLEAR OPTION: Replace the element itself to break all internal library references
+      const parent = container.parentElement;
+      if (parent) {
+        const newContainer = document.createElement('div');
+        newContainer.id = 'sign-in-button';
+        parent.replaceChild(newContainer, container);
+        container = newContainer;
+      } else {
+        container.innerHTML = '';
+      }
 
-      this.appVerifier = new RecaptchaVerifier('sign-in-button', {
+      console.log('🛡️ Re-initializing reCAPTCHA on fresh element');
+      this.appVerifier = new RecaptchaVerifier(container, {
         size: 'invisible',
         callback: (response) => {
           console.log(response);
@@ -65,9 +82,16 @@ export class AuthService {
 
       // Only render on web platform
       if (typeof window !== 'undefined' && window.document && !window['Capacitor']) {
-        this.appVerifier.render().catch(err => {
-          console.warn('reCAPTCHA render error (likely already rendered):', err);
-        });
+        try {
+          await this.appVerifier.render();
+          console.log('✅ reCAPTCHA initialized successfully');
+        } catch (err) {
+          if (err.message && err.message.includes('already been rendered')) {
+            console.log('reCAPTCHA was already rendered, continuing...');
+            return;
+          }
+          console.warn('reCAPTCHA render error:', err);
+        }
       }
     } catch (error) {
       console.error('Error initializing RecaptchaVerifier:', error);
@@ -82,14 +106,15 @@ export class AuthService {
         console.error('Error clearing reCAPTCHA:', error);
       }
       this.appVerifier = null;
+      this.isRecaptchaInitialized = false;
     }
   }
 
   async signInWithPhoneNumber(phoneNumber: string) {
     try {
-      // Always ensure we have a verifier
-      if (!this.appVerifier) {
-        this.recaptcha();
+      // Ensure reCAPTCHA is initialized
+      if (!this.appVerifier || !this.isRecaptchaInitialized) {
+        await this.recaptcha();
       }
       const confirmationResult = await signInWithPhoneNumber(this.auth, phoneNumber, this.appVerifier);
       this.confirmationResult = confirmationResult;
