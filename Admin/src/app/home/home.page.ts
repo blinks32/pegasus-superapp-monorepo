@@ -42,6 +42,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   // Store chart instances to prevent memory leaks
   private charts: Map<string, Chart> = new Map();
 
+  private bufferedDrivers: any[] = null;
+
   constructor(
     private auth: Auth,
     private menuCtrl: MenuController,
@@ -211,6 +213,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       if (this.mapRef && this.mapRef.nativeElement) {
         await this.map.createMap(this.mapRef.nativeElement, this.coordinates);
         this.setupMapResize();
+        if (this.bufferedDrivers) {
+          console.log('Applying buffered driver markers');
+          await this.updateDriverMarkers(this.bufferedDrivers);
+          this.bufferedDrivers = null;
+        }
       } else {
         console.error('Map reference not found');
       }
@@ -339,7 +346,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   async updateDriverMarkers(drivers) {
     if (!this.map.newMap) {
-      console.warn('Map not initialized yet, skipping driver markers');
+      console.warn('Map not initialized yet, buffering driver markers');
+      this.bufferedDrivers = drivers;
       return;
     }
 

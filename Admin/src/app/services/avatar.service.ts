@@ -457,7 +457,7 @@ export class AvatarService {
         return { Earnings: totalEarnings };
       }),
       catchError(err => {
-        console.error('Error in getTotalEarnings:', err);
+        console.warn('Error in getTotalEarnings (likely permissions):', err);
         return of({ Earnings: 0 });
       })
     );
@@ -465,18 +465,33 @@ export class AvatarService {
 
   getCartypes() {
     const userDocRef = collection(this.firestore, `Cartypes`);
-    return collectionData(userDocRef, { idField: 'id' });
+    return collectionData(userDocRef, { idField: 'id' }).pipe(
+      catchError(err => {
+        console.warn('Error in getCartypes:', err);
+        return of([]);
+      })
+    );
   }
 
   getPrices() {
     const userDocRef = collection(this.firestore, `prices`);
-    return collectionData(userDocRef);
+    return collectionData(userDocRef).pipe(
+      catchError(err => {
+        console.warn('Error in getPrices:', err);
+        return of([]);
+      })
+    );
   }
 
   getDocuments() {
     this.ensureDocumentNode();
     const userDocRef = collection(this.firestore, `Documents`);
-    return collectionData(userDocRef);
+    return collectionData(userDocRef).pipe(
+      catchError(err => {
+        console.warn('Error in getDocuments:', err);
+        return of([]);
+      })
+    );
   }
 
   private ensureDocumentNode(): void {
@@ -486,19 +501,29 @@ export class AvatarService {
 
   getRoles() {
     const rolesRef = collection(this.firestore, 'Roles');
-    return collectionData(rolesRef);
+    return collectionData(rolesRef).pipe(
+      catchError(err => {
+        console.warn('Error in getRoles:', err);
+        return of([]);
+      })
+    );
   }
 
   getRequests() {
     const userDocRef = doc(this.firestore, `Request/${this.auth.currentUser.uid}`);
-    return docData(userDocRef);
+    return docData(userDocRef).pipe(
+      catchError(err => {
+        console.warn('Error in getRequests:', err);
+        return of(null);
+      })
+    );
   }
 
   getDrivers(): Observable<any[]> {
     const driversRef = collection(this.firestore, 'Drivers');
     return collectionData(driversRef).pipe(
       catchError(err => {
-        console.error('Error in getDrivers:', err);
+        console.warn('Error in getDrivers:', err);
         return of([]);
       })
     );
@@ -506,19 +531,29 @@ export class AvatarService {
 
   getDriverRatings(driverId: string): Observable<any[]> {
     const ratingRef = collection(this.firestore, `Drivers/${driverId}/rating`);
-    return collectionData(ratingRef);
+    return collectionData(ratingRef).pipe(
+      catchError(err => {
+        console.warn('Error in getDriverRatings:', err);
+        return of([]);
+      })
+    );
   }
 
   getDriverRatingCount(driverId: string): Observable<any[]> {
     const ratingCountRef = collection(this.firestore, `Drivers/${driverId}/ratingCount`);
-    return collectionData(ratingCountRef);
+    return collectionData(ratingCountRef).pipe(
+      catchError(err => {
+        console.warn('Error in getDriverRatingCount:', err);
+        return of([]);
+      })
+    );
   }
 
   getTrips(): Observable<any[]> {
     const tripsRef = collection(this.firestore, 'Request');
     return collectionData(tripsRef).pipe(
       catchError(err => {
-        console.error('Error in getTrips:', err);
+        console.warn('Error in getTrips:', err);
         return of([]);
       })
     );
@@ -526,37 +561,72 @@ export class AvatarService {
 
   getActiveRides(): Observable<any[]> {
     const activeRidesRef = collection(this.firestore, 'Request');
-    return collectionData(activeRidesRef);
+    return collectionData(activeRidesRef).pipe(
+      catchError(err => {
+        console.warn('Error in getActiveRides:', err);
+        return of([]);
+      })
+    );
   }
 
   getCancelledRides(): Observable<any[]> {
     const cancelledRidesRef = collection(this.firestore, 'CancelledRides');
-    return collectionData(cancelledRidesRef);
+    return collectionData(cancelledRidesRef).pipe(
+      catchError(err => {
+        console.warn('Error in getCancelledRides:', err);
+        return of([]);
+      })
+    );
   }
 
   getPayments(): Observable<any[]> {
     const paymentsRef = collection(this.firestore, 'Payments');
-    return collectionData(paymentsRef);
+    return collectionData(paymentsRef).pipe(
+      catchError(err => {
+        console.warn('Error in getPayments:', err);
+        return of([]);
+      })
+    );
   }
 
   getAllBlogs(): Observable<any[]> {
     const blogsRef = collection(this.firestore, 'Blogs');
-    return collectionData(blogsRef);
+    return collectionData(blogsRef).pipe(
+      catchError(err => {
+        console.warn('Error in getAllBlogs:', err);
+        return of([]);
+      })
+    );
   }
 
   getAllDocuments(): Observable<any[]> {
     const documentsRef = collection(this.firestore, 'Documents');
-    return collectionData(documentsRef);
+    return collectionData(documentsRef).pipe(
+      catchError(err => {
+        console.warn('Error in getAllDocuments:', err);
+        return of([]);
+      })
+    );
   }
 
   getAllCarTypes(): Observable<any[]> {
     const carTypesRef = collection(this.firestore, 'Cartypes');
-    return collectionData(carTypesRef);
+    return collectionData(carTypesRef).pipe(
+      catchError(err => {
+        console.warn('Error in getAllCarTypes:', err);
+        return of([]);
+      })
+    );
   }
 
   getAllPrices(): Observable<any[]> {
     const pricesRef = collection(this.firestore, 'prices');
-    return collectionData(pricesRef);
+    return collectionData(pricesRef).pipe(
+      catchError(err => {
+        console.warn('Error in getAllPrices:', err);
+        return of([]);
+      })
+    );
   }
 
 
@@ -564,7 +634,7 @@ export class AvatarService {
     const userDocRef = collection(this.firestore, `Riders`);
     return collectionData(userDocRef).pipe(
       catchError(err => {
-        console.error('Error in getRiders:', err);
+        console.warn('Error in getRiders:', err);
         return of([]);
       })
     );
