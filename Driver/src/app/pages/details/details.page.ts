@@ -446,27 +446,33 @@ export class DetailsPage implements OnInit, OnDestroy {
         driverLicenseImage: this.form.value.driverLicenseImage,
       };
 
-      console.log('Checking location permissions...');
-      const permissionStatus = await Geolocation.checkPermissions();
-      console.log('Location permission status:', permissionStatus);
+      let coordinates = { coords: { latitude: 0, longitude: 0 } };
 
-      if (permissionStatus.location !== 'granted') {
-        console.log('Requesting location permissions...');
-        const requestResult = await Geolocation.requestPermissions();
-        if (requestResult.location !== 'granted') {
-          throw new Error('Location permission is required to register as a driver. Please enable location access in your device settings.');
+      if (this.platform.is('hybrid')) {
+        console.log('Checking location permissions (Native)...');
+        const permissionStatus = await Geolocation.checkPermissions();
+        console.log('Location permission status:', permissionStatus);
+
+        if (permissionStatus.location !== 'granted') {
+          console.log('Requesting location permissions...');
+          const requestResult = await Geolocation.requestPermissions();
+          if (requestResult.location !== 'granted') {
+            throw new Error('Location permission is required to register as a driver. Please enable location access in your device settings.');
+          }
         }
-      }
 
-      console.log('Getting current location...');
-      const coordinates = await this.withTimeout(
-        Geolocation.getCurrentPosition({
-          enableHighAccuracy: false,
-          timeout: 15000
-        }),
-        20000,
-        'Location request timed out. Please ensure GPS is enabled and try again.'
-      );
+        console.log('Getting current location (Native)...');
+        coordinates = await this.withTimeout(
+          Geolocation.getCurrentPosition({
+            enableHighAccuracy: false,
+            timeout: 15000
+          }),
+          20000,
+          'Location request timed out. Please ensure GPS is enabled and try again.'
+        );
+      } else {
+        console.log('Running on web, bypassing native Geolocation. Using default coordinates (0,0).');
+      }
       console.log('Location obtained:', coordinates);
 
       console.log('Creating driver profile...');
