@@ -167,11 +167,18 @@ export class DetailsPage implements OnInit {
   }
 
   private setSelectedRoleFromProfile(): void {
-    if (!this.pendingRoleName || !this.roletypes.length) {
+    if (!this.roletypes.length) {
       return;
     }
 
-    const matchingRole = this.roletypes.find((role) => role.name === this.pendingRoleName);
+    // Try to match pending role from profile first
+    let matchingRole = this.roletypes.find((role) => role.name === this.pendingRoleName);
+
+    // If no profile role, fallback to "Admin" as default
+    if (!matchingRole && !this.pendingRoleName) {
+      matchingRole = this.roletypes.find((role) => role.name === 'Admin' || role.name === 'ADMIN');
+    }
+
     if (matchingRole) {
       this.selected = matchingRole;
       this.currentRole = matchingRole.name;
