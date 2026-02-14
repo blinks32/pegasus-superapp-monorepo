@@ -19,7 +19,10 @@ export class SettingsService {
     this.settings$ = docData(settingsDoc).pipe(
       map(data => {
         if (!data) {
-          return { currency: 'USD', currencySymbol: '$' };
+          const defaults = { currency: 'USD', currencySymbol: '$' };
+          // Proactively seed defaults if missing
+          void setDoc(settingsDoc, defaults, { merge: true });
+          return defaults;
         }
         return data as AppSettings;
       }),

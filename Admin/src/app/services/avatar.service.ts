@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { collection, collectionData, CollectionReference, doc, docData, DocumentData, Firestore, setDoc, updateDoc, deleteDoc, serverTimestamp, addDoc, query, orderBy, where, getDocs } from '@angular/fire/firestore';
+import { collection, collectionData, CollectionReference, doc, docData, DocumentData, Firestore, setDoc, updateDoc, deleteDoc, serverTimestamp, addDoc, query, orderBy, where, getDocs, limit } from '@angular/fire/firestore';
 import {
   getDownloadURL,
   ref,
@@ -43,6 +43,9 @@ export class AvatarService {
     this.auth.onAuthStateChanged((user) => {
       if (user) {
         this.driverCollection = collection(this.firestore, 'Drivers');
+
+        // Initialize default data if needed
+        this.initializeDefaultData();
 
 
 
@@ -861,6 +864,55 @@ export class AvatarService {
     await deleteDoc(userDocRef);
   }
 
+  private async initializeDefaultData() {
+    try {
+      console.log('Checking for default data seeding...');
+
+      // 1. Seed Roles
+      const rolesRef = collection(this.firestore, 'Roles');
+      const rolesSnap = await getDocs(query(rolesRef, limit(1)));
+      if (rolesSnap.empty) {
+        console.log('Seeding default Roles...');
+        const defaultRoles = ['Admin', 'Support', 'Manager'];
+        for (const role of defaultRoles) {
+          await addDoc(rolesRef, { name: role });
+        }
+      }
+
+      // 2. Seed Cartypes
+      const cartypesRef = collection(this.firestore, 'Cartypes');
+      const cartypesSnap = await getDocs(query(cartypesRef, limit(1)));
+      if (cartypesSnap.empty) {
+        console.log('Seeding default Cartypes...');
+        const defaultCartypes = [
+          { name: 'Economy', seatNum: 4, image: 'https://i.ibb.co/KDy365b/hatchback.png' },
+          { name: 'Comfort', seatNum: 4, image: 'https://i.ibb.co/KDy365b/hatchback.png' },
+          { name: 'SUV', seatNum: 6, image: 'https://i.ibb.co/KDy365b/hatchback.png' }
+        ];
+        for (const ct of defaultCartypes) {
+          await addDoc(cartypesRef, ct);
+        }
+      }
+
+      // 3. Seed Prices
+      const pricesRef = collection(this.firestore, 'prices');
+      const pricesSnap = await getDocs(query(pricesRef, limit(1)));
+      if (pricesSnap.empty) {
+        console.log('Seeding default Prices...');
+        const defaultPrices = [
+          { name: 'Base Fare', amount: 5 },
+          { name: 'Price per KM', amount: 2.5 }
+        ];
+        for (const p of defaultPrices) {
+          await addDoc(pricesRef, p);
+        }
+      }
+
+      console.log('Default data seeding check complete.');
+    } catch (error) {
+      console.error('Error during default data seeding:', error);
+    }
+  }
 
   async createCard(name, number, type, id) {
     try {
@@ -925,5 +977,4 @@ export class AvatarService {
       return null;
     }
   }
-
 }
