@@ -159,27 +159,21 @@ export class DetailsPage implements OnInit, OnDestroy {
   isFormCompleteForSubmission(): boolean {
     const formValid = this.form.valid;
 
-    // Accept both uploaded images (img_) and default images (assets/)
+    // Accept both uploaded images (http/https) and default images (assets/)
     const hasProfileImage = this.imageUrl &&
-      (this.imageUrl.startsWith('img_') || this.imageUrl.startsWith('assets/'));
+      (this.imageUrl.startsWith('http') || this.imageUrl.startsWith('assets/'));
 
     const licenseImageValue = this.form.get('driverLicenseImage')?.value;
     const hasLicenseImage = licenseImageValue &&
-      (licenseImageValue.startsWith('img_') || licenseImageValue.startsWith('assets/'));
-
-    // Check if all required documents have been submitted
-    const allDocumentsSubmitted = this.areAllDocumentsSubmitted();
+      (licenseImageValue.startsWith('http') || licenseImageValue.startsWith('assets/'));
 
     console.log('Form validation check:', {
       formValid,
       hasProfileImage,
       hasLicenseImage,
-      //allDocumentsSubmitted,
       imageUrl: this.imageUrl,
       licenseImageValue: licenseImageValue
     });
-
-    // return formValid && hasProfileImage && hasLicenseImage && allDocumentsSubmitted;
 
     return formValid && hasProfileImage && hasLicenseImage;
   }
@@ -338,18 +332,20 @@ export class DetailsPage implements OnInit, OnDestroy {
         await loading.present();
         this.isUploading = true;
 
-        console.log('Compressing and storing image...');
-        // Store image and get reference with timeout
-        const imageReference = await this.withTimeout(
-          this.compressImageForFirebase(image, 'profile'),
+        console.log('Uploading and storing image to Firebase Storage...');
+        // Store image in Storage and get URL with timeout
+        const imageUrl = await this.withTimeout(
+          this.avatar.uploadImage(image, this.user.uid, 'profile'),
           30000,
-          'Image processing timed out. Please try with a smaller image.'
+          'Image upload timed out. Please check your internet connection and try again.'
         );
-        this.imageUrl = imageReference;
 
-        console.log('Getting display URL...');
-        // Get display URL for immediate preview
-        this.imageDisplayUrl = await this.getImageDataUrl(imageReference, 'profile');
+        if (!imageUrl) {
+          throw new Error('Failed to upload profile image');
+        }
+
+        this.imageUrl = imageUrl;
+        this.imageDisplayUrl = imageUrl;
 
         // Trigger change detection for form validation
         this.form.updateValueAndValidity();
@@ -415,13 +411,13 @@ export class DetailsPage implements OnInit, OnDestroy {
       console.log('Starting profile update process...');
 
       // Validate profile image (accept both uploaded and default images)
-      if (!this.imageUrl || (!this.imageUrl.startsWith('img_') && !this.imageUrl.startsWith('assets/'))) {
+      if (!this.imageUrl || (!this.imageUrl.startsWith('http') && !this.imageUrl.startsWith('assets/'))) {
         throw new Error('Profile photo is required');
       }
 
       // Validate license image (accept both uploaded and default images)
       const licenseImageUrl = this.form.get('driverLicenseImage')?.value;
-      if (!licenseImageUrl || (!licenseImageUrl.startsWith('img_') && !licenseImageUrl.startsWith('assets/'))) {
+      if (!licenseImageUrl || (!licenseImageUrl.startsWith('http') && !licenseImageUrl.startsWith('assets/'))) {
         throw new Error('Driver license photo is required');
       }
 
@@ -620,14 +616,18 @@ export class DetailsPage implements OnInit, OnDestroy {
         await loading.present();
         this.isUploadingLicense = true;
 
-        // Store image and get reference
-        const imageReference = await this.compressImageForFirebase(image, 'license');
+        // Store image in Storage and get URL
+        const imageUrl = await this.avatar.uploadImage(image, this.user.uid, 'license');
+
+        if (!imageUrl) {
+          throw new Error('Failed to upload license image');
+        }
+
         this.form.patchValue({
-          driverLicenseImage: imageReference
+          driverLicenseImage: imageUrl
         });
 
-        // Get display URL for immediate preview
-        this.licenseDisplayUrl = await this.getImageDataUrl(imageReference, 'license');
+        this.licenseDisplayUrl = imageUrl;
 
         // Trigger change detection for form validation
         this.form.updateValueAndValidity();
@@ -659,84 +659,48 @@ export class DetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  private async compressImageForFirebase(image: Photo, type: 'profile' | 'license'): Promise<string> {
-    try {
-      if (!image.base64String) {
-        throw new Error('No image data provided');
-      }
-
-      if (!this.user?.uid) {
-        throw new Error('User not authenticated');
-      }
-
-      // Store the full-quality compressed image in Firestore for actual use
-      const fullQualityBase64 = await this.compressImage(image.base64String, 0.8, 800, 600);
-
-      // Store full image in Firestore
-      const timestamp = Date.now();
-      const imageId = `${type}_${timestamp}`;
-      const imageDocRef = doc(this.firestore, `Drivers/${this.user.uid}/images/${imageId}`);
-
-      await setDoc(imageDocRef, {
-        imageData: fullQualityBase64,
-        type: type,
-        uploadedAt: serverTimestamp(),
-        uploadedBy: this.user.uid
-      });
-
-      // Return a reference ID that we can use to retrieve the full image
-      const imageReference = `img_${this.user.uid}_${imageId}`;
-
-      console.log('Image stored in Firestore with ID:', imageReference);
-      console.log('Full quality image size:', fullQualityBase64.length, 'characters');
-
-      return imageReference;
-    } catch (error) {
-      console.error('Error processing image:', error);
-      throw error;
-    }
-  }
+  // Removed obsolete compressImageForFirebase method
 
   // Method to retrieve actual image data for display
   async getImageDataUrl(imageReference: string, type: 'profile' | 'license' = 'profile'): Promise<string> {
     try {
       // Handle default images
-      if (!imageReference || imageReference === 'default_profile') {
+      if (!imageReference || imageReference === 'default_profile' || imageReference === 'assets/imgs/about.svg') {
         return 'assets/imgs/about.svg';
       }
 
-      if (imageReference === 'default_license') {
+      if (imageReference === 'default_license' || imageReference === 'assets/icon/favicon.png') {
         return 'assets/icon/favicon.png';
       }
 
-      if (!imageReference.startsWith('img_')) {
-        // Return appropriate default based on type
-        return type === 'profile' ? 'assets/imgs/about.svg' : 'assets/icon/favicon.png';
+      // If it's already a full URL (Firebase Storage or other), return it directly
+      if (imageReference.startsWith('http://') || imageReference.startsWith('https://') || imageReference.startsWith('data:image')) {
+        return imageReference;
       }
 
-      // Extract user ID and image ID from reference
-      const parts = imageReference.split('_');
-      if (parts.length < 3) {
-        return type === 'profile' ? 'assets/imgs/about.svg' : 'assets/icon/favicon.png';
+      // Backward compatibility for old img_ references (if still needed for some reason)
+      if (imageReference.startsWith('img_')) {
+        // Extract user ID and image ID from reference
+        const parts = imageReference.split('_');
+        if (parts.length < 3) return type === 'profile' ? 'assets/imgs/about.svg' : 'assets/icon/favicon.png';
+
+        const userId = parts[1];
+        const imageId = parts.slice(2).join('_');
+
+        // Get image from Firestore (old method)
+        const imageDocRef = doc(this.firestore, `Drivers/${userId}/images/${imageId}`);
+        const imageDoc = await getDoc(imageDocRef);
+
+        if (imageDoc.exists()) {
+          const data = imageDoc.data();
+          return `data:image/jpeg;base64,${data.imageData}`;
+        }
       }
 
-      const userId = parts[1];
-      const imageId = parts.slice(2).join('_');
-
-      // Get image from Firestore
-      const imageDocRef = doc(this.firestore, `Drivers/${userId}/images/${imageId}`);
-      const imageDoc = await getDoc(imageDocRef);
-
-      if (imageDoc.exists()) {
-        const data = imageDoc.data();
-        return `data:image/jpeg;base64,${data.imageData}`;
-      }
-
-      // Return default if image not found
+      // Return default if image not found or unrecognizable
       return type === 'profile' ? 'assets/imgs/about.svg' : 'assets/icon/favicon.png';
     } catch (error) {
       console.error('Error retrieving image:', error);
-      // Return default on error
       return type === 'profile' ? 'assets/imgs/about.svg' : 'assets/icon/favicon.png';
     }
   }

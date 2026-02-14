@@ -448,24 +448,29 @@ export class AvatarService {
 
 
 
-  async uploadImage(cameraFile: Photo, uid: string): Promise<string | null> {
-    const storageRef = ref(this.storage, `avatars/${uid}`);
+  async uploadImage(cameraFile: Photo, uid: string, type: 'profile' | 'license' = 'profile'): Promise<string | null> {
+    const timestamp = Date.now();
+    const storageRef = ref(this.storage, `avatars/${uid}_${type}_${timestamp}`);
     try {
       // Upload the image as a base64 string
       await uploadString(storageRef, cameraFile.base64String, 'base64');
       // Get the download URL for the uploaded image
       const imageUrl = await getDownloadURL(storageRef);
       // Reference to the user's document in Firestore
-      const userDocRef = doc(this.firestore, `Riders/${uid}`);
+      const userDocRef = doc(this.firestore, `Drivers/${uid}`);
 
       // Check if the document exists
       const docSnapshot = await getDoc(userDocRef);
       if (docSnapshot.exists()) {
-        // If the document exists, update the photoURL field
-        await updateDoc(userDocRef, { photoURL: imageUrl });
+        // If the document exists, update the appropriate field
+        if (type === 'profile') {
+          await updateDoc(userDocRef, { Driver_imgUrl: imageUrl });
+        }
       } else {
-        // If the document does not exist, create it with the photoURL field
-        await setDoc(userDocRef, { photoURL: imageUrl }, { merge: true });
+        // If the document does not exist, create it with the field if it's a profile image
+        if (type === 'profile') {
+          await setDoc(userDocRef, { Driver_imgUrl: imageUrl }, { merge: true });
+        }
       }
       return imageUrl;
     } catch (e) {
