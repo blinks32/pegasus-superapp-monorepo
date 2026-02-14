@@ -188,17 +188,21 @@ export class HomePage implements AfterViewInit, OnDestroy {
     try {
       this.EnterBookingStage();
 
-      // Check and request geolocation permissions
-      const permissionStatus = await Geolocation.checkPermissions();
+      // Check and request geolocation permissions for native platforms
+      if (this.platform.is('hybrid')) {
+        const permissionStatus = await Geolocation.checkPermissions();
 
-      if (permissionStatus.location !== 'granted') {
-        // Show alert explaining why we need location access
-        await this.showLocationPermissionAlert();
-        const requestResult = await Geolocation.requestPermissions();
+        if (permissionStatus.location !== 'granted') {
+          // Show alert explaining why we need location access
+          await this.showLocationPermissionAlert();
+          const requestResult = await Geolocation.requestPermissions();
 
-        if (requestResult.location !== 'granted') {
-          throw new Error('Location permission is required to use this app');
+          if (requestResult.location !== 'granted') {
+            throw new Error('Location permission is required to use this app');
+          }
         }
+      } else {
+        console.log('Running on web, bypassing native Geolocation permission request');
       }
 
       let coordinates;
