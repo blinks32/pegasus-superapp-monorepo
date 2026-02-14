@@ -49,16 +49,24 @@ export class AvatarService {
         this.getUserProfile(user).subscribe({
           next: async (data) => {
             this.profile = data;
-            console.log(data);
+            console.log('Admin profile data:', data);
 
             if (this.profile) {
-              if (!this.profile.Access)
+              if (!this.profile.Access && this.router.url !== '/details') {
+                console.log('Access denied, navigating to details');
                 this.router.navigateByUrl('details');
+              }
 
               if (this.profile.Driver_name)
                 this.userName = this.profile.Driver_name;
 
               this.pathM = `uploads/${this.profile.uid}/profile.png`;
+            } else {
+              // Profile missing from Firestore
+              console.log('Profile missing, navigating to details');
+              if (this.router.url !== '/details') {
+                this.router.navigateByUrl('details');
+              }
             }
           },
           error: (error) => {

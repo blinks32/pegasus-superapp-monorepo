@@ -323,7 +323,21 @@ export class LoginPage implements OnInit, AfterViewInit {
 
     await modal.present();
     const { data } = await modal.onWillDismiss();
-    // Auth state changed listener will handle the navigation
+    console.log('Test mode: OTP Modal Dismissed:', data);
+
+    // Check if user is already authenticated after test mode OTP verification
+    const currentUser = this.authY.currentUser;
+    if (currentUser) {
+      console.log('Test mode: User authenticated:', currentUser);
+      if (!currentUser.email) {
+        console.log('Navigating to details page');
+        this.router.navigateByUrl('/details');
+      } else {
+        console.log('Navigating to home page');
+        this.router.navigateByUrl('/home');
+      }
+      this.overlay.hideLoader();
+    }
   }
 
   async handleAuthError(error: any) {
