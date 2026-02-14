@@ -350,7 +350,7 @@ export class DetailsPage implements OnInit, OnDestroy {
         // Trigger change detection for form validation
         this.form.updateValueAndValidity();
 
-        console.log('Profile image stored successfully with reference:', imageReference);
+        console.log('Profile image stored successfully with URL:', imageUrl);
 
         const successAlert = await this.alertController.create({
           header: await this.translate.get('COMMON.SUCCESS').toPromise() || 'Success',
@@ -632,7 +632,7 @@ export class DetailsPage implements OnInit, OnDestroy {
         // Trigger change detection for form validation
         this.form.updateValueAndValidity();
 
-        console.log('License image stored successfully with reference:', imageReference);
+        console.log('License image stored successfully with URL:', imageUrl);
 
         const successAlert = await this.alertController.create({
           header: await this.translate.get('COMMON.SUCCESS').toPromise() || 'Success',
