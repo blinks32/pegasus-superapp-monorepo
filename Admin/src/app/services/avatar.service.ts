@@ -19,7 +19,7 @@ import { Drivers } from '../interfaces/drivers';
 import { DriverUpdate } from '../interfaces/driverUpdate';
 import { Rider } from '../interfaces/rider';
 import { AuthService } from './auth.service';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -455,6 +455,10 @@ export class AvatarService {
           totalEarnings += driverEarnings;
         });
         return { Earnings: totalEarnings };
+      }),
+      catchError(err => {
+        console.error('Error in getTotalEarnings:', err);
+        return of({ Earnings: 0 });
       })
     );
   }
@@ -492,7 +496,12 @@ export class AvatarService {
 
   getDrivers(): Observable<any[]> {
     const driversRef = collection(this.firestore, 'Drivers');
-    return collectionData(driversRef);
+    return collectionData(driversRef).pipe(
+      catchError(err => {
+        console.error('Error in getDrivers:', err);
+        return of([]);
+      })
+    );
   }
 
   getDriverRatings(driverId: string): Observable<any[]> {
@@ -507,7 +516,12 @@ export class AvatarService {
 
   getTrips(): Observable<any[]> {
     const tripsRef = collection(this.firestore, 'Request');
-    return collectionData(tripsRef);
+    return collectionData(tripsRef).pipe(
+      catchError(err => {
+        console.error('Error in getTrips:', err);
+        return of([]);
+      })
+    );
   }
 
   getActiveRides(): Observable<any[]> {
@@ -548,7 +562,12 @@ export class AvatarService {
 
   getRiders() {
     const userDocRef = collection(this.firestore, `Riders`);
-    return collectionData(userDocRef);
+    return collectionData(userDocRef).pipe(
+      catchError(err => {
+        console.error('Error in getRiders:', err);
+        return of([]);
+      })
+    );
   }
 
   async addChatMessage(msg, uid) {

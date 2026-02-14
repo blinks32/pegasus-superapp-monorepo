@@ -278,20 +278,33 @@ export class HomePage implements AfterViewInit, OnDestroy {
         lng: coordinates.coords.longitude,
       };
 
-      this.database.getEarnings().subscribe(async (d) => {
-        const earnings = Number(d.Earnings ?? 0);
-        this.earnings = Number.isFinite(earnings) ? Number(earnings.toFixed(2)) : 0;
+      this.database.getEarnings().subscribe({
+        next: async (d) => {
+          const earnings = Number(d.Earnings ?? 0);
+          this.earnings = Number.isFinite(earnings) ? Number(earnings.toFixed(2)) : 0;
+        },
+        error: (err) => {
+          console.error('Error getting earnings:', err);
+          this.earnings = 0;
+        }
       });
 
-      this.database.getCards().subscribe(async (d) => {
-        this.cards = d;
-        this.approve = false;
-        this.cards.forEach((element) => {
-          if (element.selected) {
-            this.selected = element;
-            this.selectedCard = element.name;
-          }
-        });
+      this.database.getCards().subscribe({
+        next: async (d) => {
+          this.cards = d;
+          this.approve = false;
+          this.cards.forEach((element) => {
+            if (element.selected) {
+              this.selected = element;
+              this.selectedCard = element.name;
+            }
+          });
+        },
+        error: (err) => {
+          console.error('Error getting cards:', err);
+          this.cards = [];
+          this.approve = false;
+        }
       });
 
       await this.handleDriverRequestSnapshot();

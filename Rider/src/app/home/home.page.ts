@@ -548,7 +548,7 @@ export class HomePage implements AfterViewInit {
   async checkAndRequestLocationPermissions() {
     try {
       // Check if running on web platform
-      if (this.platform.is('capacitor')) {
+      if (this.platform.is('hybrid')) {
         const permissionStatus = await Geolocation.checkPermissions();
 
         if (permissionStatus.location === 'granted') {

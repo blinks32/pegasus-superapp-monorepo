@@ -38,7 +38,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private startWidth: number;
 
   private platformSubscription: any;
-  
+
   // Store chart instances to prevent memory leaks
   private charts: Map<string, Chart> = new Map();
 
@@ -90,7 +90,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       },
       timestamp: Date.now()
     };
-    
+
     this.LatLng = {
       lat: this.coordinates.coords.latitude,
       lng: this.coordinates.coords.longitude
@@ -100,13 +100,15 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   private async getCurrentLocation() {
     try {
       // Check if running on mobile
-      if (this.platform.is('capacitor')) {
+      if (this.platform.is('hybrid')) {
         // Request permissions explicitly for mobile
         const permResult = await Geolocation.requestPermissions();
         if (permResult.location !== 'granted') {
           console.warn('Location permission not granted, using default coordinates');
           return;
         }
+      } else {
+        console.log('Running on web, bypassing native Geolocation permission request');
       }
 
       // Try high accuracy first with shorter timeout
@@ -116,17 +118,17 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
           timeout: 5000,
           maximumAge: 60000 // Accept cached position up to 1 minute old
         });
-        
+
         this.coordinates = position;
         this.LatLng = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
         console.log('Got high accuracy location:', this.LatLng);
-        
+
       } catch (highAccuracyError) {
         console.warn('High accuracy location failed, trying low accuracy:', highAccuracyError);
-        
+
         // Fallback to low accuracy with longer timeout
         try {
           const position = await Geolocation.getCurrentPosition({
@@ -134,20 +136,20 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             timeout: 10000,
             maximumAge: 300000 // Accept cached position up to 5 minutes old
           });
-          
+
           this.coordinates = position;
           this.LatLng = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
           console.log('Got low accuracy location:', this.LatLng);
-          
+
         } catch (lowAccuracyError) {
           console.warn('All geolocation attempts failed, using default coordinates:', lowAccuracyError);
           // Keep default coordinates set in setDefaultCoordinates()
         }
       }
-      
+
     } catch (e) {
       console.error('Error getting location:', e);
       // Keep default coordinates
@@ -167,21 +169,39 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.database.getDrivers().subscribe((d) => {
-      this.numDrivers = d.length;
-      this.updateChart(this.driversChartRef, [this.numDrivers], 'Drivers');
-      this.updateDriverMarkers(d);
+    this.database.getDrivers().subscribe({
+      next: (d) => {
+        this.numDrivers = d.length;
+        this.updateChart(this.driversChartRef, [this.numDrivers], 'Drivers');
+        this.updateDriverMarkers(d);
+      },
+      error: (err) => {
+        console.error('Error getting drivers:', err);
+        this.numDrivers = 0;
+      }
     });
 
-    this.database.getRiders().subscribe((d) => {
-      this.numRiders = d.length;
-      this.updateChart(this.ridersChartRef, [this.numRiders], 'Riders');
+    this.database.getRiders().subscribe({
+      next: (d) => {
+        this.numRiders = d.length;
+        this.updateChart(this.ridersChartRef, [this.numRiders], 'Riders');
+      },
+      error: (err) => {
+        console.error('Error getting riders:', err);
+        this.numRiders = 0;
+      }
     });
 
     // Assuming you have a method to get trips data
-    this.database.getTrips().subscribe((d) => {
-      this.numTrips = d.length;
-      this.updateChart(this.tripsChartRef, [this.numTrips], 'Trips');
+    this.database.getTrips().subscribe({
+      next: (d) => {
+        this.numTrips = d.length;
+        this.updateChart(this.tripsChartRef, [this.numTrips], 'Trips');
+      },
+      error: (err) => {
+        console.error('Error getting trips:', err);
+        this.numTrips = 0;
+      }
     });
   }
 
@@ -206,14 +226,14 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const chartId = label.toLowerCase();
-    
+
     // Destroy existing chart if it exists
     if (this.charts.has(chartId)) {
       this.charts.get(chartId)?.destroy();
     }
 
     const ctx = chartRef.nativeElement.getContext('2d');
-    
+
     // Define color schemes for different chart types
     const colorSchemes = {
       'earnings': {
