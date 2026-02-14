@@ -181,7 +181,7 @@ export class DetailsPage implements OnInit, OnDestroy {
 
     // return formValid && hasProfileImage && hasLicenseImage && allDocumentsSubmitted;
 
-    return formValid && hasProfileImage && hasLicenseImage ;
+    return formValid && hasProfileImage && hasLicenseImage;
   }
 
   // Method to check if all required documents are submitted
@@ -675,7 +675,7 @@ export class DetailsPage implements OnInit, OnDestroy {
       // Store full image in Firestore
       const timestamp = Date.now();
       const imageId = `${type}_${timestamp}`;
-      const imageDocRef = doc(this.firestore, `drivers/${this.user.uid}/images/${imageId}`);
+      const imageDocRef = doc(this.firestore, `Drivers/${this.user.uid}/images/${imageId}`);
 
       await setDoc(imageDocRef, {
         imageData: fullQualityBase64,
@@ -724,7 +724,7 @@ export class DetailsPage implements OnInit, OnDestroy {
       const imageId = parts.slice(2).join('_');
 
       // Get image from Firestore
-      const imageDocRef = doc(this.firestore, `drivers/${userId}/images/${imageId}`);
+      const imageDocRef = doc(this.firestore, `Drivers/${userId}/images/${imageId}`);
       const imageDoc = await getDoc(imageDocRef);
 
       if (imageDoc.exists()) {
@@ -961,7 +961,7 @@ export class DetailsPage implements OnInit, OnDestroy {
    */
   async showTextInputDialog(requiredDoc: RequiredDocument) {
     const currentValue = this.getSubmittedValue(requiredDoc.id);
-    
+
     const alert = await this.alertController.create({
       header: requiredDoc.name,
       message: requiredDoc.description || 'Please enter the required information.',
@@ -1041,7 +1041,7 @@ export class DetailsPage implements OnInit, OnDestroy {
 
     try {
       this.uploadingDocumentId = requiredDoc.id;
-      
+
       const image = await Camera.getPhoto({
         quality: 80,
         allowEditing: false,
@@ -1079,7 +1079,7 @@ export class DetailsPage implements OnInit, OnDestroy {
 
     } catch (error: any) {
       console.error('Error uploading document image:', error);
-      
+
       if (!error.message?.includes('User cancelled')) {
         await this.showErrorAlert(
           error.message || 'Failed to upload image. Please try again.'
@@ -1087,7 +1087,7 @@ export class DetailsPage implements OnInit, OnDestroy {
       }
     } finally {
       this.uploadingDocumentId = null;
-      await loading.dismiss().catch(() => {});
+      await loading.dismiss().catch(() => { });
     }
   }
 
@@ -1099,7 +1099,7 @@ export class DetailsPage implements OnInit, OnDestroy {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'application/pdf';
-    
+
     fileInput.onchange = async (event: any) => {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -1120,7 +1120,7 @@ export class DetailsPage implements OnInit, OnDestroy {
 
         // Convert file to base64
         const base64 = await this.fileToBase64(file);
-        
+
         // Upload to Firebase Storage
         const timestamp = Date.now();
         const fileName = `documents/${this.user.uid}/${requiredDoc.id}_${timestamp}.pdf`;
@@ -1149,7 +1149,7 @@ export class DetailsPage implements OnInit, OnDestroy {
         );
       } finally {
         this.uploadingDocumentId = null;
-        await loading.dismiss().catch(() => {});
+        await loading.dismiss().catch(() => { });
       }
     };
 
