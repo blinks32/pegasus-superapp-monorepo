@@ -522,10 +522,14 @@ export class LoginPage implements OnInit, OnDestroy {
     // Use the correct test phone number from config
     const testPhoneNumber = this.defaultLoginConfig?.phoneNumber || phoneNumber;
     const testCountryCode = this.defaultLoginConfig?.countryCode || this.numberT || '+60';
+    const isPureMockEnabled = true; // Set to true to allow pure UI development without ANY Firebase Auth config
 
     console.log(`🧪 Proceeding with test mode: ${testCountryCode}${testPhoneNumber}`);
+    if (isPureMockEnabled) {
+      console.warn('⚠️ PURE MOCK MODE: Firebase Auth will be completely bypassed if real call fails.');
+    }
 
-    // Create a PURE MOCK confirmation result - NO FIREBASE CALLS initially
+    // Create a PURE MOCK confirmation result
     const mockConfirmationResult = {
       confirm: async (otp: string) => {
         console.log('🧪 Test mode: Verifying OTP:', otp);
@@ -536,18 +540,37 @@ export class LoginPage implements OnInit, OnDestroy {
             this.overlay.showLoader('Signing in...');
             const fullPhoneNumber = testCountryCode + testPhoneNumber;
 
-            // This is the ONLY Firebase call in test mode - when OTP is verified
-            // We ensure reCAPTCHA is cleared before this to avoid "already rendered" error
+            // Clear reCAPTCHA before real call
             this.auth.clearRecaptcha();
 
-            const realConfirmationResult = await this.auth.signInWithPhoneNumber(fullPhoneNumber);
-            const result = await realConfirmationResult.confirm(otp);
-            this.overlay.hideLoader();
-            console.log('✅ Test mode: Firebase authentication completed');
-            return result;
+            try {
+              const realConfirmationResult = await this.auth.signInWithPhoneNumber(fullPhoneNumber);
+              const result = await realConfirmationResult.confirm(otp);
+              this.overlay.hideLoader();
+              console.log('✅ Test mode: Firebase authentication completed');
+              return result;
+            } catch (authError) {
+              this.overlay.hideLoader();
+              console.error('❌ Test mode: Firebase authentication failed:', authError);
+
+              if (isPureMockEnabled) {
+                console.warn('🧪 FALLBACK: Using Mock User because Pure Mocking is enabled.');
+                // Return a mock user object that matches Firebase User structure enough for the app to proceed
+                return {
+                  user: {
+                    uid: `mock-user-${Date.now()}`,
+                    phoneNumber: fullPhoneNumber,
+                    displayName: 'Test User',
+                    email: 'test@example.com',
+                    photoURL: 'https://ionicframework.com/docs/img/demos/avatar.svg'
+                  }
+                };
+              }
+              throw authError;
+            }
           } catch (error) {
             this.overlay.hideLoader();
-            console.error('❌ Test mode: Firebase authentication failed:', error);
+            console.error('❌ Test mode error:', error);
             throw error;
           }
         } else {

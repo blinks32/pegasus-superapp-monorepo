@@ -13,6 +13,7 @@ import {
 import { RecaptchaVerifier, GoogleAuthProvider } from 'firebase/auth';
 import { User } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -96,6 +97,14 @@ export class AuthService {
     }
   }
 
+  /**
+   * Generates a link to the Firebase Console for the current project
+   */
+  private getFirebaseConsoleLink(subPath: string): string {
+    const projectId = environment.firebase.projectId || 'YOUR_PROJECT_ID';
+    return `https://console.firebase.google.com/project/${projectId}/${subPath}`;
+  }
+
   async signInWithPhoneNumber(phoneNumber: string) {
     try {
       // Ensure reCAPTCHA is initialized
@@ -136,6 +145,7 @@ export class AuthService {
 
       // Detailed error analysis
       if (e.code === 'auth/invalid-app-credential') {
+        const settingsUrl = this.getFirebaseConsoleLink('settings/general');
         console.error('');
         console.error('🔴 CRITICAL: Invalid App Credential Error');
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -152,7 +162,7 @@ export class AuthService {
         console.error('cd android && .\\gradlew signingReport');
         console.error('');
         console.error('🔗 Firebase Console:');
-        console.error('https://console.firebase.google.com/project/pegasus-2be94/settings/general');
+        console.error(settingsUrl);
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       } else if (e.code === 'auth/quota-exceeded' || e.code === 'auth/too-many-requests') {
         console.error('');
@@ -179,6 +189,7 @@ export class AuthService {
         console.error('Check internet connectivity');
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       } else if (e.code === 'auth/operation-not-allowed') {
+        const authProvidersUrl = this.getFirebaseConsoleLink('authentication/providers');
         console.error('');
         console.error('🚫 CRITICAL: SMS Region/Operation Not Allowed');
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -190,9 +201,10 @@ export class AuthService {
         console.error('3. Check if your project has a billing account (some regions require it)');
         console.error('');
         console.error('🔗 Phone Auth Settings:');
-        console.error('https://console.firebase.google.com/project/pegasus-2be94/authentication/providers');
+        console.error(authProvidersUrl);
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       } else if (e.code === 'auth/unauthorized-domain') {
+        const authSettingsUrl = this.getFirebaseConsoleLink('authentication/settings');
         console.error('');
         console.error('🌐 CRITICAL: Unauthorized Domain');
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -203,7 +215,7 @@ export class AuthService {
         console.error('2. Add your domain (e.g., rider-mono.vercel.app) to "Authorized domains"');
         console.error('');
         console.error('🔗 Authorized Domains Settings:');
-        console.error('https://console.firebase.google.com/project/pegasus-2be94/authentication/settings');
+        console.error(authSettingsUrl);
         console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       }
 
