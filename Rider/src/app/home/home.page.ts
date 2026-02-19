@@ -1016,7 +1016,7 @@ export class HomePage implements AfterViewInit {
       // Update map camera to new location
       if (this.mapy && this.LatLng) {
         try {
-          await this.map.newMap.enableCurrentLocation(true);
+          await this.map.newMap.enableCurrentLocation(true).catch(() => { });
         } catch (e) {
           console.warn('Could not enable native location dot on retry:', e);
         }
@@ -2124,7 +2124,7 @@ export class HomePage implements AfterViewInit {
     // Re-enable map interactions if needed
     if (this.map && this.map.newMap) {
       try {
-        await this.map.newMap.enableCurrentLocation(true);
+        await this.map.newMap.enableCurrentLocation(true).catch(() => { });
         this.map.newMap.enableTouch();
       } catch (e) {
         console.error('Error enabling map features:', e);
@@ -2378,7 +2378,7 @@ export class HomePage implements AfterViewInit {
     try {
       this.stopPolling = false;
       // Enable current location and set the camera to the initial position
-      await this.map.newMap.enableCurrentLocation(true);
+      await this.map.newMap.enableCurrentLocation(true).catch(() => { });
 
 
       await this.ResetState();
@@ -2549,7 +2549,7 @@ export class HomePage implements AfterViewInit {
 
       if (this.map && this.map.newMap) {
         this.map.newMap.enableTouch();
-        await this.map.newMap.enableCurrentLocation(true);
+        await this.map.newMap.enableCurrentLocation(true).catch(() => { });
       }
 
       // Reset all ride-related data
@@ -3017,7 +3017,7 @@ export class HomePage implements AfterViewInit {
     await this.clearPolyline(this.newPoly);
     this.newPoly = null;
 
-    await this.map.newMap.enableCurrentLocation(true);
+    await this.map.newMap.enableCurrentLocation(true).catch(() => { });
     this.current_Request_Number = 0;
     this.price = null;
     await this.map.newMap.setCamera({
