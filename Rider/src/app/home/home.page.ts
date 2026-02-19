@@ -267,6 +267,7 @@ export class HomePage implements AfterViewInit {
       // Initialize geolocation and map FIRST for instant visual feedback
       await this.initializeGeolocation();
       await this.initializeMap();
+      this.setupMapListeners();
 
       // Now it's safe to enter booking stage (map is initialized)
       this.EnterBookingStage();
@@ -2553,6 +2554,12 @@ export class HomePage implements AfterViewInit {
       this.mapPinDrag = true;
       this.stopPolling = true;
 
+      // Trigger initial address lookup for current map center
+      if (this.LatLng) {
+        this.geocode.getAddress(this.LatLng.lat, this.LatLng.lng).subscribe(response => {
+          this.processAddressResponse(response);
+        });
+      }
     }
 
     if (data.home) {
@@ -2734,35 +2741,35 @@ export class HomePage implements AfterViewInit {
 
 
   processAddressResponse(addressResponse) {
-    console.log("processAddressResponse : " + addressResponse);
-    if (addressResponse) {
-      console.log(addressResponse);
-      this.actualDestination = this.map.actualLocation;
+    console.log("processAddressResponse : ", addressResponse);
+    if (addressResponse && addressResponse.results && addressResponse.results.length > 0) {
       const results = addressResponse.results;
 
-      if (results && results.length > 1 && results[1].geometry && results[1].geometry.location) {
-        this.D_LatLng = {
-          lat: results[1].geometry.location.lat,
-          lng: results[1].geometry.location.lng
-        };
+      // Set the full formatted address as the actual destination
+      this.actualDestination = results[0].formatted_address;
 
-        const addressComponents = results[1].address_components;
-        if (addressComponents && addressComponents.length > 1) {
-          this.destinationAddress = `${addressComponents[0].long_name} ${addressComponents[1].long_name}`;
-          console.log("this is it " + this.destinationAddress);
-        } else {
-          console.log('Address components are missing or incomplete.');
-          this.destinationAddress = 'Unknown address';
-        }
+      // Select the best result for the displaying address (prefer results[1] for shorter names if available)
+      const bestResult = results.length > 1 ? results[1] : results[0];
+
+      this.D_LatLng = {
+        lat: results[0].geometry.location.lat,
+        lng: results[0].geometry.location.lng
+      };
+
+      const addressComponents = bestResult.address_components;
+      if (addressComponents && addressComponents.length >= 2) {
+        this.destinationAddress = `${addressComponents[0].long_name} ${addressComponents[1].long_name}`;
+      } else if (addressComponents && addressComponents.length >= 1) {
+        this.destinationAddress = addressComponents[0].long_name;
       } else {
-        console.log('Results are missing or incomplete.');
-        this.D_LatLng = { lat: null, lng: null };
-        this.destinationAddress = 'Unknown location';
+        this.destinationAddress = bestResult.formatted_address || 'Selected Location';
       }
+
+      console.log("Updated destination address to:", this.destinationAddress);
     } else {
-      console.log('Failed to fetch address.');
+      console.log('Results are missing or incomplete.');
       this.D_LatLng = { lat: null, lng: null };
-      this.destinationAddress = 'Failed to fetch address';
+      this.destinationAddress = 'Unknown location';
     }
   }
 
