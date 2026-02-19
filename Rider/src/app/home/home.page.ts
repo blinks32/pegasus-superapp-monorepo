@@ -547,52 +547,19 @@ export class HomePage implements AfterViewInit {
   async checkAndRequestLocationPermissions() {
     try {
       // Check if running on web platform
+      // Check and request geolocation permissions for native platforms
       if (this.platform.is('hybrid')) {
         const permissionStatus = await Geolocation.checkPermissions();
 
-        if (permissionStatus.location === 'granted') {
-          this.overlay.hideLoader();
-          return true;
-        }
-
-        const alert = await this.alert.create({
-          header: 'Location Permission Required',
-          message: 'This app needs access to your location to function properly.',
-          buttons: [
-            {
-              text: 'Enable Location',
-              handler: async () => {
-                const newStatus = await Geolocation.requestPermissions();
-                this.overlay.hideLoader();
-
-                if (newStatus.location !== 'granted') {
-                  await this.showLocationRequiredAlert();
-                  return false;
-                }
-                return true;
-              }
-            }
-          ],
-          backdropDismiss: false
-        });
-
-        await alert.present();
-        const { role } = await alert.onDidDismiss();
-
-        if (role === 'backdrop') {
-          this.overlay.hideLoader();
-          await this.showLocationRequiredAlert();
-          return false;
+        if (permissionStatus.location !== 'granted') {
+          // Show alert explaining why we need location access
+          await this.showLocationPermissionAlert();
+          await Geolocation.requestPermissions();
+          // Continue even if denied - inner catch handles fallback
         }
       } else {
-        // Web platform - skip custom prompts, let initializeGeolocation handle
-        // the browser's native geolocation prompt via getCurrentPosition.
-        // This matches Driver's approach and avoids double-prompting.
         console.log('Running on web, bypassing native Geolocation permission request');
-        this.overlay.hideLoader();
-        return true;
       }
-      return true;
     } catch (error) {
       console.error('Error checking/requesting location permissions:', error);
       this.overlay.hideLoader();
