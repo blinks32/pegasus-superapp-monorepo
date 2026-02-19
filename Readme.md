@@ -194,6 +194,8 @@ Choose ONE of these options:
 }
 ```
 
+> ⚠️ **CORS Configuration:** When deploying to production, you must add your frontend application's URL (e.g., `https://rider-mono.vercel.app`) to the CORS origin list in `PaymentServer/index.js` to avoid "Blocked by CORS policy" errors.
+
 ---
 
 ## App Settings
@@ -284,6 +286,7 @@ defaultLogin: {
 | **"Permission Denied"** | This common error happens when Firestore Security Rules are not configured. See the **[Firestore Security Rules](#firestore-security-rules)** section below. |
 | Push notifications failing | Check platform certificates (APNs for iOS) |
 | Payments failing | Ensure payment server URL is correct and accessible |
+| **CORS Policy Error** | Add your origin (e.g., `https://rider-mono.vercel.app`) to the `origin` array in `PaymentServer/index.js` |
 
 ---
 

@@ -34,8 +34,9 @@ const razorpay = new Razorpay({
 });
 
 // Use CORS middleware
+// Note: Add your deployed frontend URLs here (e.g., https://rider-mono.vercel.app)
 app.use(cors({
-  origin: 'http://localhost:8101' // Rplace with your client's origin
+  origin: ['https://rider-mono.vercel.app', 'http://localhost:8101', 'http://localhost:8100']
 }));
 
 app.use(bodyParser.json());
