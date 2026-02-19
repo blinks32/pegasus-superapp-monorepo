@@ -321,7 +321,9 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
     } catch (e) {
       console.error('Error in Driver ngAfterViewInit:', e);
-      if (e.code === 1) { // Permission denied error code
+      if (!this.platform.is('hybrid') && (e.code === 1 || e.message?.includes('denied'))) {
+        await this.showWebLocationRequiredAlert();
+      } else if (e.code === 1) { // Permission denied error code
         await this.handleLocationPermissionDenied();
       } else if (e.message !== 'Location permission is required to use this app') {
         this.overlay.showAlert('Initialization Error', e.message || 'An unexpected error occurred');
@@ -2594,6 +2596,11 @@ export class HomePage implements AfterViewInit, OnDestroy {
   }
 
   private async handleLocationPermissionDenied() {
+    if (!this.platform.is('hybrid')) {
+      await this.showWebLocationRequiredAlert();
+      return;
+    }
+
     const alert = await this.alertController.create({
       header: 'Location Access Denied',
       message: 'This app requires location access to function. Please enable location access in your device settings to continue.',
@@ -2620,6 +2627,64 @@ export class HomePage implements AfterViewInit, OnDestroy {
       ]
     });
     await alert.present();
+
+    // Start polling for permissions on native platforms
+    this.startNativePermissionPolling();
+  }
+
+  private startNativePermissionPolling() {
+    if ((window as any)._nativeGeoPolling) clearInterval((window as any)._nativeGeoPolling);
+    (window as any)._nativeGeoPolling = setInterval(async () => {
+      const permissionStatus = await Geolocation.checkPermissions();
+      if (permissionStatus.location === 'granted') {
+        console.log('Native location permission granted via polling');
+        clearInterval((window as any)._nativeGeoPolling);
+        // We can't easily re-run ngAfterViewInit but we can try to re-init geolocation
+        // For simplicity, we suggest a reload or try to re-init map if possible.
+        // In Driver, ngAfterViewInit is doing a lot of setup.
+        window.location.reload();
+      }
+    }, 2000);
+  }
+
+  private async showWebLocationRequiredAlert() {
+    const alert = await this.alertController.create({
+      header: 'Location Required',
+      message: 'Location access is required. If you have denied it, please enable it in your browser site settings and click "Retry".',
+      buttons: [
+        {
+          text: 'Retry',
+          handler: () => {
+            window.location.reload(); // Driver app setup is complex, reload is safest
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+    await alert.present();
+    this.startWebPermissionWatcher();
+  }
+
+  private async startWebPermissionWatcher() {
+    if (!this.platform.is('hybrid') && navigator.permissions) {
+      try {
+        const result = await navigator.permissions.query({ name: 'geolocation' });
+        if (!(window as any)._geoWatcherActive) {
+          result.addEventListener('change', () => {
+            console.log('Web geolocation permission status changed to:', result.state);
+            if (result.state === 'granted') {
+              window.location.reload();
+            }
+          });
+          (window as any)._geoWatcherActive = true;
+        }
+      } catch (e) {
+        console.error('Error starting web permission watcher:', e);
+      }
+    }
   }
 
   // Optional: Create a reusable loading message service

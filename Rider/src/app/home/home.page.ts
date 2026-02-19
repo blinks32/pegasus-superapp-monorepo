@@ -588,17 +588,25 @@ export class HomePage implements AfterViewInit {
       } else {
         // Web platform - use browser's geolocation API
         if ('geolocation' in navigator) {
-          return new Promise((resolve) => {
-            navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-              if (result.state === 'granted') {
-                this.overlay.hideLoader();
-                resolve(true);
-              } else {
-                this.overlay.hideLoader();
-                resolve(this.showWebLocationPrompt());
-              }
-            });
-          });
+          try {
+            const result = await navigator.permissions.query({ name: 'geolocation' });
+            if (result.state === 'granted') {
+              this.overlay.hideLoader();
+              return true;
+            } else if (result.state === 'prompt') {
+              this.overlay.hideLoader();
+              return await this.showWebLocationPrompt();
+            } else {
+              // Denied state
+              this.overlay.hideLoader();
+              await this.showWebLocationRequiredAlert();
+              return false;
+            }
+          } catch (e) {
+            // Permission API not supported or other error, fallback to prompt
+            this.overlay.hideLoader();
+            return await this.showWebLocationPrompt();
+          }
         } else {
           this.overlay.hideLoader();
           await this.overlay.showAlert('Error', 'Geolocation is not supported in this browser.');
@@ -617,7 +625,7 @@ export class HomePage implements AfterViewInit {
   private async showWebLocationPrompt(): Promise<boolean> {
     const alert = await this.alert.create({
       header: 'Location Access',
-      message: 'This app needs your location. Please allow location access when prompted by your browser.',
+      message: 'This app needs your location to function properly. Please allow location access when prompted by your browser.',
       buttons: [
         {
           text: 'OK',
@@ -625,10 +633,12 @@ export class HomePage implements AfterViewInit {
             return new Promise((resolve) => {
               navigator.geolocation.getCurrentPosition(
                 () => resolve(true),
-                () => {
-                  this.showLocationRequiredAlert();
+                (err) => {
+                  console.warn('Geolocation denied or failed:', err);
+                  this.showWebLocationRequiredAlert();
                   resolve(false);
-                }
+                },
+                { timeout: 10000, enableHighAccuracy: true }
               );
             });
           }
@@ -637,6 +647,47 @@ export class HomePage implements AfterViewInit {
     });
     await alert.present();
     return true;
+  }
+
+  private async showWebLocationRequiredAlert() {
+    const alert = await this.alert.create({
+      header: 'Location Required',
+      message: 'Location access is required. If you have denied it, please enable it in your browser site settings and click "Retry".',
+      buttons: [
+        {
+          text: 'Retry',
+          handler: () => {
+            this.initializeGeolocation();
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+    await alert.present();
+    this.startWebPermissionWatcher();
+  }
+
+  private async startWebPermissionWatcher() {
+    if (!this.platform.is('hybrid') && navigator.permissions) {
+      try {
+        const result = await navigator.permissions.query({ name: 'geolocation' });
+        // Use a flag to avoid multiple listeners if called repeatedly
+        if (!(window as any)._geoWatcherActive) {
+          result.addEventListener('change', () => {
+            console.log('Web geolocation permission status changed to:', result.state);
+            if (result.state === 'granted') {
+              this.initializeGeolocation();
+            }
+          });
+          (window as any)._geoWatcherActive = true;
+        }
+      } catch (e) {
+        console.error('Error starting web permission watcher:', e);
+      }
+    }
   }
 
   private async showLocationRequiredAlert() {
@@ -1013,19 +1064,26 @@ export class HomePage implements AfterViewInit {
       console.error('Error initializing geolocation:', error);
       this.overlay.hideLoader();
 
-      // Don't show alert here, wait for initializeMap to show a consolidated one if needed
+      // Handle web denial specifically
+      if (!this.platform.is('hybrid') && (error.code === 1 || error.message?.includes('denied'))) {
+        this.showWebLocationRequiredAlert();
+      } else if (this.platform.is('hybrid')) {
+        this.startPermissionPolling();
+      }
+
       return false;
     }
   }
 
   startPermissionPolling() {
+    if (this.permissionCheckInterval) clearInterval(this.permissionCheckInterval);
     this.permissionCheckInterval = setInterval(async () => {
       const permissionStatus = await Geolocation.checkPermissions();
       if (permissionStatus.location === 'granted') {
+        console.log('Native location permission granted via polling');
         this.overlay.hideLoader();
         clearInterval(this.permissionCheckInterval);
-        // Try to get the current position again if permissions are granted
-        await this.initializeGeolocation();
+        this.initializeGeolocation();
       }
     }, 2000); // Check every 2 seconds
   }

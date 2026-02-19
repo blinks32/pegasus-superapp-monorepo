@@ -301,83 +301,31 @@ The ecosystem supports multiple languages out of the box:
 
 ## 🔒 Firestore Security Rules
 
-To fix the "Missing or insufficient permissions" error, deploy these rules in your Firebase Console:
+To fix the "Missing or insufficient permissions" error, deploy the rules found in the root [firestore.rules](file:///c:/Users/USER/Desktop/NationalID/IONIC/firestore.rules) file. These rules ensure proper isolation between Riders, Drivers, and Admins while allowing necessary mutual access for active trips.
 
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Rider Profiles
-    match /Riders/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      // Rider Cards subcollection
-      match /cards/{cardId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-      
-      // Rider known places
-      match /KnownPlaces/{placeId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-    }
+**How to deploy:**
+1. Open the [Firebase Console](https://console.firebase.google.com/).
+2. Navigate to **Firestore Database** > **Rules**.
+3. Copy the content from the root `firestore.rules` file.
+4. Click **Publish**.
 
-    // Driver Profiles
-    match /Drivers/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow read: if request.auth != null; // Riders need to see drivers on map
-    }
+---
 
-    // Admin Profiles
-    match /Admins/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
+## 📍 Geolocation Support
 
-    // Ride Requests
-    match /Request/{requestId} {
-      allow read, write, update: if request.auth != null;
-      
-      // Request messages
-      match /messages/{messageId} {
-        allow read, write: if request.auth != null;
-      }
-    }
+The Pegasus ecosystem includes robust geolocation handling for both native and web platforms.
 
-    // Support Messages
-    match /Messages/{userId} {
-      allow read, write: if request.auth != null && (request.auth.uid == userId || exists(/databases/$(database)/documents/Admins/$(request.auth.uid)));
-      
-      match /messages/{messageId} {
-        allow read, write: if request.auth != null && (request.auth.uid == userId || exists(/databases/$(database)/documents/Admins/$(request.auth.uid)));
-      }
-    }
+### Native Platforms (iOS/Android)
+Uses Capacitor Geolocation with background tracking for Drivers. If permissions are denied, the app provides deep links to device settings for easy resolution.
 
-    // Ride History
-    match /RideHistory/{historyId} {
-      allow read, write: if request.auth != null;
-    }
-    
-    match /users/{userId}/rideHistory/{historyId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
+### Web Platform
+A custom retry and detection mechanism is implemented for the web:
+- **Permission Watcher**: The app automatically detects when location permissions are granted via browser site settings and re-initializes the map without requiring a page refresh.
+- **Retry UI**: If location is blocked, a persistent "Location Required" prompt appears with a manual retry option.
 
-    // Global Collections
-    match /Settings/{document=**} {
-      allow read: if true;
-      allow write: if request.auth != null && exists(/databases/$(database)/documents/Admins/$(request.auth.uid));
-    }
-    
-    match /Blogs/{document=**} {
-      allow read: if true;
-      allow write: if request.auth != null && exists(/databases/$(database)/documents/Admins/$(request.auth.uid));
-    }
-    
-    match /paystackAuthCodes/{authCode} {
-      allow read, write: if request.auth != null;
-    }
-  }
-}
-```
+This ensures that users who initially block location can easily enable it later without getting stuck in an error state.
+
+---
 
 ---
 

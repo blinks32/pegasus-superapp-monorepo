@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { NavController, MenuController, Platform } from '@ionic/angular';
+import { NavController, MenuController, Platform, AlertController } from '@ionic/angular';
 import { MapService } from '../services/map.service';
 import { AvatarService } from '../services/avatar.service';
 import { SettingsService } from '../services/settings.service';
@@ -51,6 +51,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     private database: AvatarService,
     public nav: NavController,
     private platform: Platform,
+    private alertController: AlertController,
     private settingsService: SettingsService
   ) {
     this.checkPlatformSize();
@@ -131,6 +132,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       } catch (highAccuracyError) {
         console.warn('High accuracy location failed, trying low accuracy:', highAccuracyError);
 
+        if (!this.platform.is('hybrid') && (highAccuracyError.code === 1 || highAccuracyError.message?.includes('denied'))) {
+          await this.showWebLocationRequiredAlert();
+          return;
+        }
+
         // Fallback to low accuracy with longer timeout
         try {
           const position = await Geolocation.getCurrentPosition({
@@ -155,6 +161,46 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     } catch (e) {
       console.error('Error getting location:', e);
       // Keep default coordinates
+    }
+  }
+
+  private async showWebLocationRequiredAlert() {
+    const alert = await this.alertController.create({
+      header: 'Location Required',
+      message: 'Location access is required. If you have denied it, please enable it in your browser site settings and click "Retry".',
+      buttons: [
+        {
+          text: 'Retry',
+          handler: () => {
+            this.getCurrentLocation();
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+    await alert.present();
+    this.startWebPermissionWatcher();
+  }
+
+  private async startWebPermissionWatcher() {
+    if (!this.platform.is('hybrid') && navigator.permissions) {
+      try {
+        const result = await navigator.permissions.query({ name: 'geolocation' });
+        if (!(window as any)._geoWatcherActive) {
+          result.addEventListener('change', () => {
+            console.log('Web geolocation permission status changed to:', result.state);
+            if (result.state === 'granted') {
+              this.getCurrentLocation();
+            }
+          });
+          (window as any)._geoWatcherActive = true;
+        }
+      } catch (e) {
+        console.error('Error starting web permission watcher:', e);
+      }
     }
   }
 
