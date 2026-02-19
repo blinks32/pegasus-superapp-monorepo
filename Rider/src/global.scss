@@ -35,21 +35,10 @@ ion-header.md {
     }
 }
 
+
+// Default background for inbox-list
 #inbox-list {
-    --ion-background-color: white;
-}
-
-ion-button {
-    --box-shadow: none;
-}
-
-// Force light mode globally - override all dark mode attempts
-:root {
-    color-scheme: light only !important;
-}
-
-body {
-    color-scheme: light only !important;
+    --ion-background-color: var(--ion-background-color);
 }
 
 // Detailed error alert styling

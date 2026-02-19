@@ -1,14 +1,14 @@
 ion-content {
-  --background: #f8f9fa;
+  --background: var(--ion-background-color);
 
   .time-segment {
     padding: 16px;
     --background: transparent;
-    
+
     ion-segment-button {
-      --background: #ffffff;
+      --background: var(--ion-color-light);
       --background-checked: var(--ion-color-primary);
-      --color: #666;
+      --color: var(--ion-text-color);
       --color-checked: #ffffff;
       --indicator-color: transparent;
       min-height: 40px;
@@ -17,7 +17,7 @@ ion-content {
       letter-spacing: 0.3px;
       border-radius: 12px;
       margin: 0 4px;
-      
+
       &::part(indicator) {
         display: none;
       }
@@ -30,7 +30,7 @@ ion-content {
   }
 
   ion-item-divider {
-    --background: white;
+    --background: var(--ion-background-color);
     --color: var(--ion-color-dark);
     font-weight: 600;
     font-size: 15px;
@@ -48,9 +48,9 @@ ion-content {
     --padding-bottom: 16px;
     --border-radius: 16px;
     margin: 12px 16px;
-    --background: #ffffff;
+    --background: var(--ion-color-light);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    
+
     &::part(native) {
       border-radius: 16px;
     }
@@ -63,13 +63,13 @@ ion-content {
     margin-right: 16px;
     border: 2px solid var(--ion-color-light);
     overflow: hidden;
-    
+
     ion-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    
+
     ion-skeleton-text {
       width: 100%;
       height: 100%;
@@ -84,11 +84,11 @@ ion-content {
       font-size: 17px;
       color: var(--ion-color-dark);
     }
-    
+
     p {
       margin: 4px 0;
       font-size: 14px;
-      color: #666;
+      color: var(--ion-text-color);
       line-height: 1.5;
     }
 
@@ -114,11 +114,12 @@ ion-content {
       border-left: 2px solid var(--ion-color-primary);
     }
 
-    .location-text, .destination-text {
+    .location-text,
+    .destination-text {
       display: flex;
       align-items: center;
       margin: 8px 0;
-      
+
       ion-icon {
         margin-right: 10px;
         font-size: 18px;
@@ -132,13 +133,13 @@ ion-content {
       margin-top: 12px;
       padding-top: 12px;
       border-top: 1px solid rgba(0, 0, 0, 0.05);
-      
+
       p {
         display: flex;
         align-items: center;
         font-size: 13px;
         color: var(--ion-color-medium);
-        
+
         ion-icon {
           margin-right: 4px;
         }
@@ -154,27 +155,27 @@ ion-content {
     height: 100%;
     padding: 32px;
     text-align: center;
-    
+
     ion-img {
       max-width: 240px;
       margin-bottom: 32px;
       opacity: 0.9;
     }
-    
+
     h1 {
       font-size: 24px;
       font-weight: 700;
       color: var(--ion-color-dark);
       margin-bottom: 12px;
     }
-    
+
     p {
       font-size: 16px;
       color: var(--ion-color-medium);
       margin-bottom: 24px;
       line-height: 1.5;
     }
-    
+
     .book-now-btn {
       --border-radius: 12px;
       --padding-top: 16px;
@@ -189,15 +190,15 @@ ion-content {
   // Skeleton loading styles
   ion-skeleton-text {
     --border-radius: 8px;
-    
+
     &[style*="width: 80%"] {
       margin-bottom: 8px;
     }
-    
+
     &[style*="width: 60%"] {
       margin-bottom: 6px;
     }
-    
+
     &[style*="width: 40%"] {
       margin-bottom: 6px;
     }
@@ -207,7 +208,7 @@ ion-content {
 // Add smooth transitions
 .history-item {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  
+
   &:active {
     transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
@@ -215,4 +216,3 @@ ion-content {
 }
 
 // Dark mode disabled - app uses light mode only
-  

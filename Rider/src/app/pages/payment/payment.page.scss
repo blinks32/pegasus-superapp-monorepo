@@ -1,5 +1,5 @@
 ion-content {
-  --background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --background: var(--ion-background-color);
 }
 
 // Animations
@@ -8,6 +8,7 @@ ion-content {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -19,6 +20,7 @@ ion-content {
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -32,11 +34,11 @@ ion-content {
   gap: 12px;
   margin-bottom: 20px;
   animation: slideIn 0.5s ease-out;
-  
+
   ion-icon {
     font-size: 28px;
   }
-  
+
   h2 {
     margin: 0;
     font-size: 20px;
@@ -44,7 +46,7 @@ ion-content {
     color: var(--ion-color-dark);
     flex: 1;
   }
-  
+
   ion-badge {
     font-size: 14px;
     font-weight: 600;
@@ -58,12 +60,12 @@ ion-content {
 }
 
 .card-form-container {
-  background: white;
+  background: var(--ion-color-light);
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  
+
   &:hover {
     box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
     transform: translateY(-2px);
@@ -76,16 +78,16 @@ ion-content {
 
 .stripe-element {
   padding: 16px;
-  border: 2px solid #e8ecef;
+  border: 2px solid var(--ion-color-step-150);
   border-radius: 12px;
-  background: #f8f9fa;
+  background: var(--ion-background-color);
   transition: all 0.3s ease;
-  
+
   &:hover {
     border-color: var(--ion-color-primary);
-    background: white;
+    background: var(--ion-color-light);
   }
-  
+
   &:focus-within {
     border-color: var(--ion-color-primary);
     background: white;
@@ -101,12 +103,12 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 6px;
-  
+
   &:before {
     content: "⚠";
     display: none;
   }
-  
+
   &:not(:empty):before {
     display: inline;
   }
@@ -121,7 +123,7 @@ ion-content {
   font-size: 16px;
   text-transform: none;
   letter-spacing: 0.5px;
-  
+
   ion-icon {
     margin-right: 8px;
     font-size: 20px;
@@ -140,19 +142,19 @@ ion-content {
 }
 
 .payment-card {
-  background: white;
+  background: var(--ion-color-light);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeInUp 0.5s ease-out backwards;
-  
+
   @for $i from 1 through 10 {
     &:nth-child(#{$i}) {
       animation-delay: #{$i * 0.1}s;
     }
   }
-  
+
   &:hover {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
@@ -166,7 +168,7 @@ ion-content {
   padding: 20px;
   position: relative;
   transition: all 0.3s ease;
-  
+
   &.active {
     background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.05) 0%, rgba(var(--ion-color-primary-rgb), 0.02) 100%);
     border-left: 4px solid var(--ion-color-primary);
@@ -185,12 +187,12 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 10px;
-  
+
   .brand-icon {
     font-size: 24px;
     transition: all 0.3s ease;
   }
-  
+
   .brand-name {
     font-size: 16px;
     font-weight: 600;
@@ -204,13 +206,13 @@ ion-content {
   align-items: center;
   gap: 8px;
   font-family: 'Courier New', monospace;
-  
+
   .dots {
     color: var(--ion-color-medium);
     font-size: 18px;
     letter-spacing: 2px;
   }
-  
+
   .last4 {
     color: var(--ion-color-dark);
     font-size: 18px;
@@ -223,16 +225,16 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 12px;
-  
+
   ion-radio {
     --color-checked: var(--ion-color-primary);
     margin: 0;
   }
-  
+
   ion-button {
     --padding-start: 8px;
     --padding-end: 8px;
-    
+
     ion-icon {
       font-size: 20px;
     }
@@ -246,11 +248,11 @@ ion-content {
   padding: 8px 20px;
   background: linear-gradient(135deg, rgba(var(--ion-color-success-rgb), 0.1) 0%, rgba(var(--ion-color-success-rgb), 0.05) 100%);
   border-top: 1px solid rgba(var(--ion-color-success-rgb), 0.2);
-  
+
   ion-icon {
     font-size: 18px;
   }
-  
+
   span {
     font-size: 13px;
     font-weight: 600;
@@ -265,20 +267,20 @@ ion-content {
   text-align: center;
   padding: 60px 20px;
   animation: fadeInUp 0.8s ease-out;
-  
+
   ion-icon {
     font-size: 80px;
     opacity: 0.3;
     margin-bottom: 20px;
   }
-  
+
   h3 {
     font-size: 20px;
     font-weight: 600;
     color: var(--ion-color-medium);
     margin: 0 0 12px 0;
   }
-  
+
   p {
     font-size: 14px;
     color: var(--ion-color-medium);
@@ -291,10 +293,9 @@ ion-content {
 ion-fab {
   ion-fab-button {
     --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    
+
     &:hover {
       --box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
     }
   }
 }
-
