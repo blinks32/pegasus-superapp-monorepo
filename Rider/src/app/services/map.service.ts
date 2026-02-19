@@ -66,12 +66,14 @@ export class MapService {
         this._map.enableTrafficLayer(true)
       ];
 
-      // Attempt to enable native location features safely
-      try {
-        promises.push(this._map.enableCurrentLocation(true));
-      } catch (err) {
-        console.warn('Native enableCurrentLocation failed, will use custom marker if needed:', err);
-      }
+      // enableCurrentLocation returns a Promise that rejects on web with
+      // "Geolocation not supported on web browser". Wrapping with .catch()
+      // prevents the rejection from crashing Promise.all.
+      promises.push(
+        this._map.enableCurrentLocation(true).catch(err =>
+          console.warn('enableCurrentLocation not supported on this platform:', err)
+        )
+      );
 
       promises.push(this._map.setCamera({
         animate: true,

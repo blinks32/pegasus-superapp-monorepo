@@ -583,34 +583,13 @@ export class HomePage implements AfterViewInit {
           return false;
         }
       } else {
-        // Web platform - use browser's geolocation API
-        if ('geolocation' in navigator) {
-          try {
-            const result = await navigator.permissions.query({ name: 'geolocation' });
-            if (result.state === 'granted') {
-              this.overlay.hideLoader();
-              return true;
-            } else if (result.state === 'prompt') {
-              this.overlay.hideLoader();
-              return await this.showWebLocationPrompt();
-            } else {
-              // Denied state
-              this.overlay.hideLoader();
-              this.showWebLocationRequiredAlert();
-              return false;
-            }
-          } catch (e) {
-            // Permission API not supported or other error, fallback to prompt
-            this.overlay.hideLoader();
-            return await this.showWebLocationPrompt();
-          }
-        } else {
-          this.overlay.hideLoader();
-          await this.overlay.showAlert('Error', 'Geolocation is not supported in this browser.');
-          return false;
-        }
+        // Web platform - skip custom prompts, let initializeGeolocation handle
+        // the browser's native geolocation prompt via getCurrentPosition.
+        // This matches Driver's approach and avoids double-prompting.
+        console.log('Running on web, bypassing native Geolocation permission request');
+        this.overlay.hideLoader();
+        return true;
       }
-
       return true;
     } catch (error) {
       console.error('Error checking/requesting location permissions:', error);

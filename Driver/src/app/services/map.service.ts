@@ -44,20 +44,17 @@ export class MapService {
         lat: coords.coords.latitude,
         lng: coords.coords.longitude
       }
-      // Use a flag or check platform to avoid web geolocation issues in the map plugin
-      const isWeb = !ref.ownerDocument.defaultView.navigator.userAgent.includes('Capacitor');
-
       const promises: Promise<any>[] = [
         this.newMap.enableTrafficLayer(true)
       ];
 
-      if (!isWeb) {
-        try {
-          promises.push(this.newMap.enableCurrentLocation(true));
-        } catch (e) {
-          console.warn('enableCurrentLocation failed in MapService:', e);
-        }
-      }
+      // enableCurrentLocation returns a Promise that rejects on web.
+      // Wrapping with .catch() prevents the rejection from crashing Promise.all.
+      promises.push(
+        this.newMap.enableCurrentLocation(true).catch(err =>
+          console.warn('enableCurrentLocation not supported on this platform:', err)
+        )
+      );
 
       promises.push(this.newMap.setCamera({
         animate: true,
@@ -74,7 +71,8 @@ export class MapService {
       } catch (error) {
         console.error('Error fetching address:', error);
       }
-      this.newMap.enableCurrentLocation(true);
+      // Re-enable current location (guarded for web)
+      this.newMap.enableCurrentLocation(true).catch(() => { });
     } catch (e) {
       this.overlay.showAlert('Error', e)
     }
