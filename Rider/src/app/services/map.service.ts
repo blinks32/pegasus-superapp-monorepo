@@ -115,7 +115,7 @@ export class MapService {
 
   async createMap(ref: HTMLElement, coords: { coords: { latitude: number; longitude: number } }) {
     try {
-      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches || document.body.classList.contains('dark-theme');
 
       // Validate coords before using
       const lat = coords?.coords?.latitude || 3.1390; // Default to Kuala Lumpur, Malaysia
@@ -123,7 +123,7 @@ export class MapService {
 
       // Destroy existing map if it exists
       this._map = await GoogleMap.create({
-        id: 'my-cool-map',
+        id: 'rider-home-map',
         element: ref,
         apiKey: environment.apiKey,
         config: {

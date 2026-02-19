@@ -85,7 +85,7 @@ ion-footer {
 
     .bottomItems {
       border-radius: 20px 20px 0 0;
-      background: var(--ion-background-color);
+      background: var(--ion-color-light);
 
       /* Ensure background is set since ion-list had a default */
       // padding-bottom: 6vh;
@@ -135,15 +135,15 @@ ion-footer {
 }
 
 .shadow-top {
-  box-shadow: 0px -1.5px 1.5px rgba(196, 196, 196, 0.414);
+  box-shadow: 0px -1.5px 1.5px rgba(var(--ion-color-dark-rgb), 0.2);
 }
 
 .top_bar {
-  box-shadow: 0px 1.5px 1.5px rgba(196, 196, 196, 0.414);
+  box-shadow: 0px 1.5px 1.5px rgba(var(--ion-color-dark-rgb), 0.2);
 }
 
 .card {
-  box-shadow: 0px -1.5px 1.5px rgba(196, 196, 196, 0.414);
+  box-shadow: 0px -1.5px 1.5px rgba(var(--ion-color-dark-rgb), 0.2);
 }
 
 .main-button {
@@ -739,7 +739,7 @@ ion-item ion-item {
 
 // Modern ride confirmation card styles
 .ride-confirmation-card {
-  background: var(--ion-background-color);
+  background: var(--ion-color-light);
   border-radius: 16px 16px 0 0;
   padding: 16px;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
@@ -957,7 +957,7 @@ ion-footer .bottomItems.shadow-top[ngIf="confirmStage"] {
   }
 }
 
-// Dark mode disabled - app uses light mode only
+// Dark mode support active - following system settings
 
 // Fix map sizing and positioning
 .map-container {
