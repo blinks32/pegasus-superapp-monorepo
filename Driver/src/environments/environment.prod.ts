@@ -20,6 +20,13 @@ export const environment = {
         'android_channel_id': ''
 },
     serverUrl: 'https://payment-mono.vercel.app/',
+    stripePublishableKey: 'pk_test_0t85o0Llo0MbBfC9imSzznam',
+    defaultLogin: {
+        'enabled': true,
+        'countryCode': '+234',
+        'phoneNumber': '1234567891',
+        'otp': '123456'
+},
     CountryJson: [
         {
             "name": "Afghanistan",

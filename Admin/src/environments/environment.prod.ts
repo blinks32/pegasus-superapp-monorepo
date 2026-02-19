@@ -4,7 +4,7 @@
 
 export const environment = {
     production: true,
-     firebase: {
+    firebase: {
         'apiKey': 'AIzaSyDCh3xZfdbWtocmxfjLfrQ_SHUwjjOlQDY',
         'authDomain': 'appy-45444.firebaseapp.com',
         'projectId': 'appy-45444',
@@ -25,6 +25,13 @@ export const environment = {
         senderId: '187797802273'
     },
     serverUrl: 'https://payment-mono.vercel.app/',
+    stripePublishableKey: 'pk_test_0t85o0Llo0MbBfC9imSzznam',
+    defaultLogin: {
+        'enabled': true,
+        'countryCode': '+234',
+        'phoneNumber': '1234567892',
+        'otp': '123456'
+},
     CountryJson: [
         {
             "name": "Afghanistan",

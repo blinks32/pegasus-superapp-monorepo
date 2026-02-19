@@ -37,6 +37,9 @@ function updateEnvironmentFile(project, isProduction) {
     const urlRegex = /serverUrl:\s*['"].*?['"]/;
     content = content.replace(urlRegex, `serverUrl: '${config.payment.serverUrl}'`);
 
+    const stripeKeyRegex = /stripePublishableKey:\s*['"].*?['"]/;
+    content = content.replace(stripeKeyRegex, `stripePublishableKey: '${config.payment.stripePublishableKey}'`);
+
     const apiKeyRegex = /apiKey:\s*['"].*?['"]/;
     content = content.replace(apiKeyRegex, `apiKey: '${config.googleMaps.apiKey}'`);
 

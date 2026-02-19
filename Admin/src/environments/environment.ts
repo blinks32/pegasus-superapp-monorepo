@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-     firebase: {
+    firebase: {
         'apiKey': 'AIzaSyDCh3xZfdbWtocmxfjLfrQ_SHUwjjOlQDY',
         'authDomain': 'appy-45444.firebaseapp.com',
         'projectId': 'appy-45444',
@@ -20,11 +20,14 @@ export const environment = {
         'restApiKey': 'YTM3ODgyMzQtNjg1ZC00YTQwLWJmNjItNTA4M2VkMmY3MDdl',
         'android_channel_id': ''
 },
-    fcm: {
-        serverKey: '',
-        senderId: '187797802273'
-    },
     serverUrl: 'https://payment-mono.vercel.app/',
+    stripePublishableKey: 'pk_test_0t85o0Llo0MbBfC9imSzznam',
+    defaultLogin: {
+        'enabled': true,
+        'countryCode': '+234',
+        'phoneNumber': '1234567892',
+        'otp': '123456'
+},
     CountryJson: [
         {
             "name": "Afghanistan",
@@ -1508,14 +1511,7 @@ export const environment = {
             "isoCode": "PS",
             "flag": "https://cdn.kcak11.com/CountryFlags/countries/ps.svg"
         }
-    ],
-    // Default login credentials for testing - set enabled to true to auto-fill login form
-    defaultLogin: {
-        'enabled': true,
-        'countryCode': '+234',
-        'phoneNumber': '1234567892',
-        'otp': '123456'
-}
+    ]
 };
 
 /*
