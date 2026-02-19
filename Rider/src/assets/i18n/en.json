@@ -256,6 +256,10 @@
     "FAILED": "Payment failed. Please try again.",
     "UNKNOWN": "Payment status unknown."
   },
+  "TABS": {
+    "HOME": "Home",
+    "PROFILE": "Profile"
+  },
   "FIRST_NAME_REQUIRED": "First name is required",
   "FIRST_NAME_MIN_LENGTH": "First name is too short",
   "FIRST_NAME_MAX_LENGTH": "First name is too long (max 200 characters)",

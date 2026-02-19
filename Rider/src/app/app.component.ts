@@ -20,14 +20,6 @@ export class AppComponent {
   source: string;
   loading: boolean = true;
 
-  appPages = [
-    { title: 'MENU.HISTORY', url: '/history', icon: 'time', color: 'primary' },
-    { title: 'MENU.PAYMENT', url: '/payment', icon: 'card', color: 'primary' },
-    { title: 'MENU.PROMOTION', url: '/promotion', icon: 'gift', color: 'primary' },
-    { title: 'MENU.SUPPORT', url: '/support', icon: 'chatbubbles', color: 'primary' },
-    { title: 'MENU.ABOUT', url: '/about', icon: 'information-circle', color: 'primary' },
-  ];
-
   constructor(
     private platform: Platform,
     private ngZone: NgZone,
@@ -100,10 +92,6 @@ export class AppComponent {
 
   gotoProfile() {
     this.nav.navigateForward('profile');
-  }
-
-  gotoPage(p) {
-    this.nav.navigateForward(p);
   }
 
   async initializeTranslation() {

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Auth, updateProfile } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { LoadingController, AlertController, ActionSheetController } from '@ionic/angular';
+import { LoadingController, AlertController, ActionSheetController, NavController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { AvatarService } from 'src/app/services/avatar.service';
 import { doc } from '@angular/fire/firestore';
@@ -30,7 +30,8 @@ export class ProfilePage implements OnInit, OnDestroy {
     private auth: Auth,
     private actionSheetController: ActionSheetController,
     private fb: FormBuilder,
-    private translate: TranslateService
+    private translate: TranslateService,
+    public nav: NavController
   ) {
     this.auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -254,7 +255,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     let isoCode = 'US';
     if (lang === 'ms') isoCode = 'MY';
     if (lang === 'ar') isoCode = 'SA';
-    
+
     const country = this.CountryJson.find(c => c.isoCode === isoCode);
     return country ? country.flag : '';
   }

@@ -8,12 +8,12 @@ import {
 import { RiderProfileGuard } from './guards/rider-profile.guard';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
-const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
+const redirectLoggedInToHome = () => redirectLoggedInTo(['tabs']);
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'tabs',
     pathMatch: 'full'
   },
   {
@@ -23,21 +23,8 @@ const routes: Routes = [
     ...canActivate(redirectLoggedInToHome),
   },
   {
-    path: 'home',
-    loadChildren: () =>
-      import('./home/home.module').then((m) => m.HomePageModule),
-    ...canActivate(redirectUnauthorizedToLogin),
-  },
-  {
-    path: 'profile',
-    loadChildren: () =>
-      import('./pages/profile/profile.module').then((m) => m.ProfilePageModule),
-    ...canActivate(redirectUnauthorizedToLogin),
-  },
-  {
-    path: 'history',
-    loadChildren: () =>
-      import('./pages/history/history.module').then((m) => m.HistoryPageModule),
+    path: 'tabs',
+    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
@@ -47,48 +34,12 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
-    path: 'payment',
-    loadChildren: () =>
-      import('./pages/payment/payment.module').then((m) => m.PaymentPageModule),
-    ...canActivate(redirectUnauthorizedToLogin), // Added guard
-  },
-  {
-    path: 'support',
-    loadChildren: () =>
-      import('./pages/support/support.module').then((m) => m.SupportPageModule),
-    ...canActivate(redirectUnauthorizedToLogin), // Added guard
-  },
-  {
-    path: 'about',
-    loadChildren: () =>
-      import('./pages/about/about.module').then((m) => m.AboutPageModule),
-    ...canActivate(redirectUnauthorizedToLogin), // Added guard
-  },
-  {
-    path: 'promotion',
-    loadChildren: () =>
-      import('./pages/promotion/promotion.module').then((m) => m.PromotionPageModule),
-    ...canActivate(redirectUnauthorizedToLogin), // Added guard
-  },
-  {
-    path: 'rating',
-    loadChildren: () =>
-      import('./pages/rating/rating.module').then((m) => m.RatingPageModule),
-    ...canActivate(redirectUnauthorizedToLogin), // Added guard
-  },
-  {
-    path: 'network',
-    loadChildren: () =>
-      import('./pages/network/network.module').then((m) => m.NetworkPageModule),
-    ...canActivate(redirectUnauthorizedToLogin), // Added guard
-  },
-  {
     path: 'paymentcallback',
     loadChildren: () => import('./paymentcallback/paymentcallback.module').then(m => m.PaymentcallbackPageModule)
   },
   {
     path: '**', // Catch-all route
-    redirectTo: 'home'
+    redirectTo: 'tabs'
   },
 ];
 
@@ -98,4 +49,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
