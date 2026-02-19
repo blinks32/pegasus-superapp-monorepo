@@ -45,7 +45,6 @@ export class AvatarService {
         this.driverCollection = collection(this.firestore, 'Drivers');
 
         // Initialize default data if needed
-        this.initializeDefaultData();
 
 
 
@@ -55,6 +54,11 @@ export class AvatarService {
             console.log('Admin profile data:', data);
 
             if (this.profile) {
+              // Now that we have a confirmed admin profile, seed default data if needed
+              if (this.profile.Access) {
+                this.initializeDefaultData();
+              }
+
               if (!this.profile.Access && this.router.url !== '/details') {
                 console.log('Access denied, navigating to details');
                 this.router.navigateByUrl('details');

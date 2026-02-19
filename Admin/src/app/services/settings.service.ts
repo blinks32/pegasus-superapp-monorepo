@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, doc, docData, updateDoc, setDoc } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map, shareReplay } from 'rxjs/operators';
 
 export interface AppSettings {
   currency: string;
@@ -19,14 +19,13 @@ export class SettingsService {
     this.settings$ = docData(settingsDoc).pipe(
       map(data => {
         if (!data) {
-          const defaults = { currency: 'USD', currencySymbol: '$' };
-          // Proactively seed defaults if missing, but catch potential permission errors
-          setDoc(settingsDoc, defaults, { merge: true }).catch(err => {
-            console.warn('Failed to seed default settings (likely permission denied or doc exists):', err);
-          });
-          return defaults;
+          return { currency: 'USD', currencySymbol: '$' } as AppSettings;
         }
         return data as AppSettings;
+      }),
+      catchError(err => {
+        console.warn('Settings read failed (likely permission denied):', err);
+        return of({ currency: 'USD', currencySymbol: '$' } as AppSettings);
       }),
       shareReplay(1)
     );

@@ -580,7 +580,7 @@ export class HomePage implements AfterViewInit {
                 () => resolve(true),
                 (err) => {
                   console.warn('Geolocation denied or failed:', err);
-                  this.showWebLocationRequiredAlert();
+                  // this.showWebLocationRequiredAlert(); // Disabling annoying popup
                   resolve(false);
                 },
                 { timeout: 10000, enableHighAccuracy: true }

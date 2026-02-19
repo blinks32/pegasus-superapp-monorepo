@@ -73,9 +73,15 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     // Initialize data subscriptions
     this.initializeDataSubscriptions();
 
-    this.settingsService.getSettings().subscribe(settings => {
-      if (settings && settings.currencySymbol) {
-        this.currencySymbol = settings.currencySymbol;
+    this.settingsService.getSettings().subscribe({
+      next: (settings) => {
+        if (settings && settings.currencySymbol) {
+          this.currencySymbol = settings.currencySymbol;
+        }
+      },
+      error: (err) => {
+        console.warn('Error fetching settings in Admin HomePage:', err);
+        this.currencySymbol = '$';
       }
     });
   }
@@ -153,12 +159,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
       } catch (lowAccuracyError) {
         console.warn('All geolocation attempts failed:', lowAccuracyError);
-
-        // ONLY show alert if it's clearly a PERMISSION error on web
-        if (!this.platform.is('hybrid') && (lowAccuracyError.code === 1 || lowAccuracyError.message?.toLowerCase().includes('denied'))) {
-          await this.showWebLocationRequiredAlert();
-        }
-        // Otherwise, we just use the default coordinates set in setDefaultCoordinates()
+        // Silently use default coordinates set in setDefaultCoordinates()
       }
 
     } catch (e) {

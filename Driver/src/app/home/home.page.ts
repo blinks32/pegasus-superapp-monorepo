@@ -166,8 +166,14 @@ export class HomePage implements AfterViewInit, OnDestroy {
     private rideSharingService: RideSharingService,
     private settingsService: SettingsService
   ) {
-    this.settingsSubscription = this.settingsService.settings$.subscribe(settings => {
-      this.currencySymbol = settings.currencySymbol;
+    this.settingsSubscription = this.settingsService.settings$.subscribe({
+      next: (settings) => {
+        this.currencySymbol = settings.currencySymbol;
+      },
+      error: (err) => {
+        console.warn('Error fetching settings in HomePage:', err);
+        this.currencySymbol = '$'; // Fallback
+      }
     });
   }
 
@@ -319,7 +325,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
     } catch (e) {
       console.error('Error in Driver ngAfterViewInit:', e);
       if (!this.platform.is('hybrid') && (e.code === 1 || e.message?.includes('denied'))) {
-        await this.showWebLocationRequiredAlert();
+        console.warn('Geolocation denied on web, using fallback/default.');
       } else if (e.code === 1) { // Permission denied error code
         await this.handleLocationPermissionDenied();
       } else if (e.message !== 'Location permission is required to use this app') {
