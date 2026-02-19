@@ -62,16 +62,25 @@ export class MapService {
         lng: lng
       };
 
-      await Promise.all([
-        this._map.enableTrafficLayer(true),
-        this._map.enableCurrentLocation(true),
-        this._map.setCamera({
-          animate: true,
-          animationDuration: 500,
-          zoom: 15,
-          coordinate: this.LatLng
-        })
-      ]);
+      const promises: Promise<any>[] = [
+        this._map.enableTrafficLayer(true)
+      ];
+
+      // Guard enableCurrentLocation on web as it can throw "Geolocation not supported"
+      // or cause issues with capacitor-google-maps web implementation
+      const isWeb = !ref.ownerDocument.defaultView.navigator.userAgent.includes('Capacitor');
+      if (!isWeb) {
+        promises.push(this._map.enableCurrentLocation(true));
+      }
+
+      promises.push(this._map.setCamera({
+        animate: true,
+        animationDuration: 500,
+        zoom: 15,
+        coordinate: this.LatLng
+      }));
+
+      await Promise.all(promises);
 
       const address = await this.getAddress(this.LatLng.lat, this.LatLng.lng);
       this.processAddressResponse(address);

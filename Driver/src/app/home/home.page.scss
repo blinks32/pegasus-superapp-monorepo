@@ -2,14 +2,13 @@ capacitor-google-maps {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes slide-top {
   0% {
     transform: translateY(100%);
   }
+
   100% {
     transform: translateY(0%);
   }
@@ -19,6 +18,7 @@ capacitor-google-maps {
   100% {
     transform: translateY(50%);
   }
+
   0% {
     transform: translateY(0%);
   }
@@ -48,7 +48,7 @@ ion-skeleton-text {
 
 ion-content {
   --background: transparent;
-  margin-top: 20px;
+  position: relative;
 }
 
 ion-footer {
@@ -56,12 +56,15 @@ ion-footer {
     padding-top: 5vh;
     background: transparent;
     display: block;
+
     ion-fab-button {
       margin-right: 2.5vh;
     }
+
     ion-list {
       border-radius: 20px 20px 0 0;
       box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+
       ion-list-header {
         ion-label {
           font-weight: bold;
@@ -70,14 +73,17 @@ ion-footer {
       }
     }
   }
+
   ion-fab {
     margin-top: -40px;
   }
+
   ion-list {
     .payment {
       font-size: 1.1em;
       color: var(--ion-color-dark);
       --background: var(--ion-color-light);
+
       ion-item {
         color: var(--ion-color-dark);
         --inner-padding-bottom: 1px;
@@ -86,6 +92,7 @@ ion-footer {
         --inner-padding-top: 0;
         --background: var(--ion-color-light);
         border-radius: 10px;
+
         p {
           color: var(--ion-color-dark);
         }
@@ -111,12 +118,12 @@ ion-skeleton-text {
   background: linear-gradient(135deg, var(--ion-color-success) 0%, #0a8f3c 100%);
   border-radius: 20px 20px 0 0;
   padding: 20px 0;
-  
+
   ion-list-header {
     .ion-padding {
       width: 100%;
     }
-    
+
     .accept {
       font-size: 1.6em;
       padding: 16px;
@@ -144,7 +151,7 @@ ion-skeleton-text {
       margin: 16px 0;
       text-align: center;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      
+
       strong {
         color: white;
         font-weight: 700;
@@ -158,7 +165,7 @@ ion-skeleton-text {
       text-align: center;
       margin: 20px 0;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      
+
       &::before {
         content: '$';
         font-size: 0.8em;
@@ -177,12 +184,12 @@ ion-skeleton-text {
     font-weight: 600;
     font-size: 1.2em;
     letter-spacing: 0.5px;
-    
+
     ion-icon {
       font-size: 24px;
       margin-right: 8px;
     }
-    
+
     &:hover {
       --background: white;
     }
@@ -196,11 +203,25 @@ ion-skeleton-text {
 }
 
 @keyframes borderColorChange {
-  0% { border-color: red; }
-  25% { border-color: blue; }
-  50% { border-color: green; }
-  75% { border-color: yellow; }
-  100% { border-color: red; }
+  0% {
+    border-color: red;
+  }
+
+  25% {
+    border-color: blue;
+  }
+
+  50% {
+    border-color: green;
+  }
+
+  75% {
+    border-color: yellow;
+  }
+
+  100% {
+    border-color: red;
+  }
 }
 
 .center-button {
@@ -276,10 +297,11 @@ ion-skeleton-text {
 
 .map {
   width: 100%;
-  height: 1024px;
-  padding-bottom: 100%;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
 .lowered-fab {
@@ -291,7 +313,7 @@ ion-skeleton-text {
   border-radius: 8px;
   height: 24px;
   margin: 8px 0;
-  
+
   &.price-skeleton {
     height: 40px;
     width: 120px;
@@ -328,12 +350,12 @@ ion-skeleton-text {
   color: white;
   font-size: 1.1rem;
   font-weight: 500;
-  
+
   ion-icon {
     margin-right: 4px;
     font-size: 18px;
   }
-  
+
   .ml-2 {
     margin-left: 8px;
   }
@@ -357,12 +379,12 @@ ion-skeleton-text {
   border-radius: 10px;
   color: white;
   font-size: 1rem;
-  
+
   ion-icon {
     margin-right: 8px;
     font-size: 18px;
   }
-  
+
   span {
     white-space: nowrap;
     overflow: hidden;
@@ -385,7 +407,7 @@ ion-skeleton-text {
   border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  
+
   strong {
     font-weight: 700;
     font-size: 1.2rem;
@@ -401,11 +423,11 @@ ion-skeleton-text {
   font-weight: 600;
   font-size: 1.1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  
+
   &:hover {
     --background: white;
   }
-  
+
   ion-icon {
     font-size: 20px;
     margin-right: 6px;

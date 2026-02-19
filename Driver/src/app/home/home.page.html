@@ -35,7 +35,7 @@
 <!--Capacitor Google Map-->
 
 <ion-content [fullscreen]="false" scroll-y="false">
-  <capacitor-google-maps #map></capacitor-google-maps>
+  <capacitor-google-maps #map class="map"></capacitor-google-maps>
   <!-- <ion-fab *ngIf="bookingStage && showResetLocationButton" vertical="bottom" horizontal="end" style="margin-bottom: 200px;">
     <ion-fab-button color="light" (click)="resetLocation()">
       <ion-icon name="locate"></ion-icon>
@@ -66,18 +66,19 @@
             </div>
             <div class="price-tag">{{currencySymbol}}{{riderInfo?.price}}</div>
           </div>
-          
+
           <div class="location-container">
             <ion-icon name="location"></ion-icon>
             <span>{{riderInfo?.Rider_Location}}</span>
           </div>
-          
+
           <div class="countdown-container">
             <div class="timer-indicator">
-              {{ 'HOME.TIME_LEFT' | translate }} <strong>{{riderInfo?.countDown}}</strong> {{ 'HOME.SECONDS' | translate }}
+              {{ 'HOME.TIME_LEFT' | translate }} <strong>{{riderInfo?.countDown}}</strong> {{ 'HOME.SECONDS' | translate
+              }}
             </div>
           </div>
-          
+
           <ion-button shape="round" class="accept-button" color="light" type="submit" expand="block">
             <ion-icon slot="start" name="checkmark-sharp"></ion-icon>
             <span>{{ 'HOME.ACCEPT' | translate }}</span>
@@ -94,17 +95,17 @@
               <ion-skeleton-text [animated]="true" style="width: 60px;"></ion-skeleton-text>
             </div>
           </div>
-          
+
           <div class="location-container">
             <ion-skeleton-text [animated]="true" style="width: 180px;"></ion-skeleton-text>
           </div>
-          
+
           <div class="countdown-container">
             <div class="timer-indicator">
               <ion-skeleton-text [animated]="true" style="width: 150px;"></ion-skeleton-text>
             </div>
           </div>
-          
+
           <ion-button disabled shape="round" class="accept-button" color="light" expand="block">
             <ion-skeleton-text [animated]="true" style="width: 120px;"></ion-skeleton-text>
           </ion-button>
@@ -177,7 +178,7 @@
               <span>{{sharedRidePassengers.length}} Passenger(s)</span>
               <ion-badge color="success">{{currencySymbol}}{{getSharedRideTotalFare().toFixed(2)}}</ion-badge>
             </div>
-            
+
             <div class="passenger-item" *ngFor="let passenger of sharedRidePassengers">
               <ion-avatar>
                 <img [src]="passenger.riderImgUrl || 'assets/imgs/about.svg'">
@@ -203,40 +204,44 @@
         <!--pick up button and drop off button-->
         <ion-item-group class="ion-margin-horizontal ion-margin-bottom">
           <!-- Non-shared ride buttons -->
-          <ion-button shape="round" class="main-button" *ngIf="trackingStage && !isSharedRideMode" color="success" size="large" type="submit" (click)="PickUp()" expand="block">
+          <ion-button shape="round" class="main-button" *ngIf="trackingStage && !isSharedRideMode" color="success"
+            size="large" type="submit" (click)="PickUp()" expand="block">
             <ion-icon slot="start" name="checkmark-sharp" color="light"></ion-icon>
             <ion-label color="light">{{ 'HOME.PICK_UP' | translate }}</ion-label>
           </ion-button>
 
-          <ion-button *ngIf="drivingToDestinationStage && !isSharedRideMode" shape="round" class="main-button" color="success" size="large" type="submit" (click)="DropOff()" expand="block">
+          <ion-button *ngIf="drivingToDestinationStage && !isSharedRideMode" shape="round" class="main-button"
+            color="success" size="large" type="submit" (click)="DropOff()" expand="block">
             <ion-icon slot="start" name="checkmark-sharp" color="light"></ion-icon>
             <ion-label color="light">{{ 'HOME.DROP_OFF' | translate }}</ion-label>
           </ion-button>
 
           <!-- Shared ride waypoint buttons -->
-          <ion-button shape="round" class="main-button" *ngIf="isSharedRideMode && currentWaypoint" 
-                      [color]="currentWaypoint.type === 'pickup' ? 'success' : 'primary'" 
-                      size="large" type="submit" (click)="completeCurrentWaypoint()" expand="block">
-            <ion-icon slot="start" [name]="currentWaypoint.type === 'pickup' ? 'person-add' : 'checkmark-done'" color="light"></ion-icon>
+          <ion-button shape="round" class="main-button" *ngIf="isSharedRideMode && currentWaypoint"
+            [color]="currentWaypoint.type === 'pickup' ? 'success' : 'primary'" size="large" type="submit"
+            (click)="completeCurrentWaypoint()" expand="block">
+            <ion-icon slot="start" [name]="currentWaypoint.type === 'pickup' ? 'person-add' : 'checkmark-done'"
+              color="light"></ion-icon>
             <ion-label color="light">
               {{currentWaypoint.type === 'pickup' ? 'Pick Up' : 'Drop Off'}} {{currentWaypoint.riderName}}
             </ion-label>
           </ion-button>
-          
+
           <!-- Fallback for shared ride mode when currentWaypoint is not set yet -->
-          <ion-button shape="round" class="main-button" *ngIf="isSharedRideMode && !currentWaypoint && trackingStage" 
-                      color="success" size="large" type="submit" (click)="PickUp()" expand="block">
+          <ion-button shape="round" class="main-button" *ngIf="isSharedRideMode && !currentWaypoint && trackingStage"
+            color="success" size="large" type="submit" (click)="PickUp()" expand="block">
             <ion-icon slot="start" name="checkmark-sharp" color="light"></ion-icon>
             <ion-label color="light">{{ 'HOME.PICK_UP' | translate }}</ion-label>
           </ion-button>
-          
-          <ion-button *ngIf="isSharedRideMode && !currentWaypoint && drivingToDestinationStage" 
-                      shape="round" class="main-button" color="success" size="large" type="submit" (click)="DropOff()" expand="block">
+
+          <ion-button *ngIf="isSharedRideMode && !currentWaypoint && drivingToDestinationStage" shape="round"
+            class="main-button" color="success" size="large" type="submit" (click)="DropOff()" expand="block">
             <ion-icon slot="start" name="checkmark-sharp" color="light"></ion-icon>
             <ion-label color="light">{{ 'HOME.DROP_OFF' | translate }}</ion-label>
           </ion-button>
 
-          <ion-button *ngIf="trackingStage || drivingToDestinationStage" shape="round" class="main-button" color="primary" size="large" type="submit" (click)="Navigate()" expand="block">
+          <ion-button *ngIf="trackingStage || drivingToDestinationStage" shape="round" class="main-button"
+            color="primary" size="large" type="submit" (click)="Navigate()" expand="block">
             <ion-icon slot="start" name="map-sharp" color="light"></ion-icon>
             <ion-label color="light">{{ 'HOME.NAVIGATE' | translate }}</ion-label>
           </ion-button>

@@ -712,8 +712,11 @@ export class HomePage implements AfterViewInit {
         this.selectedCard = this.savedPaymentMethods[0].cardId;
         this.cash = false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching saved payment methods:', error);
+      if (error.code === 'permission-denied') {
+        this.overlay.showAlert('Permission Error', 'You do not have permission to access payment methods. Please check your account settings.');
+      }
     }
   }
 
