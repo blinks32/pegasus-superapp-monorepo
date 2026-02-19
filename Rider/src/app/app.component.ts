@@ -81,8 +81,9 @@ export class AppComponent {
         }
 
         if (readySource != 'dom') {
-          await StatusBar.setBackgroundColor({ color: '#3880ff' });
-          StatusBar.setStyle({ style: Style.Light });
+          // statusBar.setBackgroundColor is often problematic with overlay.
+          // Setting Style.Default allows the system to manage its color based on theme.
+          await StatusBar.setStyle({ style: Style.Default });
         }
         await this.LoadSplash();
         this.loading = false;
