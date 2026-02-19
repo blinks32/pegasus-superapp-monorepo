@@ -258,10 +258,9 @@ export class HomePage implements AfterViewInit {
   async ngAfterViewInit() {
     try {
       // First check location permissions
-      const hasPermission = await this.checkAndRequestLocationPermissions();
-      if (!hasPermission) {
-        return;
-      }
+      await this.checkAndRequestLocationPermissions();
+      // Non-blocking: continue initialization even if permission is denied 
+      // initializeGeolocation will handle the fallback
 
       // Initialize profile first
       await this.initializeProfile();
@@ -599,7 +598,7 @@ export class HomePage implements AfterViewInit {
             } else {
               // Denied state
               this.overlay.hideLoader();
-              await this.showWebLocationRequiredAlert();
+              this.showWebLocationRequiredAlert();
               return false;
             }
           } catch (e) {
@@ -657,7 +656,7 @@ export class HomePage implements AfterViewInit {
         {
           text: 'Retry',
           handler: () => {
-            this.initializeGeolocation();
+            this.retryLocationInitialization();
           }
         },
         {
@@ -679,7 +678,7 @@ export class HomePage implements AfterViewInit {
           result.addEventListener('change', () => {
             console.log('Web geolocation permission status changed to:', result.state);
             if (result.state === 'granted') {
-              this.initializeGeolocation();
+              this.retryLocationInitialization();
             }
           });
           (window as any)._geoWatcherActive = true;
@@ -1017,7 +1016,41 @@ export class HomePage implements AfterViewInit {
 
 
 
-  async initializeGeolocation() {
+  async retryLocationInitialization() {
+    console.log('Retrying geolocation initialization...');
+    this.overlay.showLoader('Updating location...');
+
+    const success = await this.initializeGeolocation(true);
+    if (success) {
+      this.overlay.hideLoader();
+      this.overlay.showToast('Location updated successfully!');
+
+      // If map wasn't initialized, try to initialize it now
+      if (!this.mapy) {
+        try {
+          await this.initializeMap();
+          // Also enter booking stage if we were stuck
+          this.EnterBookingStage();
+        } catch (e) {
+          console.error('Failed to initialize map on retry:', e);
+        }
+      }
+
+      // Update map camera to new location
+      if (this.mapy && this.LatLng) {
+        await this.map.setCameraToLocation(this.LatLng, 15, 0);
+        // Refresh drivers for new location
+        if (this.networkService.isConnected()) {
+          const center: [number, number] = [this.LatLng.lat, this.LatLng.lng];
+          await this.fetchAndDisplayDrivers(center, 8000);
+        }
+      }
+    } else {
+      this.overlay.hideLoader();
+    }
+  }
+
+  async initializeGeolocation(isRetry: boolean = false) {
     try {
       let coordinates;
 
@@ -1069,7 +1102,26 @@ export class HomePage implements AfterViewInit {
 
       // Handle web denial specifically
       if (!this.platform.is('hybrid') && (error.code === 1 || error.message?.includes('denied'))) {
-        this.showWebLocationRequiredAlert();
+        if (!isRetry) {
+          // Only show alert on initial load failure
+          this.showWebLocationRequiredAlert();
+
+          // Use fallback location so app can continue
+          this.coordinates = {
+            coords: {
+              latitude: 3.1390,
+              longitude: 101.6869,
+              accuracy: 0,
+              altitude: null,
+              altitudeAccuracy: null,
+              heading: null,
+              speed: null
+            },
+            timestamp: Date.now()
+          };
+          this.LatLng = { lat: 3.1390, lng: 101.6869 };
+          return true; // Return true to allow initialization to continue with fallback
+        }
       } else if (this.platform.is('hybrid')) {
         this.startPermissionPolling();
       }

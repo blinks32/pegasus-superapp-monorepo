@@ -195,11 +195,8 @@ export class HomePage implements AfterViewInit, OnDestroy {
         if (permissionStatus.location !== 'granted') {
           // Show alert explaining why we need location access
           await this.showLocationPermissionAlert();
-          const requestResult = await Geolocation.requestPermissions();
-
-          if (requestResult.location !== 'granted') {
-            throw new Error('Location permission is required to use this app');
-          }
+          await Geolocation.requestPermissions();
+          // Continue even if denied - inner catch handles fallback
         }
       } else {
         console.log('Running on web, bypassing native Geolocation permission request');
@@ -2642,9 +2639,73 @@ export class HomePage implements AfterViewInit, OnDestroy {
         // We can't easily re-run ngAfterViewInit but we can try to re-init geolocation
         // For simplicity, we suggest a reload or try to re-init map if possible.
         // In Driver, ngAfterViewInit is doing a lot of setup.
-        window.location.reload();
+        this.retryLocationInitialization();
       }
     }, 2000);
+  }
+
+  async retryLocationInitialization() {
+    console.log('Retrying Driver geolocation initialization...');
+    this.overlay.showLoader('Updating location...');
+
+    let coordinates;
+    try {
+      if (!this.platform.is('hybrid') && navigator.geolocation) {
+        coordinates = await new Promise<any>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({
+              coords: {
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+                accuracy: pos.coords.accuracy,
+                altitude: pos.coords.altitude,
+                altitudeAccuracy: pos.coords.altitudeAccuracy,
+                heading: pos.coords.heading,
+                speed: pos.coords.speed
+              },
+              timestamp: pos.timestamp
+            }),
+            reject,
+            { timeout: 10000, enableHighAccuracy: true }
+          );
+        });
+      } else {
+        coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000 });
+      }
+
+      this.overlay.hideLoader();
+      this.overlay.showToast('Location updated successfully!');
+
+      this.coordinates = coordinates;
+      this.LatLng = {
+        lat: coordinates.coords.latitude,
+        lng: coordinates.coords.longitude
+      };
+
+      // Update map
+      if (!this.mapy) {
+        await this.map.createMap(this.mapRef.nativeElement, coordinates);
+        this.ngZone.run(() => {
+          this.mapy = true;
+          this.actualLocation = this.map.actualLocation;
+          this.locationAddress = this.map.locationAddress;
+        });
+      } else {
+        await this.map.newMap.setCamera({
+          coordinate: this.LatLng,
+          zoom: 15,
+          animate: true
+        });
+      }
+
+      // Update backend
+      await this.database.updateDriverLocation(this.LatLng);
+
+    } catch (e) {
+      console.error('Retry failed:', e);
+      this.overlay.hideLoader();
+      this.overlay.showToast('Failed to acquire location. Please try again.');
+    }
   }
 
   private async showWebLocationRequiredAlert() {
@@ -2655,7 +2716,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
         {
           text: 'Retry',
           handler: () => {
-            window.location.reload(); // Driver app setup is complex, reload is safest
+            this.retryLocationInitialization();
           }
         },
         {
@@ -2676,7 +2737,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
           result.addEventListener('change', () => {
             console.log('Web geolocation permission status changed to:', result.state);
             if (result.state === 'granted') {
-              window.location.reload();
+              this.retryLocationInitialization();
             }
           });
           (window as any)._geoWatcherActive = true;
