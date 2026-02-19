@@ -92,5 +92,67 @@ service cloud.firestore {
     match /users/{userId}/rideHistory/{historyId} {
       allow read, write: if isOwner(userId);
     }
+
+    // --- Added missing collections ---
+
+    // Settings collection: Global app configuration
+    match /Settings/{document} {
+      allow read: if isAuthenticated();
+    }
+
+    // Wallet & Referrals
+    match /WalletTransactions/{docId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.riderId == request.auth.uid || resource.data.driverId == request.auth.uid);
+      allow create: if isAuthenticated();
+    }
+
+    match /Referrals/{docId} {
+      allow read: if isAuthenticated() && (resource.data.referrerId == request.auth.uid || resource.data.referredId == request.auth.uid);
+      allow create: if isAuthenticated();
+    }
+
+    match /ReferralRewards/{docId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // Safety & SOS
+    match /EmergencyContacts/{docId} {
+      allow read, write: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    match /TripShares/{docId} {
+      allow read: if true; // Publicly accessible via link
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    match /SOSAlerts/{docId} {
+      allow read, write: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.riderId == request.auth.uid);
+    }
+
+    match /AudioRecordings/{docId} {
+      allow read, write: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    match /SafetyRatings/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+    }
+
+    match /DriverVerifications/{docId} {
+      allow read: if isAuthenticated() && resource.data.driverId == request.auth.uid;
+      allow create: if isAuthenticated();
+    }
+
+    // Shared Rides
+    match /SharedRideOpportunities/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // Admin Notifications: Users can create them, only admins (logic outside) can read
+    match /AdminNotifications/{docId} {
+      allow create: if isAuthenticated();
+    }
   }
 }
