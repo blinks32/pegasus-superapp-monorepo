@@ -24,6 +24,7 @@ import { LatLngLiteral } from '@googlemaps/google-maps-services-js';
 import { LatLng } from '@capacitor/google-maps/dist/typings/definitions';
 import { Preferences } from '@capacitor/preferences';
 import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { environment } from 'src/environments/environment';
 
 import { TripSummaryComponent } from '../trip-summary/trip-summary.component';
 import { geohashForLocation } from 'geofire-common';
@@ -45,6 +46,7 @@ declare var google;
 })
 export class HomePage implements AfterViewInit {
   [x: string]: any;
+  isTestMode = environment.defaultLogin?.enabled || false;
   profile = null;
   presets: Array<any> = [];
   @ViewChild('map', { static: true }) mapRef: ElementRef<HTMLElement>;

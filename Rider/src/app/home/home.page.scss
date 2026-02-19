@@ -1284,6 +1284,36 @@ ion-footer .bottomItems.shadow-top[ngIf="confirmStage"] {
       margin: 0;
       padding: 0 20px;
     }
+
+    .test-mode-hint {
+      margin-top: 24px;
+      padding: 16px;
+      background: rgba(var(--ion-color-primary-rgb), 0.08);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 320px;
+
+      ion-icon {
+        font-size: 24px;
+        color: var(--ion-color-primary);
+        flex-shrink: 0;
+      }
+
+      p {
+        font-size: 13px;
+        color: var(--ion-color-dark);
+        text-align: left;
+        padding: 0;
+        margin: 0;
+        line-height: 1.4;
+
+        strong {
+          color: var(--ion-color-primary);
+        }
+      }
+    }
   }
 }
 

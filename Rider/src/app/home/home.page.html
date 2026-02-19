@@ -81,6 +81,11 @@
       <img src="../../assets/imgs/No connection-pana.svg" alt="No drivers available">
       <h2>{{ 'NO_DRIVERS' | translate }}</h2>
       <p>{{ 'NO_DRIVERS_MESSAGE' | translate }}</p>
+      <div class="test-mode-hint" *ngIf="isTestMode">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <p><strong>Test Mode Active:</strong> Please ensure you have the <strong>Driver App</strong> open and a driver
+          is online to pick up this request.</p>
+      </div>
     </div>
   </div>
 
