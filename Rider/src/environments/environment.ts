@@ -20,7 +20,7 @@ export const environment = {
         'android_channel_id': ''
 },
     onesignalServerUrl: "http://localhost:3000/send-notification",
-    serverUrl: 'https://payment-service-pi.vercel.app/',
+    serverUrl: 'https://payment-mono.vercel.app/',
     CountryJson: [
         {
             "name": "Afghanistan",

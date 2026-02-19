@@ -21,8 +21,8 @@
     "senderId": "187797802273"
   },
   "payment": {
-    "serverUrl": "https://payment-service-pi.vercel.app/",
-    "stripePublishableKey": "pk_test_YOUR_ACTUAL_PUBLISHABLE_KEY"
+    "serverUrl": "https://payment-mono.vercel.app/",
+    "stripePublishableKey": "pk_test_0t85o0Llo0MbBfC9imSzznam"
   },
   "app": {
     "name": "Pegasus Super App",

@@ -19,7 +19,7 @@ export const environment = {
         'restApiKey': 'YTM3ODgyMzQtNjg1ZC00YTQwLWJmNjItNTA4M2VkMmY3MDdl',
         'android_channel_id': ''
 },
-    serverUrl: 'https://payment-service-pi.vercel.app/',
+    serverUrl: 'https://payment-mono.vercel.app/',
     CountryJson: [
         {
             "name": "Afghanistan",

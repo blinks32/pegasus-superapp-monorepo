@@ -24,7 +24,7 @@ export const environment = {
         serverKey: '',
         senderId: '187797802273'
     },
-    serverUrl: 'https://payment-service-pi.vercel.app/',
+    serverUrl: 'https://payment-mono.vercel.app/',
     CountryJson: [
         {
             "name": "Afghanistan",
