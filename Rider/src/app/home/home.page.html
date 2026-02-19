@@ -76,6 +76,14 @@
   </ion-fab>
 
 
+  <div class="no-driver-overlay" *ngIf="noDriverStage">
+    <div class="no-driver-box">
+      <img src="../../assets/imgs/No connection-pana.svg" alt="No drivers available">
+      <h2>{{ 'NO_DRIVERS' | translate }}</h2>
+      <p>{{ 'NO_DRIVERS_MESSAGE' | translate }}</p>
+    </div>
+  </div>
+
 </ion-content>
 
 
@@ -120,22 +128,13 @@
       <!--No driver Found Bar-->
 
       <div class='bottomItems shadow-top' *ngIf="noDriverStage">
-        <ion-list-header>
-          <ion-item lines="none" style="margin: 2px;">
-            <img src="../../assets/imgs/No connection-pana.svg" style="height: 200px; width: 150px;">
-          </ion-item>
-
-        </ion-list-header>
         <ion-item-group class="ion-margin-horizontal ion-margin-bottom">
-
           <ion-button shape="round" class='main-button' size="large" type="submit" color="primary"
             (click)="ReturnHome()" expand="block">
             <ion-icon slot="start" name="arrow-back"></ion-icon>
             <ion-label>{{ 'NO_DRIVERS' | translate }}</ion-label>
           </ion-button>
-
         </ion-item-group>
-
       </div>
 
       <!--Car type, payment, confirmation and Selection Bar-->
