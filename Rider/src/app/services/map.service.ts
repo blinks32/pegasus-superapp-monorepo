@@ -90,19 +90,7 @@ const GOOGLE_MAPS_DARK_STYLE = [
   providedIn: 'root'
 })
 export class MapService {
-  private _map: GoogleMap | null = null;
-
-  get newMap(): GoogleMap {
-    if (!this._map) {
-      throw new Error('Map not initialized');
-    }
-    return this._map;
-  }
-
-  set newMap(map: GoogleMap) {
-    this._map = map;
-  }
-
+  public newMap: GoogleMap;
   LatLng: { lat: any; lng: any; };
   locationAddress: string = 'Loading..';
   showResetLocationButton: boolean;
@@ -116,13 +104,10 @@ export class MapService {
   async createMap(ref: HTMLElement, coords: { coords: { latitude: number; longitude: number } }) {
     try {
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      // Validate coords before using
-      const lat = coords?.coords?.latitude || 3.1390; // Default to Kuala Lumpur, Malaysia
+      const lat = coords?.coords?.latitude || 3.1390;
       const lng = coords?.coords?.longitude || 101.6869;
 
-      // Destroy existing map if it exists
-      this._map = await GoogleMap.create({
+      this.newMap = await GoogleMap.create({
         id: 'my-cool-map',
         element: ref,
         apiKey: environment.apiKey,
@@ -142,19 +127,19 @@ export class MapService {
       };
 
       const promises: Promise<any>[] = [
-        this._map.enableTrafficLayer(true)
+        this.newMap.enableTrafficLayer(true)
       ];
 
       // enableCurrentLocation returns a Promise that rejects on web with
       // "Geolocation not supported on web browser". Wrapping with .catch()
       // prevents the rejection from crashing Promise.all.
       promises.push(
-        this._map.enableCurrentLocation(true).catch(err =>
+        this.newMap.enableCurrentLocation(true).catch(err =>
           console.warn('enableCurrentLocation not supported on this platform:', err)
         )
       );
 
-      promises.push(this._map.setCamera({
+      promises.push(this.newMap.setCamera({
         animate: true,
         animationDuration: 500,
         zoom: 15,
@@ -173,10 +158,9 @@ export class MapService {
   }
 
   async destroyMap() {
-    if (this._map) {
+    if (this.newMap) {
       try {
-        await this._map.destroy();
-        this._map = null;
+        await this.newMap.destroy();
       } catch (error) {
         console.error('Error destroying map:', error);
       }
@@ -217,13 +201,13 @@ export class MapService {
   }
 
   async setCameraToLocation(coordinate: { lat: number; lng: number }, zoom: number, bearing: number) {
-    if (!this._map) {
+    if (!this.newMap) {
       console.error('Map not initialized');
       return;
     }
 
     try {
-      await this._map.setCamera({
+      await this.newMap.setCamera({
         animate: true,
         animationDuration: 500,
         zoom,
@@ -306,7 +290,7 @@ export class MapService {
         coordinate: { lat, lng },
         title,
       };
-      await this._map.addMarker(marker);
+      await this.newMap.addMarker(marker);
       return marker;
     } catch (error) {
       console.error('Error adding marker:', error);
