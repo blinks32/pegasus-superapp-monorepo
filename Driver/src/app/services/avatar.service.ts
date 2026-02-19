@@ -415,7 +415,14 @@ export class AvatarService {
   async checkDriverExistsByUid(uid: string): Promise<DocumentData | null> {
     try {
       const driverDocRef = doc(this.firestore, `Drivers/${uid}`);
-      const driverDoc = await getDoc(driverDocRef);
+
+      // Add timeout to prevent hanging
+      const docPromise = getDoc(driverDocRef);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Profile check timeout')), 10000)
+      );
+
+      const driverDoc = await Promise.race([docPromise, timeoutPromise]) as any;
 
       if (driverDoc.exists()) {
         const data = driverDoc.data();

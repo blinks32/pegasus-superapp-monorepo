@@ -29,7 +29,8 @@ export class LoginPage implements OnInit {
   filteredCountries = [];
   user: any;
   approve: boolean;
-  approve2: boolean;
+  approve2: boolean = false;
+  isNavigating: boolean = false; // Flag to prevent multiple navigations
   recaptchaVerifier: RecaptchaVerifier;
   //languageOptions: LanguageOption[] = [];
   currentLanguage = 'en';
@@ -91,6 +92,14 @@ export class LoginPage implements OnInit {
     await this.loadLanguage();
 
     this.initializeBackButtonCustomHandler(); // Initialize back button handler
+
+    // Add global auth state listener for the login page
+    this.authY.onAuthStateChanged(async (user) => {
+      if (user) {
+        console.log('User detected by global observer in LoginPage');
+        await this.handleUserNavigation(user);
+      }
+    });
   }
 
   /**
@@ -174,21 +183,7 @@ export class LoginPage implements OnInit {
       const user = result.user;
 
       if (user) {
-        // Check if driver document exists in database
-        const driverData = await this.avatar.checkDriverExistsByUid(user.uid);
-
-        this.overlay.hideLoader();
-
-        if (driverData) {
-          // Driver document exists - login normally
-          console.log('Existing driver found, navigating to tabs');
-          this.router.navigateByUrl('tabs');
-        } else {
-          // No driver document - go to details for account creation
-          // Pass phone number from Google account if available
-          console.log('No driver document found, navigating to details');
-          this.router.navigateByUrl('details');
-        }
+        await this.handleUserNavigation(user);
       }
     } catch (error) {
       console.error('Google sign-in error:', error);
@@ -260,35 +255,6 @@ export class LoginPage implements OnInit {
 
       const modal = await this.modalCtrl.create(options);
       await modal.present();
-      const data: any = await modal.onWillDismiss();
-
-      this.authY.onAuthStateChanged(async (user) => {
-        if (user) {
-          this.overlay.showLoader('');
-          try {
-            // Check if driver document exists in database
-            const driverData = await this.avatar.checkDriverExistsByUid(user.uid);
-
-            this.overlay.hideLoader();
-
-            if (driverData) {
-              // Driver document exists - login normally
-              console.log('Existing driver found, navigating to tabs');
-              this.router.navigateByUrl('tabs');
-            } else {
-              // No driver document - go to details for account creation
-              console.log('No driver document found, navigating to details');
-              this.router.navigateByUrl('details');
-            }
-          } catch (error) {
-            console.error('Error checking driver document:', error);
-            this.overlay.hideLoader();
-            // On error, go to details page as fallback
-            this.router.navigateByUrl('details');
-          }
-          this.approve2 = false;
-        }
-      });
     } catch (e) {
       console.error('Error during signIn:', e);
       this.overlay.hideLoader();
@@ -346,7 +312,39 @@ export class LoginPage implements OnInit {
 
     await modal.present();
     const { data } = await modal.onWillDismiss();
-    // Auth state changed listener will handle the navigation
+  }
+
+  /**
+   * Centralized navigation logic after authentication
+   */
+  private async handleUserNavigation(user: any) {
+    if (this.isNavigating) return;
+    this.isNavigating = true;
+
+    try {
+      this.overlay.showLoader('');
+
+      // Check if driver document exists in database
+      const driverData = await this.avatar.checkDriverExistsByUid(user.uid);
+
+      this.overlay.hideLoader();
+
+      if (driverData) {
+        console.log('Existing driver found, navigating to tabs');
+        this.router.navigateByUrl('tabs');
+      } else {
+        console.log('No driver document found, navigating to details');
+        this.router.navigateByUrl('details');
+      }
+    } catch (error) {
+      console.error('Error checking driver document:', error);
+      this.overlay.hideLoader();
+      // On error, go to details page as fallback
+      this.router.navigateByUrl('details');
+    } finally {
+      this.isNavigating = false;
+      this.approve2 = false;
+    }
   }
 
   async handleAuthError(error: any) {
