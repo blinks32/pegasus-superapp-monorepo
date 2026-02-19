@@ -262,22 +262,20 @@ export class HomePage implements AfterViewInit {
       // Non-blocking: continue initialization even if permission is denied 
       // initializeGeolocation will handle the fallback
 
-      // Initialize profile first
-      await this.initializeProfile();
-
-      // Then proceed with other initializations
-      await this.initializeApp();
-      await this.initializeNetworkMonitoring();
-      await this.fetchSavedPaymentMethods();
-      // load user preset places (localStorage-backed)
-      await this.loadPresets();
-
-      // Initialize geolocation and map BEFORE entering booking stage
+      // Initialize geolocation and map FIRST for instant visual feedback
       await this.initializeGeolocation();
       await this.initializeMap();
 
       // Now it's safe to enter booking stage (map is initialized)
       this.EnterBookingStage();
+
+      // Then proceed with other initializations (non-blocking for map)
+      await this.initializeProfile();
+      await this.initializeApp();
+      await this.initializeNetworkMonitoring();
+      await this.fetchSavedPaymentMethods();
+      // load user preset places (localStorage-backed)
+      await this.loadPresets();
 
       // Set up real-time listener for ride state
       this.initializeRideStateListener();
