@@ -49,6 +49,11 @@ ion-skeleton-text {
 ion-content {
   --background: transparent;
   position: relative;
+  pointer-events: none; // Allow touches to pass through to native map
+
+  &>* {
+    pointer-events: auto; // Re-enable for UI elements
+  }
 }
 
 ion-footer {
@@ -301,7 +306,7 @@ ion-skeleton-text {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: -1;
+  z-index: 0;
 }
 
 .lowered-fab {

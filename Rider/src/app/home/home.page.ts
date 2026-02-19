@@ -1193,6 +1193,7 @@ export class HomePage implements AfterViewInit {
       }
 
       await this.map.createMap(this.mapRef.nativeElement, this.coordinates);
+      this.map.newMap.enableTouch();
       this.ngZone.run(() => {
         this.mapy = true;
         this.actualLocation = this.map.actualLocation;
@@ -3424,6 +3425,11 @@ export class HomePage implements AfterViewInit {
       this.newPoly = await this.map.newMap.addPolylines(polylines);
     } catch (error) {
       console.error('Error creating and adding markers:', error);
+    } finally {
+      // Always re-enable touch events after markers/polylines are done
+      if (this.map && this.map.newMap) {
+        this.map.newMap.enableTouch();
+      }
     }
   }
 

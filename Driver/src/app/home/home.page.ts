@@ -261,6 +261,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
       await this.fetchOnlineState();
 
       await this.map.createMap(this.mapRef.nativeElement, coordinates);
+      this.map.newMap.enableTouch();
       this.ngZone.run(() => {
         this.mapy = true;
         this.actualLocation = this.map.actualLocation;
@@ -2169,6 +2170,11 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
     } catch (error) {
       console.error('Error adding markers and polyline:', error);
+    } finally {
+      // Always re-enable touch events after markers/polylines are done
+      if (this.map && this.map.newMap) {
+        this.map.newMap.enableTouch();
+      }
     }
   }
 
