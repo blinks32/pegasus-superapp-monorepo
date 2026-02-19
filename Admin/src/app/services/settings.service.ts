@@ -20,8 +20,10 @@ export class SettingsService {
       map(data => {
         if (!data) {
           const defaults = { currency: 'USD', currencySymbol: '$' };
-          // Proactively seed defaults if missing
-          void setDoc(settingsDoc, defaults, { merge: true });
+          // Proactively seed defaults if missing, but catch potential permission errors
+          setDoc(settingsDoc, defaults, { merge: true }).catch(err => {
+            console.warn('Failed to seed default settings (likely permission denied or doc exists):', err);
+          });
           return defaults;
         }
         return data as AppSettings;

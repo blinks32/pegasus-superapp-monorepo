@@ -128,38 +128,41 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
           lng: position.coords.longitude
         };
         console.log('Got high accuracy location:', this.LatLng);
+        return; // Success!
 
       } catch (highAccuracyError) {
         console.warn('High accuracy location failed, trying low accuracy:', highAccuracyError);
 
-        if (!this.platform.is('hybrid') && (highAccuracyError.code === 1 || highAccuracyError.message?.includes('denied'))) {
+        // Don't show alert yet, try low accuracy fallback first
+      }
+
+      // Fallback to low accuracy with longer timeout
+      try {
+        const position = await Geolocation.getCurrentPosition({
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 300000 // Accept cached position up to 5 minutes old
+        });
+
+        this.coordinates = position;
+        this.LatLng = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        console.log('Got low accuracy location:', this.LatLng);
+
+      } catch (lowAccuracyError) {
+        console.warn('All geolocation attempts failed:', lowAccuracyError);
+
+        // ONLY show alert if it's clearly a PERMISSION error on web
+        if (!this.platform.is('hybrid') && (lowAccuracyError.code === 1 || lowAccuracyError.message?.toLowerCase().includes('denied'))) {
           await this.showWebLocationRequiredAlert();
-          return;
         }
-
-        // Fallback to low accuracy with longer timeout
-        try {
-          const position = await Geolocation.getCurrentPosition({
-            enableHighAccuracy: false,
-            timeout: 10000,
-            maximumAge: 300000 // Accept cached position up to 5 minutes old
-          });
-
-          this.coordinates = position;
-          this.LatLng = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          console.log('Got low accuracy location:', this.LatLng);
-
-        } catch (lowAccuracyError) {
-          console.warn('All geolocation attempts failed, using default coordinates:', lowAccuracyError);
-          // Keep default coordinates set in setDefaultCoordinates()
-        }
+        // Otherwise, we just use the default coordinates set in setDefaultCoordinates()
       }
 
     } catch (e) {
-      console.error('Error getting location:', e);
+      console.error('Error in location process:', e);
       // Keep default coordinates
     }
   }

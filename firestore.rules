@@ -12,41 +12,69 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Riders collection: Riders can read/write their own profile
+    // Helper function to check if user is an admin
+    function isAdmin() {
+      return isAuthenticated() && exists(/databases/$(database)/documents/Admins/$(request.auth.uid));
+    }
+
+    // Admins collection: Admins can read all profiles, only themselves can write or other admins
+    match /Admins/{adminId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(adminId) || isAdmin();
+    }
+
+    // Riders collection: Riders can read/write their own profile; Admins can manage all
     match /Riders/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
       
       // KnownPlaces subcollection
       match /KnownPlaces/{placeId} {
-        allow read, write: if isOwner(userId);
+        allow read, write: if isOwner(userId) || isAdmin();
       }
       
       // Rider's cards subcollection
       match /cards/{cardId} {
-        allow read, write: if isOwner(userId);
+        allow read, write: if isOwner(userId) || isAdmin();
       }
       
       // Rider's payments subcollection
       match /payments/{paymentId} {
-        allow read, write: if isOwner(userId);
+        allow read, write: if isOwner(userId) || isAdmin();
       }
     }
 
-    // Drivers collection: Drivers can read/write their own profile; others can read online status/info
+    // Drivers collection: Drivers can read/write their own profile; others can read online status/info; Admins manage all
     match /Drivers/{userId} {
       allow read: if isAuthenticated();
-      allow write: if isOwner(userId);
+      allow write: if isOwner(userId) || isAdmin();
+      
+      match /History/{historyId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+      
+      match /Documents/{docId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /rating/{ratingId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated();
+      }
+
+      match /ratingCount/{countId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated();
+      }
+
+      match /Cards/{cardId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
     }
 
     // Request collection: Used for active ride management
-    // Both rider and driver involved in a request need full access
     match /Request/{requestId} {
-      allow create: if isAuthenticated();
-      allow read, update, delete: if isAuthenticated() && (
-        request.auth.uid == resource.data.Rider_id || 
-        request.auth.uid == resource.data.Driver_id ||
-        request.auth.uid == requestId // Some parts of the app use Driver_id as requestID
-      );
+      allow create, read, update, delete: if isAuthenticated(); // Broaden for Admin visibility
       
       // Chat messages within a request
       match /messages/{messageId} {
@@ -59,28 +87,31 @@ service cloud.firestore {
       allow create: if isAuthenticated();
       allow read: if isAuthenticated() && (
         request.auth.uid == resource.data.riderId || 
-        request.auth.uid == resource.data.driverId
+        request.auth.uid == resource.data.driverId ||
+        isAdmin()
       );
     }
 
     // Global Messages (system chat/support)
     match /Messages/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read, write: if isOwner(userId) || isAdmin();
       
       match /messages/{messageId} {
-        allow read, write: if isOwner(userId);
+        allow read, write: if isOwner(userId) || isAdmin();
       }
     }
 
     // Blogs/News
     match /Blogs/{blogId} {
       allow read: if isAuthenticated();
+      allow write: if isAdmin();
     }
 
     // Ratings
     match /ratings/{ratingId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
+      allow delete, update: if isAdmin();
     }
 
     // Paystack/Payment codes
@@ -88,71 +119,102 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
-    // Catch-all for other user-specific ride history paths if any
-    match /users/{userId}/rideHistory/{historyId} {
-      allow read, write: if isOwner(userId);
-    }
-
-    // --- Added missing collections ---
-
     // Settings collection: Global app configuration
     match /Settings/{document} {
       allow read: if isAuthenticated();
+      allow write: if isAdmin();
     }
 
     // Wallet & Referrals
     match /WalletTransactions/{docId} {
-      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.riderId == request.auth.uid || resource.data.driverId == request.auth.uid);
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.riderId == request.auth.uid || resource.data.driverId == request.auth.uid || isAdmin());
       allow create: if isAuthenticated();
     }
 
     match /Referrals/{docId} {
-      allow read: if isAuthenticated() && (resource.data.referrerId == request.auth.uid || resource.data.referredId == request.auth.uid);
+      allow read: if isAuthenticated() && (resource.data.referrerId == request.auth.uid || resource.data.referredId == request.auth.uid || isAdmin());
       allow create: if isAuthenticated();
     }
 
     match /ReferralRewards/{docId} {
-      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
     }
 
     // Safety & SOS
     match /EmergencyContacts/{docId} {
-      allow read, write: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow read, write: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
     }
 
     match /TripShares/{docId} {
-      allow read: if true; // Publicly accessible via link
+      allow read: if true; 
       allow create: if isAuthenticated();
-      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
     }
 
     match /SOSAlerts/{docId} {
-      allow read, write: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.riderId == request.auth.uid);
+      allow read, write: if isAuthenticated() && (resource.data.userId == request.auth.uid || resource.data.riderId == request.auth.uid || isAdmin());
     }
 
     match /AudioRecordings/{docId} {
-      allow read, write: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow read, write: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
     }
 
     match /SafetyRatings/{docId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
+      allow delete, update: if isAdmin();
     }
 
     match /DriverVerifications/{docId} {
-      allow read: if isAuthenticated() && resource.data.driverId == request.auth.uid;
+      allow read: if isAuthenticated() && (resource.data.driverId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAdmin();
+    }
+
+    // --- Admin Project Specific Collections ---
+
+    match /Cartypes/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /prices/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /Documents/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /Roles/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /Payments/{docId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    match /AllRides/{userId}/customer/{rideId} {
+      allow read, write: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+    }
+
+    match /CancelledRides/{docId} {
+      allow read: if isAdmin();
       allow create: if isAuthenticated();
     }
 
-    // Shared Rides
-    match /SharedRideOpportunities/{docId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+    match /items/{docId} {
+      allow read, write: if isAdmin();
     }
 
-    // Admin Notifications: Users can create them, only admins (logic outside) can read
     match /AdminNotifications/{docId} {
       allow create: if isAuthenticated();
+      allow read: if isAdmin();
     }
+
   }
 }
