@@ -257,10 +257,12 @@ export class HomePage implements AfterViewInit {
 
   async ngAfterViewInit() {
     try {
-      // First check location permissions
-      await this.checkAndRequestLocationPermissions();
-      // Non-blocking: continue initialization even if permission is denied 
-      // initializeGeolocation will handle the fallback
+      // Only check native permissions on hybrid (matches Driver's approach)
+      // On web, initializeGeolocation calls getCurrentPosition which triggers
+      // the browser's built-in prompt directly — no separate check needed.
+      if (this.platform.is('hybrid')) {
+        await this.checkAndRequestLocationPermissions();
+      }
 
       // Initialize geolocation and map FIRST for instant visual feedback
       await this.initializeGeolocation();
