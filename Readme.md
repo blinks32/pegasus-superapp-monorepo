@@ -319,11 +319,11 @@ The Pegasus ecosystem includes robust geolocation handling for both native and w
 Uses Capacitor Geolocation with background tracking for Drivers. If permissions are denied, the app provides deep links to device settings for easy resolution.
 
 ### Web Platform
-A custom retry and detection mechanism is implemented for the web:
-- **Permission Watcher**: The app automatically detects when location permissions are granted via browser site settings and re-initializes the map without requiring a page refresh.
-- **Retry UI**: If location is blocked, a persistent "Location Required" prompt appears with a manual retry option.
+A simplified, non-blocking fallback mechanism is implemented for the web:
+- **Direct Initialization**: On web, the app bypasses native permission checks and goes straight to the browser's native geolocation prompt.
+- **Graceful Fallback**: If a user denies location access, the app shows a non-blocking toast notification and falls back to a default location (Kuala Lumpur). This ensuring the map always initializes and the user isn't stuck behind blocking alerts.
+- **Fast Loading**: Geolocation and Map initialization are prioritized in the `ngAfterViewInit` lifecycle hook to ensure the map appears almost instantly.
 
-This ensures that users who initially block location can easily enable it later without getting stuck in an error state.
 
 ---
 

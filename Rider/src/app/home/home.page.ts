@@ -1081,36 +1081,23 @@ export class HomePage implements AfterViewInit {
       this.startPollingPosition();
       return true;
     } catch (error) {
-      console.error('Error initializing geolocation:', error);
-      this.overlay.hideLoader();
-
-      // Handle web denial specifically
-      if (!this.platform.is('hybrid') && (error.code === 1 || error.message?.includes('denied'))) {
-        if (!isRetry) {
-          // Only show alert on initial load failure
-          this.showWebLocationRequiredAlert();
-
-          // Use fallback location so app can continue
-          this.coordinates = {
-            coords: {
-              latitude: 3.1390,
-              longitude: 101.6869,
-              accuracy: 0,
-              altitude: null,
-              altitudeAccuracy: null,
-              heading: null,
-              speed: null
-            },
-            timestamp: Date.now()
-          };
-          this.LatLng = { lat: 3.1390, lng: 101.6869 };
-          return true; // Return true to allow initialization to continue with fallback
-        }
-      } else if (this.platform.is('hybrid')) {
-        this.startPermissionPolling();
-      }
-
-      return false;
+      console.warn('Geolocation failed, trying fallback:', error);
+      // Fallback to default (Kuala Lumpur) - matches Driver's approach
+      this.coordinates = {
+        coords: {
+          latitude: 3.1390,
+          longitude: 101.6869,
+          accuracy: 0,
+          altitude: null,
+          altitudeAccuracy: null,
+          heading: null,
+          speed: null
+        },
+        timestamp: Date.now()
+      };
+      this.LatLng = { lat: 3.1390, lng: 101.6869 };
+      this.overlay.showToast('Using default location. Please enable GPS for better accuracy.');
+      return true; // Always continue to map initialization with fallback
     }
   }
 
