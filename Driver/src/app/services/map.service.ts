@@ -52,7 +52,11 @@ export class MapService {
       ];
 
       if (!isWeb) {
-        promises.push(this.newMap.enableCurrentLocation(true));
+        try {
+          promises.push(this.newMap.enableCurrentLocation(true));
+        } catch (e) {
+          console.warn('enableCurrentLocation failed in MapService:', e);
+        }
       }
 
       promises.push(this.newMap.setCamera({

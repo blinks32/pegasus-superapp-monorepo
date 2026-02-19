@@ -66,11 +66,11 @@ export class MapService {
         this._map.enableTrafficLayer(true)
       ];
 
-      // Guard enableCurrentLocation on web as it can throw "Geolocation not supported"
-      // or cause issues with capacitor-google-maps web implementation
-      const isWeb = !ref.ownerDocument.defaultView.navigator.userAgent.includes('Capacitor');
-      if (!isWeb) {
+      // Attempt to enable native location features safely
+      try {
         promises.push(this._map.enableCurrentLocation(true));
+      } catch (err) {
+        console.warn('Native enableCurrentLocation failed, will use custom marker if needed:', err);
       }
 
       promises.push(this._map.setCamera({

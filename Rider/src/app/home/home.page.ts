@@ -1038,6 +1038,11 @@ export class HomePage implements AfterViewInit {
 
       // Update map camera to new location
       if (this.mapy && this.LatLng) {
+        try {
+          await this.map.newMap.enableCurrentLocation(true);
+        } catch (e) {
+          console.warn('Could not enable native location dot on retry:', e);
+        }
         await this.map.setCameraToLocation(this.LatLng, 15, 0);
         // Refresh drivers for new location
         if (this.networkService.isConnected()) {
@@ -3591,7 +3596,10 @@ export class HomePage implements AfterViewInit {
     if (this.map && this.map.newMap) {
       try {
         this.map.newMap.enableTouch();
-        this.map.newMap.enableCurrentLocation(true);
+        // Only try to enable if supported to avoid web console spam/crashes
+        this.map.newMap.enableCurrentLocation(true).catch(e => {
+          console.warn('Native location dot not supported or failed to enable:', e);
+        });
       } catch (e) {
         console.error('Error enabling map features in booking stage:', e);
       }
