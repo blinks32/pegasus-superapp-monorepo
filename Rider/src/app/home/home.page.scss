@@ -146,14 +146,12 @@ ion-footer {
 .bottom-sheet-content {
   --background: transparent;
   --padding-top: 10px;
-  --padding-bottom: 80px; // Ensure content stays above tab bar
 
   .sheet-section {
     padding: 8px 0;
     animation: fadeIn 0.3s ease-in-out;
   }
 }
-
 
 @keyframes fadeIn {
   from {
