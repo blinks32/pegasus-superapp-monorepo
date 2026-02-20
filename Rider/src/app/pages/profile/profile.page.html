@@ -15,53 +15,67 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div *ngIf="user; else loading">
-    <div class="preview">
-      <ion-avatar (click)="presentImageSourceActionSheet()">
-        <img *ngIf="user.photoURL; else placeholder_avatar;" [src]="user.photoURL" />
-        <ng-template #placeholder_avatar>
-          <div class="fallback">
-            <p>{{ 'SELECT_AVATAR' | translate }}</p>
-          </div>
-        </ng-template>
-      </ion-avatar>
+  <div *ngIf="user; else loading" class="profile-container">
+    <div class="header-section">
+      <div class="avatar-wrapper" (click)="presentImageSourceActionSheet()">
+        <ion-avatar class="main-avatar">
+          <img *ngIf="user.photoURL; else placeholder_avatar;" [src]="user.photoURL" />
+          <ng-template #placeholder_avatar>
+            <div class="fallback">
+              <ion-icon name="person-outline"></ion-icon>
+            </div>
+          </ng-template>
+        </ion-avatar>
+        <div class="edit-badge">
+          <ion-icon name="camera"></ion-icon>
+        </div>
+      </div>
+      <h2 class="user-name">{{ user.displayName || ('GUEST' | translate) }}</h2>
     </div>
 
-    <form [formGroup]="profileForm">
-      <ion-item class="ion-margin">
-        <ion-icon name="call" color="primary" slot="start"></ion-icon>
-        <ion-label>
-          {{ user.phoneNumber || 'No phone number' }}
-        </ion-label>
-      </ion-item>
+    <ion-card class="info-card modern-card">
+      <ion-card-header>
+        <ion-card-title>{{ 'PERSONAL_DETAILS' | translate }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="profileForm">
+          <ion-item lines="none" class="modern-item">
+            <ion-icon name="call-outline" color="primary" slot="start"></ion-icon>
+            <ion-label position="stacked">{{ 'MOBILE_NUMBER' | translate }}</ion-label>
+            <ion-input [value]="user.phoneNumber" readonly></ion-input>
+          </ion-item>
 
-      <ion-item class="ion-margin">
-        <ion-icon name="person" color="primary" slot="start"></ion-icon>
-        <ion-input formControlName="displayName" placeholder="Name"></ion-input>
-      </ion-item>
+          <ion-item lines="none" class="modern-item">
+            <ion-icon name="person-outline" color="primary" slot="start"></ion-icon>
+            <ion-label position="stacked">{{ 'NAME' | translate }}</ion-label>
+            <ion-input formControlName="displayName" placeholder="Enter your name"></ion-input>
+          </ion-item>
 
-      <ion-item class="ion-margin">
-        <ion-icon name="mail" color="primary" slot="start"></ion-icon>
-        <ion-label>
-          {{ user.email || 'No email' }}
-        </ion-label>
-      </ion-item>
-    </form>
+          <ion-item lines="none" class="modern-item">
+            <ion-icon name="mail-outline" color="primary" slot="start"></ion-icon>
+            <ion-label position="stacked">{{ 'EMAIL_ADDRESS' | translate }}</ion-label>
+            <ion-input [value]="user.email" readonly></ion-input>
+          </ion-item>
+        </form>
+      </ion-card-content>
+    </ion-card>
 
-    <ion-list lines="none" class="ion-margin-top">
-      <ion-item (click)="nav.navigateForward('promotion')" detail="true">
-        <ion-icon name="gift" color="primary" slot="start"></ion-icon>
-        <ion-label>{{ 'MENU.PROMOTION' | translate }}</ion-label>
-      </ion-item>
-      <ion-item (click)="nav.navigateForward('about')" detail="true">
-        <ion-icon name="information-circle" color="primary" slot="start"></ion-icon>
-        <ion-label>{{ 'MENU.ABOUT' | translate }}</ion-label>
-      </ion-item>
-    </ion-list>
+    <ion-card class="menu-card modern-card">
+      <ion-list lines="none">
+        <ion-item (click)="nav.navigateForward('promotion')" detail="true" class="modern-item">
+          <ion-icon name="gift-outline" color="primary" slot="start"></ion-icon>
+          <ion-label>{{ 'MENU.PROMOTION' | translate }}</ion-label>
+        </ion-item>
+        <ion-item (click)="nav.navigateForward('about')" detail="true" class="modern-item">
+          <ion-icon name="information-circle-outline" color="primary" slot="start"></ion-icon>
+          <ion-label>{{ 'MENU.ABOUT' | translate }}</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card>
 
-    <ion-label color="primary" class="ion-text-center ion-padding-top">
-      <p>{{ 'RECEIPT_EMAIL_NOTE' | translate }}</p>
-    </ion-label>
+    <div class="ion-text-center note-section">
+      <p class="email-note">{{ 'RECEIPT_EMAIL_NOTE' | translate }}</p>
+    </div>
   </div>
 
   <ng-template #loading>

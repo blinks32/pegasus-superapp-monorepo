@@ -21,62 +21,74 @@
       <ion-img src="../assets/imgs/main2.svg"></ion-img>
     </ion-slide>
   </ion-slides>
-  <ion-row class="ion-no-padding">
-    <ion-list class="ion-no-padding full-width">
-      <ion-item-group class="ion-margin-horizontal">
-        <form [formGroup]="form" class="ion-padding modern-form">
-          <div id="sign-in-button"></div>
-          <div class="phone-input-container">
-            <ion-item lines="none" class="country-select">
-              <ion-button fill="clear" class="country-button" (click)="openCountrySearchModal()"
-                [disabled]="isInTestMode">
-                <img [src]="flag" class="country-flag" />
-                {{ CountryCode }}
-                <ion-icon name="chevron-down-outline"></ion-icon>
-              </ion-button>
-              <ion-input class="phone-input" formControlName="phone" [placeholder]="'MOBILE_NUMBER' | translate"
-                type="tel" [readonly]="isInTestMode" minlength="10" maxlength="11" (ionFocus)="Show()"
-                (ionBlur)="Hide()">
+  <!-- Login Form -->
+  <div class="form-container">
+    <form [formGroup]="form">
+      <div id="sign-in-button"></div>
+
+      <!-- Phone Input Card -->
+      <ion-card class="phone-input-card">
+        <ion-card-content class="card-content">
+          <div class="input-wrapper">
+            <!-- Country Code Button -->
+            <button type="button" class="country-select-btn" (click)="openCountrySearchModal()"
+              [disabled]="isInTestMode">
+              <img [src]="flag" class="country-flag" />
+              <span class="country-code">{{ CountryCode }}</span>
+              <ion-icon name="chevron-down-outline" class="dropdown-icon"></ion-icon>
+            </button>
+
+            <!-- Phone Number Input -->
+            <div class="phone-input-wrapper">
+              <ion-input class="phone-input" type="tel" formControlName="phone"
+                [placeholder]="'MOBILE_NUMBER' | translate" [readonly]="isInTestMode" minlength="10" maxlength="11"
+                (ionFocus)="Show()" (ionBlur)="Hide()">
               </ion-input>
-            </ion-item>
-            <ion-text class="ion-text-center" *ngIf="!form.get('phone').valid && form.get('phone').touched">
-              <ion-text class="error" *ngIf="form.get('phone').hasError('required')" color="danger">
+            </div>
+          </div>
+
+          <!-- Validation Error -->
+          <div class="validation-error" *ngIf="!form.get('phone').valid && form.get('phone').touched">
+            <ion-text color="danger">
+              <small *ngIf="form.get('phone').hasError('required')">
                 {{ 'MOBILE_REQUIRED' | translate }}
-              </ion-text>
-              <ion-text class="error"
-                *ngIf="form.get('phone').hasError('minlength') && !form.get('phone').hasError('required')"
-                color="danger">
+              </small>
+              <small *ngIf="form.get('phone').hasError('minlength') && !form.get('phone').hasError('required')">
                 {{ 'MOBILE_INVALID' | translate }}
-              </ion-text>
+              </small>
             </ion-text>
           </div>
+        </ion-card-content>
+      </ion-card>
 
-          <div class="test-mode-notice" *ngIf="isInTestMode">
-            <ion-icon name="information-circle-outline"></ion-icon>
-            <span>TEST VERSION: Only the default number can be used.</span>
-          </div>
-          <ion-button class="submit-button" shape="round" size="large" type="button"
-            [disabled]="!form.get('phone').valid" (click)="signIn()" expand="block">
-            <ion-label *ngIf="!approve2">{{ 'CONTINUE' | translate }}</ion-label>
-            <ion-icon *ngIf="!approve2" name="arrow-forward-outline"></ion-icon>
-            <ion-progress-bar *ngIf="approve2" type="indeterminate"></ion-progress-bar>
-          </ion-button>
+      <div class="test-mode-notice" *ngIf="isInTestMode">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <span>TEST VERSION: Only the default number can be used.</span>
+      </div>
 
-          <div class="divider-container">
-            <div class="divider-line"></div>
-            <span class="divider-text">{{ 'OR' | translate }}</span>
-            <div class="divider-line"></div>
-          </div>
+      <!-- Submit Button -->
+      <ion-button class="submit-btn" shape="round" size="large" type="button" [disabled]="!form.get('phone').valid"
+        color="primary" (click)="signIn()" expand="block">
+        <span *ngIf="!approve2">{{ 'CONTINUE' | translate }}</span>
+        <ion-icon *ngIf="!approve2" slot="end" name="arrow-forward-outline"></ion-icon>
+        <ion-spinner *ngIf="approve2" name="crescent"></ion-spinner>
+      </ion-button>
 
-          <ion-button class="google-button" shape="round" size="large" fill="outline" (click)="signInWithGoogle()"
-            [disabled]="defaultLoginConfig?.enabled" expand="block">
-            <ion-icon name="logo-google" slot="start"></ion-icon>
-            <ion-label>{{ 'CONTINUE_WITH_GOOGLE' | translate }}</ion-label>
-          </ion-button>
-        </form>
-      </ion-item-group>
-    </ion-list>
-  </ion-row>
+      <!-- Divider -->
+      <div class="divider-container">
+        <div class="divider-line"></div>
+        <span class="divider-text">{{ 'OR' | translate }}</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Google Login Button -->
+      <ion-button class="google-btn" expand="block" shape="round" fill="outline" (click)="signInWithGoogle()"
+        [disabled]="defaultLoginConfig?.enabled">
+        <ion-icon slot="start" name="logo-google" class="google-icon"></ion-icon>
+        <span>{{ 'CONTINUE_WITH_GOOGLE' | translate }}</span>
+      </ion-button>
+    </form>
+  </div>
 
   <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button>

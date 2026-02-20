@@ -155,108 +155,297 @@ ion-select-option {
 
 // Add any additional RTL-specific styles here
 
+// Header Styles
 .modern-header {
+  --background: transparent;
+  --border-width: 0;
+  padding-top: 20px;
+
   .app-title {
-    font-size: 2rem;
+    font-size: 32px;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin: 0;
+    padding: 0;
+    color: var(--ion-color-primary);
+    text-align: center;
   }
 
   .app-tagline {
-    font-size: 1.1rem;
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 4px 0 0 0;
+    font-weight: 400;
+    text-align: center;
     opacity: 0.8;
   }
 }
 
+// Content Styles
 .modern-content {
-  .test-mode-notice {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(var(--ion-color-warning-rgb), 0.1);
-    color: var(--ion-color-warning-shade);
-    padding: 10px 16px;
-    border-radius: 12px;
-    margin: 1rem 0;
+  --background: var(--ion-background-color);
+  padding: 0 24px;
+}
+
+// Slider Styles
+ion-slides {
+  height: 30vh;
+  margin: 20px 0;
+
+  ion-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+// Form Container
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-bottom: 40px;
+}
+
+// Phone Input Card
+.phone-input-card {
+  margin: 0 0 24px 0;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .card-content {
+    padding: 16px;
+  }
+}
+
+// Input Wrapper
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  padding: 4px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: var(--ion-color-primary);
+    background: var(--ion-color-light-tint);
+  }
+}
+
+// Country Select Button
+.country-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--ion-color-light);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 110px;
+
+  &:hover {
+    background: var(--ion-color-light-shade);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .country-flag {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .country-code {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  .dropdown-icon {
+    font-size: 16px;
+    color: var(--ion-color-medium);
+  }
+}
+
+// Phone Input Wrapper
+.phone-input-wrapper {
+  flex: 1;
+
+  .phone-input {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --background: transparent;
+    --placeholder-color: var(--ion-color-medium);
+    --placeholder-opacity: 0.7;
+    font-size: 20px;
+    font-weight: 600;
+    height: 56px;
+  }
+}
+
+// Validation Error
+.validation-error {
+  margin-top: 12px;
+  padding: 0 4px;
+
+  small {
+    font-size: 13px;
+    display: block;
+    margin: 0;
+  }
+}
+
+// Test Mode Notice
+.test-mode-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(var(--ion-color-warning-rgb), 0.1);
+  color: var(--ion-color-warning-shade);
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 500;
+
+  ion-icon {
+    font-size: 18px;
+  }
+}
+
+// Submit Button
+.submit-btn {
+  margin-top: 8px;
+  height: 56px;
+  --border-radius: 14px;
+  font-weight: 600;
+  font-size: 17px;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+
+  &:not([disabled]) {
+    &:hover {
+      --box-shadow: 0 6px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  ion-icon {
+    font-size: 22px;
+    margin-left: 8px;
+  }
+
+  ion-spinner {
+    --color: white;
+  }
+}
+
+// Divider
+.divider-container {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--ion-color-medium-tint);
+  }
+
+  .divider-text {
+    padding: 0 16px;
+    color: var(--ion-color-medium);
     font-size: 14px;
     font-weight: 500;
+  }
+}
+
+// Google Sign-in Button
+.google-btn {
+  height: 56px;
+  --border-radius: 14px;
+  font-weight: 600;
+  font-size: 17px;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  --background: var(--ion-color-light);
+  --color: var(--ion-text-color);
+  border: 1px solid var(--ion-color-step-300);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  &:not([disabled]) {
+    &:hover {
+      --background: #f8f9fa;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .google-icon {
+    font-size: 22px;
+    margin-right: 8px;
+    color: #4285f4;
+  }
+
+  ion-spinner {
+    --color: #4285f4;
+  }
+}
+
+// Language FAB
+.language-fab {
+  margin: 0 16px 16px 0;
+
+  ion-fab-button {
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
     ion-icon {
-      font-size: 20px;
+      font-size: 24px;
     }
   }
 
-  .phone-input-container {
-    margin: 2rem 0;
-
-    .country-select {
-      background: var(--ion-color-light);
-      border-radius: 12px;
-      margin-bottom: 1rem;
-
-      .country-button {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        .country-flag {
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-        }
-      }
-
-      .phone-input {
-        --padding-start: 12px;
-        --background: transparent;
-        font-size: 1.5rem;
-        font-weight: 600;
-      }
+  ion-fab-list {
+    ion-fab-button {
+      width: 48px;
+      height: 48px;
+      margin: 8px 0;
     }
   }
 
-  .submit-button {
-    margin-top: 2rem;
-    --border-radius: 12px;
-    --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+  .lang-flag {
+    font-size: 20px;
+  }
+}
 
-    ion-icon {
-      margin-left: 8px;
-    }
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 
-  .divider-container {
-    display: flex;
-    align-items: center;
-    margin: 1.5rem 0;
-
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: var(--ion-color-medium);
-      opacity: 0.3;
-    }
-
-    .divider-text {
-      padding: 0 1rem;
-      color: var(--ion-color-medium);
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  .google-button {
-    --border-radius: 12px;
-    --border-width: 2px;
-    --border-color: var(--ion-color-medium);
-
-    ion-icon {
-      margin-right: 8px;
-      color: #4285F4;
-    }
-
-    ion-label {
-      color: var(--ion-color-dark);
-    }
-  }
+.modern-header,
+.form-container {
+  animation: fadeIn 0.6s ease-out;
 }
