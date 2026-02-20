@@ -37,8 +37,8 @@
           </ion-item-divider>
 
           <ion-item [class.ion-invalid]="form.get('fullname')?.touched && form.get('fullname')?.invalid">
-            <ion-label position="floating">{{ 'DETAILS.PERSONAL_INFO.FIRST_NAME' | translate }}</ion-label>
-            <ion-input formControlName="fullname" type="text">
+            <ion-input formControlName="fullname" type="text" [label]="'DETAILS.PERSONAL_INFO.FIRST_NAME' | translate"
+              labelPlacement="floating">
             </ion-input>
             <ion-note slot="error" *ngIf="form.get('fullname')?.touched && form.get('fullname')?.errors?.['required']">
               {{ 'VALIDATION.REQUIRED' | translate }}
@@ -46,12 +46,14 @@
           </ion-item>
 
           <ion-item>
-            <ion-input formControlName="lastname" [placeholder]="'DETAILS.PERSONAL_INFO.LAST_NAME' | translate">
+            <ion-input formControlName="lastname" [label]="'DETAILS.PERSONAL_INFO.LAST_NAME' | translate"
+              labelPlacement="stacked" [placeholder]="'DETAILS.PERSONAL_INFO.LAST_NAME' | translate">
             </ion-input>
           </ion-item>
 
           <ion-item>
             <ion-input formControlName="email" type="email" [readonly]="user?.email"
+              [label]="'DETAILS.PERSONAL_INFO.EMAIL' | translate" labelPlacement="stacked"
               [placeholder]="'DETAILS.PERSONAL_INFO.EMAIL' | translate">
             </ion-input>
           </ion-item>
@@ -63,12 +65,14 @@
             <ion-label>{{ 'DETAILS.VEHICLE_INFO.TITLE' | translate }}</ion-label>
           </ion-item-divider>
           <ion-item>
-            <ion-input formControlName="plateNumber" [placeholder]="'DETAILS.VEHICLE_INFO.PLATE_NUMBER' | translate">
+            <ion-input formControlName="plateNumber" [label]="'DETAILS.VEHICLE_INFO.PLATE_NUMBER' | translate"
+              labelPlacement="stacked" [placeholder]="'DETAILS.VEHICLE_INFO.PLATE_NUMBER' | translate">
             </ion-input>
           </ion-item>
 
           <ion-item>
-            <ion-select formControlName="carType" [placeholder]="'DETAILS.VEHICLE_INFO.CAR_TYPE' | translate">
+            <ion-select formControlName="carType" [label]="'DETAILS.VEHICLE_INFO.CAR_TYPE' | translate"
+              labelPlacement="stacked" [placeholder]="'DETAILS.VEHICLE_INFO.CAR_TYPE' | translate">
               <ion-select-option *ngFor="let type of cartypes" [value]="type.id">
                 {{type.name}}
               </ion-select-option>
@@ -76,13 +80,14 @@
           </ion-item>
 
           <ion-item>
-            <ion-input formControlName="carName" [placeholder]="'DETAILS.VEHICLE_INFO.CAR_NAME' | translate">
+            <ion-input formControlName="carName" [label]="'DETAILS.VEHICLE_INFO.CAR_NAME' | translate"
+              labelPlacement="stacked" [placeholder]="'DETAILS.VEHICLE_INFO.CAR_NAME' | translate">
             </ion-input>
           </ion-item>
 
           <ion-item>
-            <ion-input formControlName="mileage" type="number"
-              [placeholder]="'DETAILS.VEHICLE_INFO.MILEAGE' | translate">
+            <ion-input formControlName="mileage" type="number" [label]="'DETAILS.VEHICLE_INFO.MILEAGE' | translate"
+              labelPlacement="stacked" [placeholder]="'DETAILS.VEHICLE_INFO.MILEAGE' | translate">
             </ion-input>
           </ion-item>
         </ion-item-group>
@@ -94,7 +99,8 @@
           </ion-item-divider>
 
           <ion-item>
-            <ion-input formControlName="driverLicense" [placeholder]="'DETAILS.LICENSE_INFO.NUMBER' | translate">
+            <ion-input formControlName="driverLicense" [label]="'DETAILS.LICENSE_INFO.NUMBER' | translate"
+              labelPlacement="stacked" [placeholder]="'DETAILS.LICENSE_INFO.NUMBER' | translate">
             </ion-input>
           </ion-item>
 

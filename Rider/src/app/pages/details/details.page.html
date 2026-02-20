@@ -25,8 +25,8 @@
         <div class="ion-margin-vertical">
           <ion-item class="ion-margin"
             [class.ion-invalid]="form.get('fullname')?.invalid && form.get('fullname')?.touched">
-            <ion-input formControlName="fullname" [placeholder]="'FIRST_NAME' | translate" type="text" minlength="1"
-              maxlength="200">
+            <ion-input formControlName="fullname" [label]="'FIRST_NAME' | translate" labelPlacement="stacked"
+              [placeholder]="'FIRST_NAME' | translate" type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
           <ion-note color="danger" class="ion-margin-horizontal ion-padding-start"
@@ -38,8 +38,8 @@
 
           <ion-item class="ion-margin"
             [class.ion-invalid]="form.get('lastname')?.invalid && form.get('lastname')?.touched">
-            <ion-input formControlName="lastname" [placeholder]="'LAST_NAME' | translate" type="text" minlength="1"
-              maxlength="200">
+            <ion-input formControlName="lastname" [label]="'LAST_NAME' | translate" labelPlacement="stacked"
+              [placeholder]="'LAST_NAME' | translate" type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
           <ion-note color="danger" class="ion-margin-horizontal ion-padding-start"
@@ -50,8 +50,9 @@
           </ion-note>
 
           <ion-item class="ion-margin" [class.ion-invalid]="form.get('email')?.invalid && form.get('email')?.touched">
-            <ion-input formControlName="email" [placeholder]="'EMAIL_PLACEHOLDER' | translate" type="email"
-              [readonly]="user?.email" minlength="1" maxlength="200">
+            <ion-input formControlName="email" [label]="'EMAIL' | translate" labelPlacement="stacked"
+              [placeholder]="'EMAIL_PLACEHOLDER' | translate" type="email" [readonly]="user?.email" minlength="1"
+              maxlength="200">
             </ion-input>
           </ion-item>
           <ion-note color="danger" class="ion-margin-horizontal ion-padding-start"

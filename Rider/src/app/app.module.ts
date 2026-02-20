@@ -15,8 +15,8 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { getApp } from 'firebase/app';
 import { OtpComponent } from './otp/otp.component';
-import { NgOtpInputModule } from  'ng-otp-input';
-import { Client} from "@googlemaps/google-maps-services-js";
+import { NgOtpInputModule } from 'ng-otp-input';
+import { Client } from "@googlemaps/google-maps-services-js";
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { CountrySearchModalComponent } from './country-search-modal/country-search-modal.component';
@@ -34,8 +34,8 @@ export function createTranslateLoader(http: HttpClient) {
 
 @NgModule({
   declarations: [AppComponent, OtpComponent, CountrySearchModalComponent, AddCardComponent, AutocompleteComponent, EnrouteChatComponent, TripSummaryComponent],
-  entryComponents: [TripSummaryComponent, CountrySearchModalComponent, AddCardComponent, AutocompleteComponent, EnrouteChatComponent],
   imports: [
+
     BrowserModule,
     NgOtpInputModule,
     FormsModule,
@@ -58,7 +58,7 @@ export function createTranslateLoader(http: HttpClient) {
     })
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },  GoogleAuthProvider, FacebookAuthProvider, Client],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, GoogleAuthProvider, FacebookAuthProvider, Client],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

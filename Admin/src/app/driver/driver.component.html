@@ -1,8 +1,8 @@
 <ion-header class="ion-no-border" [translucent]="true">
-  <ion-toolbar >
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button color="primary" (click)="closeModal()">
-        <ion-icon slot="icon-only" name="close"></ion-icon> 
+        <ion-icon slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
 
@@ -14,183 +14,153 @@
 <ion-content *ngIf="!info" class="ion-padding scroll">
 
   <ion-list>
-   
+
     <ion-item-group>
-   
+
       <form [formGroup]="form">
 
         <div>
           <ion-list-header>
-           
+
             <ion-label *ngIf="!signedIn" color="primary" class="ion-text-center">
               <h1>Personal Information</h1>
-              </ion-label>
-             </ion-list-header>
+            </ion-label>
+          </ion-list-header>
 
-             <div *ngIf="!signedIn" class="preview">
+          <div *ngIf="!signedIn" class="preview">
 
-              <ion-avatar (click)="changeProfile()">
-                <img *ngIf="imageURl; else placeholder_avatar;" [src]="imageURl" />
-          
-                <ng-template #placeholder_avatar>
-                  <div class="fallback">
-                    <p>Profile Picture</p>
-                  </div>
-                </ng-template>
-              </ion-avatar>
-              
-            </div>
+            <ion-avatar (click)="changeProfile()">
+              <img *ngIf="imageURl; else placeholder_avatar;" [src]="imageURl" />
 
-            <ion-item *ngIf="signedIn" class="ion-margin">
-              <ion-input 
-              formControlName="email" 
-              placeholder="Your Email" 
-              type="text"
-              minlength="1"
-              maxlength="200">
-            </ion-input>
-            </ion-item>
-  
-            <ion-item *ngIf="signedIn" class="ion-margin">
-              <ion-input 
-              formControlName="password" 
-              placeholder="Your Password" 
-              type="password"
-              minlength="1"
-              maxlength="200">
-            </ion-input>
-            </ion-item>
+              <ng-template #placeholder_avatar>
+                <div class="fallback">
+                  <p>Profile Picture</p>
+                </div>
+              </ng-template>
+            </ion-avatar>
 
+          </div>
 
-            <ion-item *ngIf="!signedIn" class="ion-margin">
-              <ion-input 
-                formControlName="fullname" 
-                placeholder="First Name" 
-                type="text"
-                minlength="1"
-                maxlength="200">
-              </ion-input>
-            </ion-item>
-  
-            <ion-item *ngIf="!signedIn" class="ion-margin">
-              <ion-input 
-                formControlName="phone" 
-                placeholder="Phone" 
-                type="number"
-                minlength="1"
-                maxlength="200">
-              </ion-input>
-            </ion-item>
-          
-
-          <ion-item *ngIf="!signedIn" class="ion-margin">
-
-            <ion-input 
-              formControlName="lastname" 
-              placeholder="Last Name" 
-              type="text"
-              minlength="1"
-              maxlength="200">
+          <ion-item *ngIf="signedIn" class="ion-margin">
+            <ion-input formControlName="email" label="Your Email" labelPlacement="floating" placeholder="Your Email"
+              type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
 
-          
+          <ion-item *ngIf="signedIn" class="ion-margin">
+            <ion-input formControlName="password" label="Your Password" labelPlacement="floating"
+              placeholder="Your Password" type="password" minlength="1" maxlength="200">
+            </ion-input>
+          </ion-item>
+
+
+          <ion-item *ngIf="!signedIn" class="ion-margin">
+            <ion-input formControlName="fullname" label="First Name" labelPlacement="floating" placeholder="First Name"
+              type="text" minlength="1" maxlength="200">
+            </ion-input>
+          </ion-item>
+
+          <ion-item *ngIf="!signedIn" class="ion-margin">
+            <ion-input formControlName="phone" label="Phone" labelPlacement="floating" placeholder="Phone" type="number"
+              minlength="1" maxlength="200">
+            </ion-input>
+          </ion-item>
+
+
+          <ion-item *ngIf="!signedIn" class="ion-margin">
+
+            <ion-input formControlName="lastname" label="Last Name" labelPlacement="floating" placeholder="Last Name"
+              type="text" minlength="1" maxlength="200">
+            </ion-input>
+          </ion-item>
+
+
 
         </div>
 
 
         <div *ngIf="!signedIn">
-          <ion-list-header class="ion-padding-top" >
-           
+          <ion-list-header class="ion-padding-top">
+
             <ion-label color="primary" class="ion-text-center">
-             
+
               <h1>Car Information</h1>
-              </ion-label>
-             </ion-list-header>
+            </ion-label>
+          </ion-list-header>
           <ion-item *ngIf="!signedIn" class="ion-margin">
 
 
-            <ion-input 
-              formControlName="car" 
-              placeholder="Car Name" 
-              type="text"
-              minlength="1"
-              maxlength="200">
+            <ion-input formControlName="car" placeholder="Car Name" type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
 
-          <ion-item *ngIf="!signedIn"  class="ion-margin">
+          <ion-item *ngIf="!signedIn" class="ion-margin">
             <ion-select placeholder="{{selected}}" [value]="selected" (ionChange)="chooseCarType($event)">
-            <ion-select-option *ngFor="let card of cartypes" [value]="card">{{card.name}}</ion-select-option>
-          </ion-select>
-        </ion-item>
+              <ion-select-option *ngFor="let card of cartypes" [value]="card">{{card.name}}</ion-select-option>
+            </ion-select>
+          </ion-item>
 
 
           <ion-item *ngIf="!signedIn" class="ion-margin">
-            <ion-input 
-            formControlName="plate" 
-            placeholder="Car Plate Number" 
-            type="text"
-            minlength="1"
-            maxlength="200">
-          </ion-input>
+            <ion-input formControlName="plate" label="Car Plate Number" labelPlacement="floating"
+              placeholder="Car Plate Number" type="text" minlength="1" maxlength="200">
+            </ion-input>
           </ion-item>
 
         </div>
 
-       
+
 
 
 
       </form>
 
- 
+
 
       <ion-list lines="none" *ngIf="!signedIn">
-        <ion-list-header >
-         
+        <ion-list-header>
+
           <ion-label color="primary" class="ion-text-center">
             <h1>Documents</h1>
-            </ion-label>
-           </ion-list-header>
+          </ion-label>
+        </ion-list-header>
 
 
-           <div *ngFor="let card of docs">
+        <div *ngFor="let card of docs">
 
-            <div *ngIf="card.type == 'image'" class="preview">
+          <div *ngIf="card.type == 'image'" class="preview">
 
-              <ion-avatar (click)="changeImage(card)">
-                <img *ngIf="card.image; else placeholder_avatar;" [src]="card.image" />
-          
-                <ng-template #placeholder_avatar>
-                  <div class="fallback">
-                    <p>{{card.name}}</p>
-                  </div>
-                </ng-template>
-              </ion-avatar>
-              
-            </div>
+            <ion-avatar (click)="changeImage(card)">
+              <img *ngIf="card.image; else placeholder_avatar;" [src]="card.image" />
 
-            <ion-item class="ion-margin">
-            <ion-input (ionChange)="chooseText(card, $event)" *ngIf="card.type == 'text'"
-            placeholder="{{card.name}}" 
-            type="text"
-            minlength="1"
-            maxlength="200">
-          </ion-input>
-            </ion-item>
+              <ng-template #placeholder_avatar>
+                <div class="fallback">
+                  <p>{{card.name}}</p>
+                </div>
+              </ng-template>
+            </ion-avatar>
 
-           </div>
-          </ion-list>
+          </div>
+
+          <ion-item class="ion-margin">
+            <ion-input (ionChange)="chooseText(card, $event)" *ngIf="card.type == 'text'" placeholder="{{card.name}}"
+              type="text" minlength="1" maxlength="200">
+            </ion-input>
+          </ion-item>
+
+        </div>
+      </ion-list>
 
 
-      <ion-button *ngIf="!signedIn" shape="round" size="large" type="submit" [disabled]="!form.valid" color="primary" (click)="signIn()" expand="block">
+      <ion-button *ngIf="!signedIn" shape="round" size="large" type="submit" [disabled]="!form.valid" color="primary"
+        (click)="signIn()" expand="block">
         <ion-label *ngIf="!approve2">Continue</ion-label>
         <ion-icon *ngIf="!approve2" color='light' slot="end" name="arrow-forward"></ion-icon>
         <ion-progress-bar *ngIf="approve2" color='light' type="indeterminate"></ion-progress-bar>
       </ion-button>
 
-      <ion-button *ngIf="signedIn" shape="round" size="large" type="submit" color="primary" (click)="createUser()" expand="block">
+      <ion-button *ngIf="signedIn" shape="round" size="large" type="submit" color="primary" (click)="createUser()"
+        expand="block">
         <ion-label *ngIf="!approve2">Sign In</ion-label>
         <ion-icon *ngIf="!approve2" color='light' slot="end" name="arrow-forward"></ion-icon>
         <ion-progress-bar *ngIf="approve2" color='light' type="indeterminate"></ion-progress-bar>
@@ -201,7 +171,7 @@
 
 
 
-      </ion-list>
+  </ion-list>
 
 
 </ion-content>
@@ -216,34 +186,34 @@
 <ion-content *ngIf="info" class="ion-padding scroll">
 
   <ion-list>
-   
+
     <ion-item-group>
-   
+
       <form [formGroup]="form">
 
         <div>
           <ion-list-header>
-           
+
             <ion-label color="primary" class="ion-text-center">
               <h1>Personal Information</h1>
-              </ion-label>
-             </ion-list-header>
+            </ion-label>
+          </ion-list-header>
 
-             <div class="preview">
+          <div class="preview">
 
-              <ion-avatar (click)="changeProfile()">
-                <img *ngIf="info.Driver_imgUrl; else placeholder_avatar;" [src]="info.Driver_imgUrl" />
-          
-                <ng-template #placeholder_avatar>
-                  <div class="fallback">
-                    <p>Profile Picture</p>
-                  </div>
-                </ng-template>
-              </ion-avatar>
-              
-            </div>
+            <ion-avatar (click)="changeProfile()">
+              <img *ngIf="info.Driver_imgUrl; else placeholder_avatar;" [src]="info.Driver_imgUrl" />
 
-            <!-- <ion-item *ngIf="signedIn" class="ion-margin">
+              <ng-template #placeholder_avatar>
+                <div class="fallback">
+                  <p>Profile Picture</p>
+                </div>
+              </ng-template>
+            </ion-avatar>
+
+          </div>
+
+          <!-- <ion-item *ngIf="signedIn" class="ion-margin">
               <ion-input 
               formControlName="email" 
               placeholder="Your Email" 
@@ -264,77 +234,60 @@
             </ion-item> -->
 
 
-            <ion-item class="ion-margin">
-              <ion-input 
-                formControlName="fullname" 
-                placeholder="{{info.Driver_name}}" 
-                type="text"
-                minlength="1"
-                maxlength="200">
-              </ion-input>
-            </ion-item>
-  
-            <ion-item class="ion-margin">
-              <ion-input 
-                formControlName="phone" 
-                placeholder="{{info.Driver_phone}}" 
-                type="number"
-                minlength="1"
-                maxlength="200"
-                scroll="false">
-              </ion-input>
-            </ion-item>
-          
+          <ion-item class="ion-margin">
+            <ion-input formControlName="fullname" placeholder="{{info.Driver_name}}" type="text" minlength="1"
+              maxlength="200">
+            </ion-input>
+          </ion-item>
+
+          <ion-item class="ion-margin">
+            <ion-input formControlName="phone" placeholder="{{info.Driver_phone}}" type="number" minlength="1"
+              maxlength="200" scroll="false">
+            </ion-input>
+          </ion-item>
+
 
         </div>
 
 
         <div>
-          <ion-list-header class="ion-padding-top" >
-           
+          <ion-list-header class="ion-padding-top">
+
             <ion-label color="primary" class="ion-text-center">
-             
+
               <h1>Car Information</h1>
-              </ion-label>
-             </ion-list-header>
+            </ion-label>
+          </ion-list-header>
           <ion-item class="ion-margin">
 
 
-            <ion-input 
-              formControlName="car" 
-              placeholder="{{info.Driver_car}}" 
-              type="text"
-              minlength="1"
+            <ion-input formControlName="car" placeholder="{{info.Driver_car}}" type="text" minlength="1"
               maxlength="200">
             </ion-input>
           </ion-item>
 
-          <ion-item  class="ion-margin">
+          <ion-item class="ion-margin">
             <ion-select placeholder="{{info.Driver_cartype}}" [value]="selected" (ionChange)="chooseCarType($event)">
-            <ion-select-option *ngFor="let card of cartypes" [value]="card">{{card.name}}</ion-select-option>
-          </ion-select>
-        </ion-item>
+              <ion-select-option *ngFor="let card of cartypes" [value]="card">{{card.name}}</ion-select-option>
+            </ion-select>
+          </ion-item>
 
 
           <ion-item class="ion-margin">
-            <ion-input 
-            formControlName="plate" 
-            placeholder="{{info.Driver_plate}}" 
-            type="text"
-            minlength="1"
-            maxlength="200">
-          </ion-input>
+            <ion-input formControlName="plate" placeholder="{{info.Driver_plate}}" type="text" minlength="1"
+              maxlength="200">
+            </ion-input>
           </ion-item>
 
         </div>
 
-       
+
 
 
 
       </form>
 
- 
+
 
       <!-- <ion-list lines="none">
         <ion-list-header >
@@ -380,14 +333,14 @@
         <ion-progress-bar *ngIf="approve2" color='light' type="indeterminate"></ion-progress-bar>
       </ion-button>
 
-    
+
 
     </ion-item-group>
 
 
 
 
-      </ion-list>
+  </ion-list>
 
 
 </ion-content>

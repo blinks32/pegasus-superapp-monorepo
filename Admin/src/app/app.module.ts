@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -39,7 +39,6 @@ export function createTranslateLoader(http: HttpClient) {
 
 @NgModule({
   declarations: [AppComponent, CountrySearchModalComponent, OtpComponent, CartypeComponent, DocumentsComponent, PricesComponent, SupportComponent, DriverComponent, DriverDocumentsComponent, RiderComponent],
-  entryComponents: [],
   imports: [
     BrowserModule,
     NgOtpInputModule,
@@ -109,6 +108,7 @@ export function createTranslateLoader(http: HttpClient) {
     Client,
     AlertController
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],
 })
 export class AppModule {

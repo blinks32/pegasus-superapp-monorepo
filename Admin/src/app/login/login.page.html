@@ -4,29 +4,32 @@
   </div>
 
   <div class="content-container">
-    <ion-slides pager="true" [options]="slideOpts">
-      <ion-slide>
+    <swiper-container [pagination]="true" [autoplay]="{ delay: 3000 }">
+      <swiper-slide>
         <ion-img src="../assets/imgs/main.svg"></ion-img>
-      </ion-slide>
-      <ion-slide>
+      </swiper-slide>
+      <swiper-slide>
         <ion-img src="../assets/imgs/main1.svg"></ion-img>
-      </ion-slide>
-      <ion-slide>
+      </swiper-slide>
+      <swiper-slide>
         <ion-img src="../assets/imgs/main2.svg"></ion-img>
-      </ion-slide>
-    </ion-slides>
+      </swiper-slide>
+    </swiper-container>
 
     <form [formGroup]="form" class="modern-form">
       <ion-item>
-        <ion-button class="country-code-btn" fill="clear" (click)="openCountrySearchModal()" [disabled]="isInTestMode">
+        <ion-button slot="start" class="country-code-btn" fill="clear" (click)="openCountrySearchModal()"
+          [disabled]="isInTestMode">
           <ion-icon name="globe-outline"></ion-icon>
           {{ defaultCountryCode ||CountryCode }}
         </ion-button>
         <div id="sign-in-button"></div>
-        <ion-input formControlName="phone" placeholder="Mobile Number" type="tel" [readonly]="isInTestMode"
-          [attr.maxlength]="maxPhoneLength" (ionFocus)="Show()" (ionBlur)="Hide()" class="phone-input">
+        <ion-input formControlName="phone" label="Mobile Number" labelPlacement="stacked" type="tel"
+          [readonly]="isInTestMode" [attr.maxlength]="maxPhoneLength" (ionFocus)="Show()" (ionBlur)="Hide()"
+          class="phone-input">
         </ion-input>
       </ion-item>
+
 
       <div class="test-mode-notice" *ngIf="isInTestMode">
         <ion-icon name="information-circle-outline"></ion-icon>

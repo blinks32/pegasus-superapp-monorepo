@@ -3,32 +3,30 @@
     <h1 class="ion-text-center">Personal Information</h1>
 
     <ion-item>
-      <ion-label position="floating">First Name</ion-label>
-      <ion-input formControlName="fullname" type="text" minlength="1" maxlength="200"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating">Last Name</ion-label>
-      <ion-input formControlName="lastname" type="text" minlength="1" maxlength="200"></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="floating">Your Email</ion-label>
-      <ion-input formControlName="email" type="email" [readonly]="user?.email" minlength="1"
+      <ion-input formControlName="fullname" label="First Name" labelPlacement="floating" type="text" minlength="1"
         maxlength="200"></ion-input>
     </ion-item>
 
+    <ion-item>
+      <ion-input formControlName="lastname" label="Last Name" labelPlacement="floating" type="text" minlength="1"
+        maxlength="200"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input formControlName="email" label="Your Email" labelPlacement="floating" type="email"
+        [readonly]="user?.email" minlength="1" maxlength="200"></ion-input>
+    </ion-item>
+
     <ion-item *ngIf="isGoogleUser">
-      <ion-label position="floating">Phone Number</ion-label>
-      <ion-input formControlName="phone" type="tel" placeholder="+60123456789"></ion-input>
+      <ion-input formControlName="phone" label="Phone Number" labelPlacement="floating" type="tel"
+        placeholder="+60123456789"></ion-input>
     </ion-item>
     <ion-text class="error" *ngIf="isGoogleUser && !form.get('phone').valid && form.get('phone').touched">
       <p>Please enter a valid phone number</p>
     </ion-text>
 
     <ion-item>
-      <ion-label position="floating">Role</ion-label>
-      <ion-select [value]="selected" (ionChange)="chooseCarType($event)">
+      <ion-select label="Role" labelPlacement="floating" [value]="selected" (ionChange)="chooseCarType($event)">
         <ion-select-option *ngFor="let role of roletypes" [value]="role">{{role.name}}</ion-select-option>
       </ion-select>
     </ion-item>

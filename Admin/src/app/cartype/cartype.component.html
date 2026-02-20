@@ -13,18 +13,17 @@
   <form [formGroup]="form" (ngSubmit)="info ? EditNow() : processNow()">
     <div class="form-container">
       <ion-item>
-        <ion-label position="floating">Name</ion-label>
-        <ion-input formControlName="name" type="text" maxlength="50"></ion-input>
+        <ion-input formControlName="name" label="Name" labelPlacement="floating" type="text" maxlength="50"></ion-input>
       </ion-item>
-<!-- 
+      <!-- 
       <ion-item>
         <ion-label position="floating">Surcharge</ion-label>
         <ion-input formControlName="surcharge" type="number" inputmode="decimal" maxlength="100"></ion-input>
       </ion-item> -->
 
       <ion-item>
-        <ion-label position="floating">Seats Number</ion-label>
-        <ion-input formControlName="seats" type="number" inputmode="decimal" maxlength="2" scroll="false"></ion-input>
+        <ion-input formControlName="seats" label="Seats Number" labelPlacement="floating" type="number"
+          inputmode="decimal" maxlength="2" scroll="false"></ion-input>
       </ion-item>
 
       <div class="avatar-container">

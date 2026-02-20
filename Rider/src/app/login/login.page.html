@@ -47,10 +47,11 @@
 
               <!-- Phone Number Input -->
               <div class="phone-input-wrapper">
-                <ion-input class="phone-input" type="tel" formControlName="phone"
-                  [placeholder]="'MOBILE_NUMBER' | translate" [readonly]="isInTestMode" minlength="10" maxlength="10"
-                  (ionFocus)="Show()" (ionBlur)="Hide()">
+                <ion-input class="phone-input" type="tel" formControlName="phone" [label]="'MOBILE_NUMBER' | translate"
+                  labelPlacement="stacked" [readonly]="isInTestMode" minlength="10" maxlength="10" (ionFocus)="Show()"
+                  (ionBlur)="Hide()">
                 </ion-input>
+
               </div>
             </div>
 

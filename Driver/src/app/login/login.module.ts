@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -20,5 +20,7 @@ import { SharedTranslationsModule } from '../shared/shared-translations.module';
     SharedTranslationsModule
   ],
   declarations: [LoginPage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class LoginPageModule {}
+export class LoginPageModule { }
+
