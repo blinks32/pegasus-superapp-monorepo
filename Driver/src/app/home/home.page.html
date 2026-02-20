@@ -46,240 +46,223 @@
 <ion-footer [translucent]="true" class="ion-no-border">
   <div #bottomBar>
     <ion-row>
-      <!--Price Section-->
-      <ion-list class="shadow-top" *ngIf="bookingStage" lines="full">
-        <ion-item-group class="ion-margin-horizontal ion-margin-bottom">
-          <ion-button shape="round" class="main-button" color="primary" size="large" type="submit" expand="block">
-            <ion-icon slot="start" name="cash-sharp" color="success"></ion-icon>
-            <ion-label color="light"> {{currencySymbol}}{{earnings}}</ion-label>
-          </ion-button>
-        </ion-item-group>
-      </ion-list>
+      <!-- Bottom Sheet Modal for Driver -->
+      <ion-modal [isOpen]="bookingStage || confirmStage || trackingStage || drivingToDestinationStage"
+        [initialBreakpoint]="0.25" [breakpoints]="[0, 0.25, 0.5, 0.75, 1]" [backdropDismiss]="false"
+        [backdropBreakpoint]="0.5" handle="true" class="bottom-sheet-modal">
+        <ng-template>
+          <ion-content class="ion-padding bottom-sheet-content">
 
-      <!-- Accept Ride Section -->
-      <ion-list class='shadow-top book modern-accept-card' *ngIf="confirmStage" lines="none" (click)="AcceptRide()">
-        <div class="accept-ride-content" *ngIf="distanceText">
-          <div class="ride-info-row">
-            <div class="trip-details">
-              <ion-icon name="time-outline"></ion-icon> {{durationText}}
-              <ion-icon name="locate-outline" class="ml-2"></ion-icon> {{distanceText}}
-            </div>
-            <div class="price-tag">{{currencySymbol}}{{riderInfo?.price}}</div>
-          </div>
-
-          <div class="location-container">
-            <ion-icon name="location"></ion-icon>
-            <span>{{riderInfo?.Rider_Location}}</span>
-          </div>
-
-          <div class="countdown-container">
-            <div class="timer-indicator">
-              {{ 'HOME.TIME_LEFT' | translate }} <strong>{{riderInfo?.countDown}}</strong> {{ 'HOME.SECONDS' | translate
-              }}
-            </div>
-          </div>
-
-          <ion-button shape="round" class="accept-button" color="light" type="submit" expand="block">
-            <ion-icon slot="start" name="checkmark-sharp"></ion-icon>
-            <span>{{ 'HOME.ACCEPT' | translate }}</span>
-          </ion-button>
-        </div>
-
-        <!-- Loading state -->
-        <div class="accept-ride-content" *ngIf="!distanceText">
-          <div class="ride-info-row">
-            <div class="trip-details">
-              <ion-skeleton-text [animated]="true" style="width: 120px;"></ion-skeleton-text>
-            </div>
-            <div class="price-tag">
-              <ion-skeleton-text [animated]="true" style="width: 60px;"></ion-skeleton-text>
-            </div>
-          </div>
-
-          <div class="location-container">
-            <ion-skeleton-text [animated]="true" style="width: 180px;"></ion-skeleton-text>
-          </div>
-
-          <div class="countdown-container">
-            <div class="timer-indicator">
-              <ion-skeleton-text [animated]="true" style="width: 150px;"></ion-skeleton-text>
-            </div>
-          </div>
-
-          <ion-button disabled shape="round" class="accept-button" color="light" expand="block">
-            <ion-skeleton-text [animated]="true" style="width: 120px;"></ion-skeleton-text>
-          </ion-button>
-        </div>
-      </ion-list>
-
-      <!--Pick Ride Section-->
-      <ion-list class='shadow-top' *ngIf="trackingStage || drivingToDestinationStage" lines="none">
-        <ion-list-header class="ion-margin-bottom">
-          <ion-label class="ion-text-center">
-            <h1>{{ 'HOME.ARRIVAL_IN' | translate }} {{durationText}}</h1>
-          </ion-label>
-        </ion-list-header>
-
-        <!-- Single Rider View (Non-shared ride) -->
-        <div class="card" *ngIf="!isSharedRideMode">
-          <ion-item>
-            <ion-item>
-              <ion-label>
-                <h1>{{ 'HOME.YOUR_RIDER_IS' | translate }} {{riderInfo.Rider_name}}</h1>
-                <p><strong>{{ 'HOME.DESTINATION' | translate }} </strong>{{riderInfo.Rider_Destination}}</p>
-              </ion-label>
-            </ion-item>
-            <ion-item class="price">
-              <ion-avatar>
-                <ion-img [src]="riderInfo.Rider_imgUrl"></ion-img>
-              </ion-avatar>
-              <ion-label>
-                <p><ion-icon slot="icon-only" color="secondary" name="star"></ion-icon> 5 </p>
-              </ion-label>
-            </ion-item>
-          </ion-item>
-
-          <ion-item>
-            <ion-item *ngIf="cash">
-              <ion-label>
-                <h1><ion-icon color='primary' slot="icon-only" name="cash"></ion-icon> Cash</h1>
-              </ion-label>
-            </ion-item>
-            <ion-item *ngIf="!cash">
-              <ion-label>
-                <h1><ion-icon color='primary' slot="icon-only" name="card"></ion-icon> Card</h1>
-              </ion-label>
-            </ion-item>
-            <ion-item class="price">
-              <ion-label>
-                <h1>{{currencySymbol}}{{riderInfo.price}}</h1>
-              </ion-label>
-            </ion-item>
-          </ion-item>
-        </div>
-
-        <!-- Shared Ride View -->
-        <div class="shared-ride-card" *ngIf="isSharedRideMode && currentSharedRide">
-          <!-- Current Waypoint Info -->
-          <div class="current-waypoint" *ngIf="currentWaypoint">
-            <div class="waypoint-header">
-              <ion-badge [color]="currentWaypoint.type === 'pickup' ? 'success' : 'primary'">
-                {{currentWaypoint.type === 'pickup' ? 'PICK UP' : 'DROP OFF'}}
-              </ion-badge>
-              <span class="waypoint-rider">{{currentWaypoint.riderName}}</span>
-            </div>
-            <p class="waypoint-address">{{currentWaypoint.address}}</p>
-          </div>
-
-          <!-- Passengers List -->
-          <div class="passengers-section">
-            <div class="passengers-header">
-              <ion-icon name="people"></ion-icon>
-              <span>{{sharedRidePassengers.length}} Passenger(s)</span>
-              <ion-badge color="success">{{currencySymbol}}{{getSharedRideTotalFare().toFixed(2)}}</ion-badge>
+            <!--Price Section / Earnings Tray-->
+            <div class="sheet-section" *ngIf="bookingStage">
+              <ion-item-group class="ion-margin-bottom">
+                <ion-button shape="round" class="main-button" color="primary" size="large" type="submit" expand="block">
+                  <ion-icon slot="start" name="cash-sharp" color="success"></ion-icon>
+                  <ion-label color="light"> {{currencySymbol}}{{earnings}}</ion-label>
+                </ion-button>
+              </ion-item-group>
             </div>
 
-            <div class="passenger-item" *ngFor="let passenger of sharedRidePassengers">
-              <ion-avatar>
-                <img [src]="passenger.riderImgUrl || 'assets/imgs/about.svg'">
-              </ion-avatar>
-              <div class="passenger-info">
-                <span class="passenger-name">{{passenger.riderName}}</span>
-                <ion-badge [color]="passenger.status === 'picked_up' ? 'success' : 
-                                   passenger.status === 'dropped_off' ? 'medium' : 'warning'" size="small">
-                  {{passenger.status | titlecase}}
-                </ion-badge>
-              </div>
-              <span class="passenger-price">{{currencySymbol}}{{passenger.discountedPrice.toFixed(2)}}</span>
-            </div>
-          </div>
+            <!-- Accept Ride Section -->
+            <div class="sheet-section" *ngIf="confirmStage">
+              <div class="modern-accept-card" (click)="AcceptRide()">
+                <div class="accept-ride-content" *ngIf="distanceText">
+                  <div class="ride-info-row">
+                    <div class="trip-details">
+                      <ion-icon name="time-outline"></ion-icon> {{durationText}}
+                      <ion-icon name="locate-outline" class="ml-2"></ion-icon> {{distanceText}}
+                    </div>
+                    <div class="price-tag">{{currencySymbol}}{{riderInfo?.price}}</div>
+                  </div>
 
-          <!-- Earnings Summary -->
-          <div class="earnings-summary">
-            <span>Your Earnings:</span>
-            <strong>{{currencySymbol}}{{getSharedRideDriverEarnings().toFixed(2)}}</strong>
-          </div>
-        </div>
+                  <div class="location-container">
+                    <ion-icon name="location"></ion-icon>
+                    <span>{{riderInfo?.Rider_Location}}</span>
+                  </div>
 
-        <!--pick up button and drop off button-->
-        <ion-item-group class="ion-margin-horizontal ion-margin-bottom">
-          <!-- Non-shared ride buttons -->
-          <ion-button shape="round" class="main-button" *ngIf="trackingStage && !isSharedRideMode" color="success"
-            size="large" type="submit" (click)="PickUp()" expand="block">
-            <ion-icon slot="start" name="checkmark-sharp" color="light"></ion-icon>
-            <ion-label color="light">{{ 'HOME.PICK_UP' | translate }}</ion-label>
-          </ion-button>
+                  <div class="countdown-container">
+                    <div class="timer-indicator">
+                      {{ 'HOME.TIME_LEFT' | translate }} <strong>{{riderInfo?.countDown}}</strong> {{ 'HOME.SECONDS' |
+                      translate }}
+                    </div>
+                  </div>
 
-          <ion-button *ngIf="drivingToDestinationStage && !isSharedRideMode" shape="round" class="main-button"
-            color="success" size="large" type="submit" (click)="DropOff()" expand="block">
-            <ion-icon slot="start" name="checkmark-sharp" color="light"></ion-icon>
-            <ion-label color="light">{{ 'HOME.DROP_OFF' | translate }}</ion-label>
-          </ion-button>
+                  <ion-button shape="round" class="accept-button" color="light" type="submit" expand="block">
+                    <ion-icon slot="start" name="checkmark-sharp"></ion-icon>
+                    <span>{{ 'HOME.ACCEPT' | translate }}</span>
+                  </ion-button>
+                </div>
 
-          <!-- Shared ride waypoint buttons -->
-          <ion-button shape="round" class="main-button" *ngIf="isSharedRideMode && currentWaypoint"
-            [color]="currentWaypoint.type === 'pickup' ? 'success' : 'primary'" size="large" type="submit"
-            (click)="completeCurrentWaypoint()" expand="block">
-            <ion-icon slot="start" [name]="currentWaypoint.type === 'pickup' ? 'person-add' : 'checkmark-done'"
-              color="light"></ion-icon>
-            <ion-label color="light">
-              {{currentWaypoint.type === 'pickup' ? 'Pick Up' : 'Drop Off'}} {{currentWaypoint.riderName}}
-            </ion-label>
-          </ion-button>
-
-          <!-- Fallback for shared ride mode when currentWaypoint is not set yet -->
-          <ion-button shape="round" class="main-button" *ngIf="isSharedRideMode && !currentWaypoint && trackingStage"
-            color="success" size="large" type="submit" (click)="PickUp()" expand="block">
-            <ion-icon slot="start" name="checkmark-sharp" color="light"></ion-icon>
-            <ion-label color="light">{{ 'HOME.PICK_UP' | translate }}</ion-label>
-          </ion-button>
-
-          <ion-button *ngIf="isSharedRideMode && !currentWaypoint && drivingToDestinationStage" shape="round"
-            class="main-button" color="success" size="large" type="submit" (click)="DropOff()" expand="block">
-            <ion-icon slot="start" name="checkmark-sharp" color="light"></ion-icon>
-            <ion-label color="light">{{ 'HOME.DROP_OFF' | translate }}</ion-label>
-          </ion-button>
-
-          <ion-button *ngIf="trackingStage || drivingToDestinationStage" shape="round" class="main-button"
-            color="primary" size="large" type="submit" (click)="Navigate()" expand="block">
-            <ion-icon slot="start" name="map-sharp" color="light"></ion-icon>
-            <ion-label color="light">{{ 'HOME.NAVIGATE' | translate }}</ion-label>
-          </ion-button>
-        </ion-item-group>
-      </ion-list>
-
-      <!-- Match Candidates Popup for Shared Rides -->
-      <ion-card class="match-candidates-card" *ngIf="showMatchCandidates && matchCandidates.length > 0">
-        <ion-card-header>
-          <ion-card-title>
-            <ion-icon name="people" color="success"></ion-icon>
-            Passengers Going Your Way
-          </ion-card-title>
-          <ion-button fill="clear" size="small" (click)="showMatchCandidates = false">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="match-item" *ngFor="let candidate of matchCandidates">
-            <div class="match-info">
-              <strong>{{candidate.riderName}}</strong>
-              <p>{{candidate.pickup.address}} → {{candidate.dropoff.address}}</p>
-              <div class="match-stats">
-                <ion-badge color="success">{{candidate.routeSimilarity}}% match</ion-badge>
-                <ion-badge color="warning">+{{candidate.detourDistance.toFixed(1)}}km detour</ion-badge>
+                <!-- Loading state -->
+                <div class="accept-ride-content" *ngIf="!distanceText">
+                  <div class="ride-info-row">
+                    <div class="trip-details">
+                      <ion-skeleton-text [animated]="true" style="width: 120px;"></ion-skeleton-text>
+                    </div>
+                    <div class="price-tag">
+                      <ion-skeleton-text [animated]="true" style="width: 60px;"></ion-skeleton-text>
+                    </div>
+                  </div>
+                  <div class="location-container">
+                    <ion-skeleton-text [animated]="true" style="width: 180px;"></ion-skeleton-text>
+                  </div>
+                  <div class="countdown-container">
+                    <div class="timer-indicator">
+                      <ion-skeleton-text [animated]="true" style="width: 150px;"></ion-skeleton-text>
+                    </div>
+                  </div>
+                  <ion-button disabled shape="round" class="accept-button" color="light" expand="block">
+                    <ion-skeleton-text [animated]="true" style="width: 120px;"></ion-skeleton-text>
+                  </ion-button>
+                </div>
               </div>
             </div>
-            <div class="match-actions">
-              <ion-button size="small" color="success" (click)="acceptMatchCandidate(candidate)">
-                <ion-icon name="checkmark"></ion-icon>
-              </ion-button>
-              <ion-button size="small" color="danger" fill="outline" (click)="declineMatchCandidate(candidate)">
-                <ion-icon name="close"></ion-icon>
-              </ion-button>
+
+            <!--Pick/Drop Ride Section-->
+            <div class="sheet-section" *ngIf="trackingStage || drivingToDestinationStage">
+              <div class="arrival-header">
+                <h1>{{ 'HOME.ARRIVAL_IN' | translate }} {{durationText}}</h1>
+              </div>
+
+              <!-- Single Rider View (Non-shared ride) -->
+              <div class="card" *ngIf="!isSharedRideMode">
+                <ion-item lines="none">
+                  <ion-avatar slot="start">
+                    <ion-img [src]="riderInfo.Rider_imgUrl"></ion-img>
+                  </ion-avatar>
+                  <ion-label>
+                    <h1>{{ 'HOME.YOUR_RIDER_IS' | translate }} {{riderInfo.Rider_name}}</h1>
+                    <p><strong>{{ 'HOME.DESTINATION' | translate }} </strong>{{riderInfo.Rider_Destination}}</p>
+                  </ion-label>
+                  <div slot="end" class="rating-badge">
+                    <ion-icon color="warning" name="star"></ion-icon> 5
+                  </div>
+                </ion-item>
+
+                <ion-item lines="none" class="payment-info-item">
+                  <ion-label>
+                    <h2 class="ion-text-uppercase">
+                      <ion-icon color='primary' [name]="cash ? 'cash' : 'card'"></ion-icon>
+                      {{ cash ? 'Cash' : 'Card' }}
+                    </h2>
+                  </ion-label>
+                  <div slot="end" class="fare-amount">
+                    {{currencySymbol}}{{riderInfo.price}}
+                  </div>
+                </ion-item>
+              </div>
+
+              <!-- Shared Ride View -->
+              <div class="shared-ride-card" *ngIf="isSharedRideMode && currentSharedRide">
+                <!-- Current Waypoint Info -->
+                <div class="current-waypoint" *ngIf="currentWaypoint">
+                  <div class="waypoint-header">
+                    <ion-badge [color]="currentWaypoint.type === 'pickup' ? 'success' : 'primary'">
+                      {{currentWaypoint.type === 'pickup' ? 'PICK UP' : 'DROP OFF'}}
+                    </ion-badge>
+                    <span class="waypoint-rider">{{currentWaypoint.riderName}}</span>
+                  </div>
+                  <p class="waypoint-address">{{currentWaypoint.address}}</p>
+                </div>
+
+                <!-- Passengers List -->
+                <div class="passengers-section">
+                  <div class="passengers-header">
+                    <ion-icon name="people"></ion-icon>
+                    <span>{{sharedRidePassengers.length}} Passenger(s)</span>
+                    <ion-badge color="success">{{currencySymbol}}{{getSharedRideTotalFare().toFixed(2)}}</ion-badge>
+                  </div>
+                  <div class="passenger-item" *ngFor="let passenger of sharedRidePassengers">
+                    <ion-avatar>
+                      <img [src]="passenger.riderImgUrl || 'assets/imgs/about.svg'">
+                    </ion-avatar>
+                    <div class="passenger-info">
+                      <span class="passenger-name">{{passenger.riderName}}</span>
+                      <ion-badge [color]="passenger.status === 'picked_up' ? 'success' : 
+                                         passenger.status === 'dropped_off' ? 'medium' : 'warning'" size="small">
+                        {{passenger.status | titlecase}}
+                      </ion-badge>
+                    </div>
+                    <span class="passenger-price">{{currencySymbol}}{{passenger.discountedPrice.toFixed(2)}}</span>
+                  </div>
+                </div>
+
+                <!-- Earnings Summary -->
+                <div class="earnings-summary">
+                  <span>Your Earnings:</span>
+                  <strong>{{currencySymbol}}{{getSharedRideDriverEarnings().toFixed(2)}}</strong>
+                </div>
+              </div>
+
+              <!-- Action buttons (Pick Up, Drop Off, Navigate) -->
+              <div class="action-buttons-container">
+                <!-- Non-shared ride buttons -->
+                <ion-button shape="round" class="action-btn" *ngIf="trackingStage && !isSharedRideMode" color="success"
+                  size="large" (click)="PickUp()" expand="block">
+                  <ion-icon slot="start" name="checkmark-sharp"></ion-icon>
+                  <ion-label>{{ 'HOME.PICK_UP' | translate }}</ion-label>
+                </ion-button>
+
+                <ion-button shape="round" class="action-btn" *ngIf="drivingToDestinationStage && !isSharedRideMode"
+                  color="success" size="large" (click)="DropOff()" expand="block">
+                  <ion-icon slot="start" name="checkmark-sharp"></ion-icon>
+                  <ion-label>{{ 'HOME.DROP_OFF' | translate }}</ion-label>
+                </ion-button>
+
+                <!-- Shared ride waypoint buttons -->
+                <ion-button shape="round" class="action-btn" *ngIf="isSharedRideMode && currentWaypoint"
+                  [color]="currentWaypoint.type === 'pickup' ? 'success' : 'primary'" size="large"
+                  (click)="completeCurrentWaypoint()" expand="block">
+                  <ion-icon slot="start"
+                    [name]="currentWaypoint.type === 'pickup' ? 'person-add' : 'checkmark-done'"></ion-icon>
+                  <ion-label>{{currentWaypoint.type === 'pickup' ? 'Pick Up' : 'Drop Off'}}
+                    {{currentWaypoint.riderName}}</ion-label>
+                </ion-button>
+
+                <!-- Navigation button -->
+                <ion-button shape="round" class="action-btn navigate-btn" color="primary" fill="outline" size="large"
+                  (click)="Navigate()" expand="block">
+                  <ion-icon slot="start" name="map-sharp"></ion-icon>
+                  <ion-label>{{ 'HOME.NAVIGATE' | translate }}</ion-label>
+                </ion-button>
+              </div>
             </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
+
+            <!-- Match Candidates Popup for Shared Rides -->
+            <div class="sheet-section" *ngIf="showMatchCandidates && matchCandidates.length > 0">
+              <div class="match-candidates-card">
+                <div class="match-header">
+                  <h3><ion-icon name="people" color="success"></ion-icon> Passengers Going Your Way</h3>
+                  <ion-button fill="clear" size="small" (click)="showMatchCandidates = false">
+                    <ion-icon name="close"></ion-icon>
+                  </ion-button>
+                </div>
+                <div class="match-list">
+                  <div class="match-item" *ngFor="let candidate of matchCandidates">
+                    <div class="match-info">
+                      <strong>{{candidate.riderName}}</strong>
+                      <p>{{candidate.pickup.address}} → {{candidate.dropoff.address}}</p>
+                      <div class="match-stats">
+                        <ion-badge color="success">{{candidate.routeSimilarity}}% match</ion-badge>
+                        <ion-badge color="warning">+{{candidate.detourDistance.toFixed(1)}}km detour</ion-badge>
+                      </div>
+                    </div>
+                    <div class="match-actions">
+                      <ion-button size="small" color="success" (click)="acceptMatchCandidate(candidate)">
+                        <ion-icon name="checkmark"></ion-icon>
+                      </ion-button>
+                      <ion-button size="small" color="danger" fill="outline" (click)="declineMatchCandidate(candidate)">
+                        <ion-icon name="close"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
     </ion-row>
   </div>
+
 </ion-footer>

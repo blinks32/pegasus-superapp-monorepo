@@ -96,354 +96,341 @@
 <ion-footer [translucent]="true" class="ion-no-border" style="position: relative; z-index: 1000;">
   <div #bottomBar>
     <ion-row>
-
-
-      <!--where to bar and button-->
-      <div class="bottomItems shadow-top" *ngIf="bookingStage">
-
-        <ion-item-group class="ion-margin-horizontal ion-margin-bottom ">
-          <ion-button [disabled]="!locationAddress" shape="round" class="main-button" size="large" type="submit"
-            (click)="showAutocompleteModal()" expand="block">
-            <ion-icon slot="start" name="search" color="primary"></ion-icon>
-            <ion-label>{{ locationAddress ? ('WHERE_TO' | translate) : ('WAITING_ADDRESS' | translate) }}</ion-label>
-          </ion-button>
-
-        </ion-item-group>
-
-      </div>
-
-      <!--Map Pin Choose Bar-->
-      <div class='bottomItems shadow-top' *ngIf="mapPinStage">
-
-        <ion-item-group class="ion-margin-horizontal ion-margin-bottom">
-          <ion-button shape="round" size="large" type="submit" (click)="getDistanceAndDirections()" expand="block">
-            <ion-icon slot="end" name="arrow-forward"></ion-icon>
-            <ion-label>{{destinationAddress}}</ion-label>
-          </ion-button>
-        </ion-item-group>
-
-      </div>
-
-      <!--No driver Found Bar-->
-
-      <div class='bottomItems shadow-top' *ngIf="noDriverStage">
-        <ion-item-group class="ion-margin-horizontal ion-margin-bottom">
-          <ion-button shape="round" class='main-button' size="large" type="submit" color="primary"
-            (click)="ReturnHome()" expand="block">
-            <ion-icon slot="start" name="arrow-back"></ion-icon>
-            <ion-label>{{ 'NO_DRIVERS' | translate }}</ion-label>
-          </ion-button>
-        </ion-item-group>
-      </div>
-
-      <!--Car type, payment, confirmation and Selection Bar-->
-      <div class='bottomItems shadow-top' *ngIf="confirmStage">
-        <!-- Modern card layout -->
-        <div class="ride-confirmation-card">
-          <!-- Vehicle info with price section -->
-          <div *ngIf="price" class="ride-details">
-            <div class="vehicle-info" (click)="ShowDriverInfoPop()">
-              <ion-avatar>
-                <ion-img src="../../assets/icon/pin.png"></ion-img>
-              </ion-avatar>
-              <div class="vehicle-details">
-                <h2>{{carname}} <ion-icon name="information-circle" color="primary"></ion-icon></h2>
-                <p class="vehicle-stats">
-                  <span><ion-icon name="time" color="primary"></ion-icon> {{D_duration}}</span>
-                  <span><ion-icon name="person" color="primary"></ion-icon> {{driver_number_of_seats}} seats</span>
-                </p>
-              </div>
-              <div class="price-tag">
-                <h2 *ngIf="!sharedRideEnabled">{{settingsService.currencySymbol}}{{price}}</h2>
-                <h2 *ngIf="sharedRideEnabled" class="shared-price">
-                  {{settingsService.currencySymbol}}{{getDiscountedPriceRange().min.toFixed(0)}} -
-                  {{settingsService.currencySymbol}}{{getDiscountedPriceRange().max.toFixed(0)}}
-                </h2>
-                <p class="original-price" *ngIf="sharedRideEnabled">
-                  <del>{{settingsService.currencySymbol}}{{price}}</del>
-                </p>
-                <p class="original-price" *ngIf="!sharedRideEnabled">
-                  <del>{{settingsService.currencySymbol}}{{price*2}}</del>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Loading skeleton for ride details -->
-          <div *ngIf="!price" class="ride-details skeleton">
-            <div class="vehicle-info">
-              <ion-avatar>
-                <ion-skeleton-text [animated]="true"></ion-skeleton-text>
-              </ion-avatar>
-              <div class="vehicle-details">
-                <h2><ion-skeleton-text [animated]="true" style="width: 130px"></ion-skeleton-text></h2>
-                <p class="vehicle-stats">
-                  <ion-skeleton-text [animated]="true" style="width: 130px"></ion-skeleton-text>
-                </p>
-              </div>
-              <div class="price-tag">
-                <h2><ion-skeleton-text [animated]="true" style="width: 60px"></ion-skeleton-text></h2>
-                <p><ion-skeleton-text [animated]="true" style="width: 60px"></ion-skeleton-text></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Share & Save Toggle -->
-          <div class="shared-ride-toggle" *ngIf="price">
-            <ion-item lines="none" class="share-save-item">
-              <ion-icon name="people-outline" slot="start" color="success"></ion-icon>
-              <ion-label>
-                <h3>{{ 'SHARED_RIDE.TOGGLE_TITLE' | translate }}</h3>
-                <p>{{ 'SHARED_RIDE.TOGGLE_DESCRIPTION' | translate }}</p>
-              </ion-label>
-              <ion-toggle slot="end" color="success" [checked]="sharedRideEnabled"
-                (ionChange)="onSharedRideToggle($event)">
-              </ion-toggle>
-            </ion-item>
-            <div class="savings-preview" *ngIf="sharedRideEnabled">
-              <ion-icon name="pricetag-outline" color="success"></ion-icon>
-              <span>{{ 'SHARED_RIDE.POTENTIAL_SAVINGS' | translate }}:
-                {{settingsService.currencySymbol}}{{getPotentialSavings().min.toFixed(2)}} -
-                {{settingsService.currencySymbol}}{{getPotentialSavings().max.toFixed(2)}}</span>
-            </div>
-
-            <!-- Calculating route indicator -->
-            <div class="calculating-route" *ngIf="isCalculatingRoute">
-              <ion-spinner name="dots" color="primary"></ion-spinner>
-              <span>{{ 'SHARED_RIDE.CALCULATING_ROUTE' | translate }}</span>
-            </div>
-
-            <!-- Nearby riders banner -->
-            <div class="nearby-riders-banner" *ngIf="sharedRideEnabled && nearbyRidersCount > 0 && !isCalculatingRoute"
-              (click)="viewSharedRides()">
-              <ion-icon name="people" color="success"></ion-icon>
-              <span>{{ nearbyRidersCount }} {{ 'SHARED_RIDE.RIDERS_NEARBY' | translate }}</span>
-              <ion-button fill="clear" size="small" color="success">
-                {{ 'SHARED_RIDE.VIEW_MATCHES' | translate }}
-                <ion-icon name="chevron-forward" slot="end"></ion-icon>
-              </ion-button>
-            </div>
-          </div>
-
-          <!-- Payment method selector -->
-          <div class="payment-selector">
-            <ion-item lines="none">
-              <ion-icon name="wallet-outline" slot="start" color="primary"></ion-icon>
-              <ion-label>{{ 'PAYMENT.PAYMENT_METHOD' | translate }}</ion-label>
-              <ion-select [value]="selectedCard" (ionChange)="chooseCard($event)" interface="action-sheet">
-                <ion-select-option value="cash">
-                  {{ 'CASH' | translate }}
-                </ion-select-option>
-                <ion-select-option *ngFor="let card of savedPaymentMethods" [value]="card.cardId">
-                  {{card.brand | titlecase}} •••• {{card.last4}}
-                </ion-select-option>
-                <ion-select-option value="add_card">
-                  {{ 'PAYMENT.ADD_NEW_CARD_OPTION' | translate }}
-                </ion-select-option>
-              </ion-select>
-            </ion-item>
-            <ion-note *ngIf="!savedPaymentMethods || savedPaymentMethods.length === 0" class="payment-hint">
-              <ion-icon name="information-circle-outline" color="primary"></ion-icon>
-              {{ 'PAYMENT.CASH_HINT' | translate }}
-            </ion-note>
-          </div>
-
-          <!-- Book ride button -->
-          <div class="book-button-container">
-            <ion-button class="book-ride-btn" shape="round" color="primary" size="large" expand="block"
-              (click)="StartRide()">
-              <ion-icon *ngIf='price' slot="start" name="checkmark-sharp"></ion-icon>
-              <ion-progress-bar color="light" *ngIf='!price' type="indeterminate"></ion-progress-bar>
-              <ion-label *ngIf='price'>{{ 'BOOK_RIDE' | translate }}</ion-label>
-            </ion-button>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- Connecting to driver bar-->
-      <div class='bottomItems shadow-top' *ngIf="searchingStage">
-        <ion-list-header>
-          <ion-item>
-            <ion-avatar slot="start">
-              <ion-img [src]="currentDriver.Driver_imgUrl"></ion-img>
-            </ion-avatar>
-            <ion-label>
-
-              <h1>{{currentDriver.Driver_name}}</h1>
-              <p>{{ 'DRIVER_ARRIVES' | translate }} {{duration}}</p>
-
-            </ion-label>
-          </ion-item>
-
-        </ion-list-header>
-        <ion-item-group class="ion-margin-horizontal ion-margin-bottom">
-
-          <ion-button fill="outline" shape="round" color="danger" class='main-button' size="small" type="submit"
-            expand="block" (click)="presentCancelRideActionSheet()">
-            <ion-label></ion-label>
-            <ion-icon slot="start" slot="icon-only" name="close-sharp" color="danger"></ion-icon>
-          </ion-button>
-
-          <ion-progress-bar color="primary" class="ion-padding" type="indeterminate"></ion-progress-bar>
-
-
-        </ion-item-group>
-
-      </div>
-
-
-
-      <!--Driver tracking to user bar (FIXED LAYOUT)-->
-      <div class='bottomItems shadow-top' *ngIf="trackingStage">
-        <div class="card">
-          <!-- Car information row -->
-          <ion-item lines="none" class="driver-card-item">
-            <ion-label>
-              <p>{{driverInfo.Driver_car}}.{{driverInfo.Driver_cartype}}</p>
-              <h1>{{driverInfo.Driver_plate}}</h1>
-            </ion-label>
-
-            <!-- Driver avatar and rating on right side -->
-            <div slot="end" class="driver-avatar-container">
-              <ion-avatar>
-                <ion-img [src]="driverInfo.Driver_imgUrl"></ion-img>
-              </ion-avatar>
-              <div class="driver-rating">
-                <ion-icon color="warning" name="star"></ion-icon>
-                <span>{{driverInfo.Driver_rating}}</span>
-              </div>
-            </div>
-          </ion-item>
-
-          <!-- Driver name row -->
-          <ion-item lines="none" class="driver-card-item">
-            <ion-label>
-              <ion-text color="primary">{{driverInfo.Driver_name}}</ion-text>
-              <p>1,832 rides</p>
-            </ion-label>
-          </ion-item>
-
-          <!-- Payment row -->
-          <ion-item lines="none" class="driver-card-item">
-            <ion-label *ngIf="cash">
-              <h2><ion-icon color='primary' name="cash"></ion-icon> {{ 'CASH' | translate }}</h2>
-            </ion-label>
-            <ion-label *ngIf="!cash">
-              <h2><ion-icon color='primary' name="card"></ion-icon> {{ 'CARD' | translate }}</h2>
-            </ion-label>
-
-            <div slot="end" class="price-container">
-              <h1>{{settingsService.currencySymbol}}{{price}}</h1>
-            </div>
-          </ion-item>
-
-          <!-- More options accordion (made more visible) -->
-          <ion-accordion-group class="driver-actions-accordion">
-            <ion-accordion value="first">
-              <ion-item slot="header" class="accordion-header">
-                <ion-label>
-                  <h2>{{ 'MORE_OPTIONS' | translate }}</h2>
-                </ion-label>
-              </ion-item>
-              <div slot="content" class="accordion-content">
-                <ion-button shape="round" class='main-button' size="large" expand="block" (click)="CallDriver()">
-                  <ion-icon color='primary' slot="start" name="person"></ion-icon>
-                  <ion-label>{{ 'CONTACT_DRIVER' | translate }}</ion-label>
+      <!-- Bottom Sheet Modal -->
+      <ion-modal
+        [isOpen]="bookingStage || confirmStage || searchingStage || trackingStage || drivingToDestinationStage || noDriverStage || mapPinStage"
+        [initialBreakpoint]="0.25" [breakpoints]="[0, 0.25, 0.5, 0.75, 1]" [backdropDismiss]="false"
+        [backdropBreakpoint]="0.5" handle="true" class="bottom-sheet-modal">
+        <ng-template>
+          <ion-content class="ion-padding bottom-sheet-content">
+            <!--where to bar and button-->
+            <div class="sheet-section" *ngIf="bookingStage">
+              <ion-item-group class="ion-margin-bottom">
+                <ion-button [disabled]="!locationAddress" shape="round" class="main-button" size="large" type="submit"
+                  (click)="showAutocompleteModal()" expand="block">
+                  <ion-icon slot="start" name="search" color="primary"></ion-icon>
+                  <ion-label>{{ locationAddress ? ('WHERE_TO' | translate) : ('WAITING_ADDRESS' | translate)
+                    }}</ion-label>
                 </ion-button>
+              </ion-item-group>
+            </div>
 
-                <ion-button shape="round" class='main-button' size="large" expand="block" (click)="EnterChat()">
-                  <ion-icon color='primary' slot="start" name="chatbubbles"></ion-icon>
-                  <ion-label>{{ 'CHAT_DRIVER' | translate }}</ion-label>
+            <!--Map Pin Choose Bar-->
+            <div class="sheet-section" *ngIf="mapPinStage">
+              <ion-item-group class="ion-margin-bottom">
+                <ion-button shape="round" size="large" type="submit" (click)="getDistanceAndDirections()"
+                  expand="block">
+                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
+                  <ion-label>{{destinationAddress}}</ion-label>
                 </ion-button>
+              </ion-item-group>
+            </div>
 
-                <ion-button shape="round" class='main-button' size="large" expand="block"
-                  (click)="presentCancelRideActionSheet()">
-                  <ion-icon color='primary' slot="start" name="close"></ion-icon>
-                  <ion-label>{{ 'CANCEL_RIDE' | translate }}</ion-label>
+            <!--No driver Found Bar-->
+            <div class="sheet-section" *ngIf="noDriverStage">
+              <ion-item-group class="ion-margin-bottom">
+                <ion-button shape="round" class='main-button' size="large" type="submit" color="primary"
+                  (click)="ReturnHome()" expand="block">
+                  <ion-icon slot="start" name="arrow-back"></ion-icon>
+                  <ion-label>{{ 'NO_DRIVERS' | translate }}</ion-label>
                 </ion-button>
-              </div>
-            </ion-accordion>
-          </ion-accordion-group>
-        </div>
-      </div>
+              </ion-item-group>
+            </div>
 
+            <!--Car type, payment, confirmation and Selection Bar-->
+            <div class="sheet-section" *ngIf="confirmStage">
+              <div class="ride-confirmation-card">
+                <!-- Vehicle info with price section -->
+                <div *ngIf="price" class="ride-details">
+                  <div class="vehicle-info" (click)="ShowDriverInfoPop()">
+                    <ion-avatar>
+                      <ion-img src="../../assets/icon/pin.png"></ion-img>
+                    </ion-avatar>
+                    <div class="vehicle-details">
+                      <h2>{{carname}} <ion-icon name="information-circle" color="primary"></ion-icon></h2>
+                      <p class="vehicle-stats">
+                        <span><ion-icon name="time" color="primary"></ion-icon> {{D_duration}}</span>
+                        <span><ion-icon name="person" color="primary"></ion-icon> {{driver_number_of_seats}}
+                          seats</span>
+                      </p>
+                    </div>
+                    <div class="price-tag">
+                      <h2 *ngIf="!sharedRideEnabled">{{settingsService.currencySymbol}}{{price}}</h2>
+                      <h2 *ngIf="sharedRideEnabled" class="shared-price">
+                        {{settingsService.currencySymbol}}{{getDiscountedPriceRange().min.toFixed(0)}} -
+                        {{settingsService.currencySymbol}}{{getDiscountedPriceRange().max.toFixed(0)}}
+                      </h2>
+                      <p class="original-price" *ngIf="sharedRideEnabled">
+                        <del>{{settingsService.currencySymbol}}{{price}}</del>
+                      </p>
+                      <p class="original-price" *ngIf="!sharedRideEnabled">
+                        <del>{{settingsService.currencySymbol}}{{price*2}}</del>
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
+                <!-- Loading skeleton for ride details -->
+                <div *ngIf="!price" class="ride-details skeleton">
+                  <div class="vehicle-info">
+                    <ion-avatar>
+                      <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+                    </ion-avatar>
+                    <div class="vehicle-details">
+                      <h2><ion-skeleton-text [animated]="true" style="width: 130px"></ion-skeleton-text></h2>
+                      <p class="vehicle-stats">
+                        <ion-skeleton-text [animated]="true" style="width: 130px"></ion-skeleton-text>
+                      </p>
+                    </div>
+                    <div class="price-tag">
+                      <h2><ion-skeleton-text [animated]="true" style="width: 60px"></ion-skeleton-text></h2>
+                      <p><ion-skeleton-text [animated]="true" style="width: 60px"></ion-skeleton-text></p>
+                    </div>
+                  </div>
+                </div>
 
+                <!-- Share & Save Toggle -->
+                <div class="shared-ride-toggle" *ngIf="price">
+                  <ion-item lines="none" class="share-save-item">
+                    <ion-icon name="people-outline" slot="start" color="success"></ion-icon>
+                    <ion-label>
+                      <h3>{{ 'SHARED_RIDE.TOGGLE_TITLE' | translate }}</h3>
+                      <p>{{ 'SHARED_RIDE.TOGGLE_DESCRIPTION' | translate }}</p>
+                    </ion-label>
+                    <ion-toggle slot="end" color="success" [checked]="sharedRideEnabled"
+                      (ionChange)="onSharedRideToggle($event)">
+                    </ion-toggle>
+                  </ion-item>
+                  <div class="savings-preview" *ngIf="sharedRideEnabled">
+                    <ion-icon name="pricetag-outline" color="success"></ion-icon>
+                    <span>{{ 'SHARED_RIDE.POTENTIAL_SAVINGS' | translate }}:
+                      {{settingsService.currencySymbol}}{{getPotentialSavings().min.toFixed(2)}} -
+                      {{settingsService.currencySymbol}}{{getPotentialSavings().max.toFixed(2)}}</span>
+                  </div>
 
-      <!--Rider Picked Up now tracking to destination bar (FIXED LAYOUT)-->
-      <div class='bottomItems shadow-top' *ngIf="drivingToDestinationStage">
-        <div class="card">
-          <!-- Car information row -->
-          <ion-item lines="none" class="driver-card-item">
-            <ion-label>
-              <p>{{driverInfo.Driver_car}}.{{driverInfo.Driver_cartype}}</p>
-              <h1>{{driverInfo.Driver_plate}}</h1>
-            </ion-label>
+                  <!-- Calculating route indicator -->
+                  <div class="calculating-route" *ngIf="isCalculatingRoute">
+                    <ion-spinner name="dots" color="primary"></ion-spinner>
+                    <span>{{ 'SHARED_RIDE.CALCULATING_ROUTE' | translate }}</span>
+                  </div>
 
-            <!-- Driver avatar and rating on right side -->
-            <div slot="end" class="driver-avatar-container">
-              <ion-avatar>
-                <ion-img [src]="driverInfo.Driver_imgUrl"></ion-img>
-              </ion-avatar>
-              <div class="driver-rating">
-                <ion-icon color="secondary" name="star"></ion-icon>
-                <span>{{driverInfo.Driver_rating || 5}}</span>
+                  <!-- Nearby riders banner -->
+                  <div class="nearby-riders-banner"
+                    *ngIf="sharedRideEnabled && nearbyRidersCount > 0 && !isCalculatingRoute"
+                    (click)="viewSharedRides()">
+                    <ion-icon name="people" color="success"></ion-icon>
+                    <span>{{ nearbyRidersCount }} {{ 'SHARED_RIDE.RIDERS_NEARBY' | translate }}</span>
+                    <ion-button fill="clear" size="small" color="success">
+                      {{ 'SHARED_RIDE.VIEW_MATCHES' | translate }}
+                      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+                    </ion-button>
+                  </div>
+                </div>
+
+                <!-- Payment method selector -->
+                <div class="payment-selector">
+                  <ion-item lines="none">
+                    <ion-icon name="wallet-outline" slot="start" color="primary"></ion-icon>
+                    <ion-label>{{ 'PAYMENT.PAYMENT_METHOD' | translate }}</ion-label>
+                    <ion-select [value]="selectedCard" (ionChange)="chooseCard($event)" interface="action-sheet">
+                      <ion-select-option value="cash">
+                        {{ 'CASH' | translate }}
+                      </ion-select-option>
+                      <ion-select-option *ngFor="let card of savedPaymentMethods" [value]="card.cardId">
+                        {{card.brand | titlecase}} •••• {{card.last4}}
+                      </ion-select-option>
+                      <ion-select-option value="add_card">
+                        {{ 'PAYMENT.ADD_NEW_CARD_OPTION' | translate }}
+                      </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                  <ion-note *ngIf="!savedPaymentMethods || savedPaymentMethods.length === 0" class="payment-hint">
+                    <ion-icon name="information-circle-outline" color="primary"></ion-icon>
+                    {{ 'PAYMENT.CASH_HINT' | translate }}
+                  </ion-note>
+                </div>
+
+                <!-- Book ride button -->
+                <div class="book-button-container">
+                  <ion-button class="book-ride-btn" shape="round" color="primary" size="large" expand="block"
+                    (click)="StartRide()">
+                    <ion-icon *ngIf='price' slot="start" name="checkmark-sharp"></ion-icon>
+                    <ion-progress-bar color="light" *ngIf='!price' type="indeterminate"></ion-progress-bar>
+                    <ion-label *ngIf='price'>{{ 'BOOK_RIDE' | translate }}</ion-label>
+                  </ion-button>
+                </div>
               </div>
             </div>
-          </ion-item>
 
-          <!-- Driver name row -->
-          <ion-item lines="none" class="driver-card-item">
-            <ion-label>
-              <ion-text color="primary">{{driverInfo.Driver_name}}</ion-text>
-              <p>1,832 rides</p>
-            </ion-label>
-          </ion-item>
-
-          <!-- Payment row -->
-          <ion-item lines="none" class="driver-card-item">
-            <ion-label *ngIf="cash">
-              <h2><ion-icon color='primary' name="cash"></ion-icon> {{ 'CASH' | translate }}</h2>
-            </ion-label>
-            <ion-label *ngIf="!cash">
-              <h2><ion-icon color='primary' name="card"></ion-icon> {{ 'CARD' | translate }}</h2>
-            </ion-label>
-
-            <div slot="end" class="price-container">
-              <h1>{{settingsService.currencySymbol}}{{price}}</h1>
+            <!-- Connecting to driver bar-->
+            <div class="sheet-section" *ngIf="searchingStage">
+              <ion-list-header>
+                <ion-item lines="none">
+                  <ion-avatar slot="start">
+                    <ion-img [src]="currentDriver.Driver_imgUrl"></ion-img>
+                  </ion-avatar>
+                  <ion-label>
+                    <h1>{{currentDriver.Driver_name}}</h1>
+                    <p>{{ 'DRIVER_ARRIVES' | translate }} {{duration}}</p>
+                  </ion-label>
+                </ion-item>
+              </ion-list-header>
+              <ion-item-group class="ion-margin-bottom">
+                <ion-button fill="outline" shape="round" color="danger" class='main-button' size="small" type="submit"
+                  expand="block" (click)="presentCancelRideActionSheet()">
+                  <ion-icon slot="icon-only" name="close-sharp" color="danger"></ion-icon>
+                </ion-button>
+                <ion-progress-bar color="primary" class="ion-padding" type="indeterminate"></ion-progress-bar>
+              </ion-item-group>
             </div>
-          </ion-item>
 
-          <!-- Added accordion here too for consistency -->
-          <ion-accordion-group class="driver-actions-accordion">
-            <ion-accordion value="first">
-              <ion-item slot="header" class="accordion-header">
-                <ion-label>
-                  <h2>{{ 'MORE_OPTIONS' | translate }}</h2>
-                </ion-label>
-              </ion-item>
-              <div slot="content" class="accordion-content">
-                <ion-button shape="round" class='main-button' size="large" expand="block" (click)="CallDriver()">
-                  <ion-icon color='primary' slot="start" name="person"></ion-icon>
-                  <ion-label>{{ 'CONTACT_DRIVER' | translate }}</ion-label>
-                </ion-button>
+            <!--Driver tracking to user bar (FIXED LAYOUT)-->
+            <div class="sheet-section" *ngIf="trackingStage">
+              <div class="card">
+                <!-- Car information row -->
+                <ion-item lines="none" class="driver-card-item">
+                  <ion-label>
+                    <p>{{driverInfo.Driver_car}}.{{driverInfo.Driver_cartype}}</p>
+                    <h1>{{driverInfo.Driver_plate}}</h1>
+                  </ion-label>
 
-                <ion-button shape="round" class='main-button' size="large" expand="block" (click)="EnterChat()">
-                  <ion-icon color='primary' slot="start" name="chat
-                  bubbles"></ion-icon>
-                  <ion-label>{{ 'CHAT_DRIVER' | translate }}</ion-label>
-                </ion-button>
+                  <!-- Driver avatar and rating on right side -->
+                  <div slot="end" class="driver-avatar-container">
+                    <ion-avatar>
+                      <ion-img [src]="driverInfo.Driver_imgUrl"></ion-img>
+                    </ion-avatar>
+                    <div class="driver-rating">
+                      <ion-icon color="warning" name="star"></ion-icon>
+                      <span>{{driverInfo.Driver_rating}}</span>
+                    </div>
+                  </div>
+                </ion-item>
+
+                <!-- Driver name row -->
+                <ion-item lines="none" class="driver-card-item">
+                  <ion-label>
+                    <ion-text color="primary">{{driverInfo.Driver_name}}</ion-text>
+                    <p>1,832 rides</p>
+                  </ion-label>
+                </ion-item>
+
+                <!-- Payment row -->
+                <ion-item lines="none" class="driver-card-item">
+                  <ion-label *ngIf="cash">
+                    <h2><ion-icon color='primary' name="cash"></ion-icon> {{ 'CASH' | translate }}</h2>
+                  </ion-label>
+                  <ion-label *ngIf="!cash">
+                    <h2><ion-icon color='primary' name="card"></ion-icon> {{ 'CARD' | translate }}</h2>
+                  </ion-label>
+
+                  <div slot="end" class="price-container">
+                    <h1>{{settingsService.currencySymbol}}{{price}}</h1>
+                  </div>
+                </ion-item>
+
+                <!-- More options accordion (made more visible) -->
+                <ion-accordion-group class="driver-actions-accordion">
+                  <ion-accordion value="first">
+                    <ion-item slot="header" class="accordion-header">
+                      <ion-label>
+                        <h2>{{ 'MORE_OPTIONS' | translate }}</h2>
+                      </ion-label>
+                    </ion-item>
+                    <div slot="content" class="accordion-content">
+                      <ion-button shape="round" class='main-button' size="large" expand="block" (click)="CallDriver()">
+                        <ion-icon color='primary' slot="start" name="person"></ion-icon>
+                        <ion-label>{{ 'CONTACT_DRIVER' | translate }}</ion-label>
+                      </ion-button>
+
+                      <ion-button shape="round" class='main-button' size="large" expand="block" (click)="EnterChat()">
+                        <ion-icon color='primary' slot="start" name="chatbubbles"></ion-icon>
+                        <ion-label>{{ 'CHAT_DRIVER' | translate }}</ion-label>
+                      </ion-button>
+
+                      <ion-button shape="round" class='main-button' size="large" expand="block"
+                        (click)="presentCancelRideActionSheet()">
+                        <ion-icon color='primary' slot="start" name="close"></ion-icon>
+                        <ion-label>{{ 'CANCEL_RIDE' | translate }}</ion-label>
+                      </ion-button>
+                    </div>
+                  </ion-accordion>
+                </ion-accordion-group>
               </div>
-            </ion-accordion>
-          </ion-accordion-group>
-        </div>
-      </div>
+            </div>
 
+            <!--Rider Picked Up now tracking to destination bar (FIXED LAYOUT)-->
+            <div class="sheet-section" *ngIf="drivingToDestinationStage">
+              <div class="card">
+                <!-- Car information row -->
+                <ion-item lines="none" class="driver-card-item">
+                  <ion-label>
+                    <p>{{driverInfo.Driver_car}}.{{driverInfo.Driver_cartype}}</p>
+                    <h1>{{driverInfo.Driver_plate}}</h1>
+                  </ion-label>
 
+                  <!-- Driver avatar and rating on right side -->
+                  <div slot="end" class="driver-avatar-container">
+                    <ion-avatar>
+                      <ion-img [src]="driverInfo.Driver_imgUrl"></ion-img>
+                    </ion-avatar>
+                    <div class="driver-rating">
+                      <ion-icon color="secondary" name="star"></ion-icon>
+                      <span>{{driverInfo.Driver_rating || 5}}</span>
+                    </div>
+                  </div>
+                </ion-item>
 
+                <!-- Driver name row -->
+                <ion-item lines="none" class="driver-card-item">
+                  <ion-label>
+                    <ion-text color="primary">{{driverInfo.Driver_name}}</ion-text>
+                    <p>1,832 rides</p>
+                  </ion-label>
+                </ion-item>
+
+                <!-- Payment row -->
+                <ion-item lines="none" class="driver-card-item">
+                  <ion-label *ngIf="cash">
+                    <h2><ion-icon color='primary' name="cash"></ion-icon> {{ 'CASH' | translate }}</h2>
+                  </ion-label>
+                  <ion-label *ngIf="!cash">
+                    <h2><ion-icon color='primary' name="card"></ion-icon> {{ 'CARD' | translate }}</h2>
+                  </ion-label>
+
+                  <div slot="end" class="price-container">
+                    <h1>{{settingsService.currencySymbol}}{{price}}</h1>
+                  </div>
+                </ion-item>
+
+                <!-- Added accordion here too for consistency -->
+                <ion-accordion-group class="driver-actions-accordion">
+                  <ion-accordion value="first">
+                    <ion-item slot="header" class="accordion-header">
+                      <ion-label>
+                        <h2>{{ 'MORE_OPTIONS' | translate }}</h2>
+                      </ion-label>
+                    </ion-item>
+                    <div slot="content" class="accordion-content">
+                      <ion-button shape="round" class='main-button' size="large" expand="block" (click)="CallDriver()">
+                        <ion-icon color='primary' slot="start" name="person"></ion-icon>
+                        <ion-label>{{ 'CONTACT_DRIVER' | translate }}</ion-label>
+                      </ion-button>
+
+                      <ion-button shape="round" class='main-button' size="large" expand="block" (click)="EnterChat()">
+                        <ion-icon color='primary' slot="start" name="chatbubbles"></ion-icon>
+                        <ion-label>{{ 'CHAT_DRIVER' | translate }}</ion-label>
+                      </ion-button>
+                    </div>
+                  </ion-accordion>
+                </ion-accordion-group>
+              </div>
+            </div>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
     </ion-row>
   </div>
+
 </ion-footer>
 
 <!-- Shared Ride Opportunities Modal -->

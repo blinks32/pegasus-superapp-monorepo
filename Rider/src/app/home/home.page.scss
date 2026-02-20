@@ -124,6 +124,47 @@ ion-footer {
   }
 }
 
+.bottom-sheet-modal {
+  --border-radius: 24px 24px 0 0;
+  --box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+  --background: var(--ion-background-color);
+
+  // Custom height for different stages can be handled via breakpoints
+  // but we can also style the internal content
+  &::part(content) {
+    backdrop-filter: blur(10px);
+  }
+
+  &::part(handle) {
+    background: var(--ion-color-step-300);
+    width: 40px;
+    height: 4px;
+    margin-top: 10px;
+  }
+}
+
+.bottom-sheet-content {
+  --background: transparent;
+  --padding-top: 10px;
+
+  .sheet-section {
+    padding: 8px 0;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .centerElem {
   justify-content: center;
   align-items: center;
@@ -179,146 +220,13 @@ ion-footer {
   z-index: 0;
 }
 
-// Modern Card Styling for Selection Bar
-.bottomItems {
-  &.shadow-top {
-    // Remove fixed max-height
-    min-height: 150px; // Minimum height to ensure visibility
-    height: auto; // Let it grow based on content
-    max-height: 80vh; // Maximum height as percentage of viewport height
-    overflow-y: auto; // Keep scrolling if content is too long
-    transition: height 0.3s ease; // Smooth height transitions
-
-    // Ensure proper padding and spacing
-    padding: 16px;
-    margin-bottom: env(safe-area-inset-bottom, 0px); // Account for notches/home indicators
-
-    // When in different stages, adjust height accordingly
-    &[ngIf="trackingStage"],
-    &[ngIf="drivingToDestinationStage"] {
-      height: auto;
-      min-height: 200px; // Slightly taller for these stages
-    }
-
-    &[ngIf="searchingStage"] {
-      height: auto;
-      min-height: 180px;
-    }
-
-    &[ngIf="confirmStage"] {
-      height: auto;
-      min-height: 250px;
-    }
-
-    &.no-driver-container {
-      min-height: 100px;
-      padding-top: 24px;
-    }
-
-    background: var(--ion-background-color);
-    backdrop-filter: blur(10px);
-    border-radius: 24px 24px 0 0;
-
-    .payment {
-      margin: 0;
-      padding: 12px 0;
-
-      ion-item {
-        --padding-start: 0;
-        --inner-padding-end: 0;
-        border-radius: 16px;
-        margin-bottom: 12px;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-
-        ion-avatar {
-          width: 48px;
-          height: 48px;
-          margin-right: 12px;
-        }
-
-        ion-label {
-          h1 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            ion-icon {
-              font-size: 18px;
-            }
-          }
-
-          p {
-            font-size: 14px;
-            color: var(--ion-color-medium);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            ion-icon {
-              font-size: 16px;
-            }
-          }
-        }
-      }
-
-      .price {
-        text-align: right;
-
-        h1 {
-          font-size: 20px;
-          font-weight: 700;
-          color: var(--ion-color-primary);
-          margin: 0;
-        }
-
-        p del {
-          font-size: 14px;
-          color: var(--ion-color-medium);
-        }
-      }
-    }
-  }
-
-  .card {
-    margin-top: 16px;
-    border-radius: 16px;
-    background: var(--ion-color-light);
-    overflow: hidden;
-
-    ion-item {
-      --padding-start: 16px;
-      --padding-end: 16px;
-      --background: transparent;
-
-      ion-select {
-        width: 100%;
-        max-width: 100%;
-        --padding-start: 0;
-      }
-    }
-
-    ion-button {
-      margin: 16px;
-      --border-radius: 12px;
-      --padding-top: 16px;
-      --padding-bottom: 16px;
-
-      ion-icon {
-        margin-right: 8px;
-      }
-
-      &[disabled] {
-        opacity: 0.7;
-      }
-    }
+// Ensure content area doesn't cover the header
+ion-content {
+  &.bottom-sheet-content {
+    pointer-events: auto;
   }
 }
+
 
 // Modern Progress Bar
 ion-progress-bar {
