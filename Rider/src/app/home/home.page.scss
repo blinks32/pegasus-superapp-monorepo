@@ -139,7 +139,14 @@ ion-footer {
 }
 
 .top_bar {
-  box-shadow: 0px 1.5px 1.5px rgba(var(--ion-color-dark-rgb), 0.2);
+  background: rgba(var(--ion-background-color-rgb), 0.9);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  margin: 10px 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  --padding-start: 16px;
+  --min-height: 50px;
 }
 
 .card {
@@ -147,9 +154,20 @@ ion-footer {
 }
 
 .main-button {
-  color: var(--ion-color-dark);
-  --background: var(--ion-color-light-shade);
-  // border-bottom: 1px solid var(--ion-color-primary);
+  --color: white;
+  --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+  --border-radius: 16px;
+  font-weight: 600;
+  height: 54px;
+  --box-shadow: 0 4px 15px rgba(var(--ion-color-primary-rgb), 0.3);
+  text-transform: none;
+  font-size: 16px;
+  margin: 0;
+
+  ion-icon {
+    font-size: 20px;
+    margin-right: 10px;
+  }
 }
 
 .preview {
@@ -215,9 +233,13 @@ ion-footer {
       padding-top: 24px;
     }
 
-    background: var(--ion-background-color);
-    backdrop-filter: blur(10px);
-    border-radius: 24px 24px 0 0;
+    background: rgba(var(--ion-background-color-rgb), 0.9);
+    backdrop-filter: blur(15px);
+    border-radius: 24px;
+    margin: 16px;
+    margin-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 
     .payment {
       margin: 0;
