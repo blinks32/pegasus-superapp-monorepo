@@ -118,6 +118,7 @@ export class MapService {
           },
           zoom: 15,
           styles: isDarkMode ? GOOGLE_MAPS_DARK_STYLE : [],
+          disableDefaultUI: true,
         },
       });
 
