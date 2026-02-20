@@ -121,3 +121,10 @@ ion-header.md {
         line-height: 1.5;
     }
 }
+
+// Make tab bar stay above modal sheet
+ion-tab-bar {
+    z-index: 20001 !important; // Above modal overlays
+    position: relative;
+    border-top: 1px solid var(--ion-color-step-150);
+}
