@@ -12,9 +12,9 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     DriversPageRoutingModule,
-    TranslateModule.forChild()
+    TranslateModule.forChild(),
+    DriversPage
   ],
-  declarations: [DriversPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DriversPageModule { }

@@ -44,17 +44,12 @@ export class AvatarService {
       if (user) {
         this.driverCollection = collection(this.firestore, 'Drivers');
 
-        // Initialize default data if needed
-
-
-
         this.getUserProfile(user).subscribe({
           next: async (data) => {
             this.profile = data;
             console.log('Admin profile data:', data);
 
             if (this.profile) {
-              // Now that we have a confirmed admin profile, seed default data if needed
               if (this.profile.Access) {
                 this.initializeDefaultData();
               }
@@ -69,7 +64,6 @@ export class AvatarService {
 
               this.pathM = `uploads/${this.profile.uid}/profile.png`;
             } else {
-              // Profile missing from Firestore
               console.log('Profile missing, navigating to details');
               if (this.router.url !== '/details') {
                 this.router.navigateByUrl('details');
@@ -79,7 +73,7 @@ export class AvatarService {
           error: (error) => {
             console.error('Error in Admin profile subscription:', error);
             if (error.code === 'permission-denied') {
-              alert('Permission denied to access Admin profile. Please check Firestore Security Rules for the "Admins" collection in the new Firebase project.');
+              alert('Permission denied to access Admin profile.');
             }
           }
         })
@@ -89,6 +83,56 @@ export class AvatarService {
 
       }
     })
+  }
+
+  get user() {
+    return this.auth.currentUser;
+  }
+
+  async getSavedPaymentMethods(): Promise<Card[]> {
+    const paymentMethodsRef = collection(this.firestore, `Admins/${this.user.uid}/cards`);
+    const snapshot = await getDocs(paymentMethodsRef);
+    const methods: Card[] = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Card));
+    return methods;
+  }
+
+  async setActiveCard(email: string, cardId: string): Promise<void> {
+    const userDocRef = doc(this.firestore, `Admins/${this.user.uid}`);
+    await setDoc(userDocRef, { activeCardId: cardId }, { merge: true });
+  }
+
+  getActiveCard(email: string): Observable<any> {
+    const userDocRef = doc(this.firestore, `Admins/${this.user.uid}`);
+    return docData(userDocRef);
+  }
+
+  async deleteSavedPaymentMethod(methodId: string): Promise<void> {
+    const paymentMethodDocRef = doc(this.firestore, `Admins/${this.user.uid}/cards/${methodId}`);
+    await deleteDoc(paymentMethodDocRef);
+  }
+
+  async updateFirestoreAfterPayment(paymentResult: any) {
+    const paymentDocRef = doc(this.firestore, `Admins/${this.user.uid}/payments/lastpayment`);
+    await setDoc(paymentDocRef, {
+      paymentResult: paymentResult,
+      paymentDate: new Date(),
+    });
+  }
+
+  async checkCardExistsStripe(email: string, last4: string): Promise<boolean> {
+    const cardsCollectionRef = collection(this.firestore, `Admins/${this.user.uid}/cards`);
+    const cardQuery = query(cardsCollectionRef, where('last4', '==', last4));
+    const cardDocs = await getDocs(cardQuery);
+    return !cardDocs.empty;
+  }
+
+  async addCardStripe(email: string, cardId: string, last4: string): Promise<void> {
+    const cardsCollectionRef = collection(this.firestore, `Admins/${this.user.uid}/cards`);
+    const cardDocRef = doc(cardsCollectionRef, cardId);
+    await setDoc(cardDocRef, { cardId, last4 }, { merge: true });
   }
 
   getUserProfile(user) {

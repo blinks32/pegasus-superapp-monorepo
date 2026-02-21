@@ -14,8 +14,8 @@ import { DetailsPage } from './details.page';
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
-    DetailsPageRoutingModule
-  ],
-  declarations: [DetailsPage]
+    DetailsPageRoutingModule,
+    DetailsPage
+  ]
 })
-export class DetailsPageModule {}
+export class DetailsPageModule { }

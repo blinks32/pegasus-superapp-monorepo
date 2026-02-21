@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController, ModalOptions } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, LoadingController, ModalController, ModalOptions } from '@ionic/angular';
 import { CartypeComponent } from 'src/app/cartype/cartype.component';
 import { AvatarService } from 'src/app/services/avatar.service';
 
@@ -7,39 +9,41 @@ import { AvatarService } from 'src/app/services/avatar.service';
   selector: 'app-cartypes',
   templateUrl: './cartypes.page.html',
   styleUrls: ['./cartypes.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, CartypeComponent]
 })
 export class CartypesPage implements OnInit {
   triphistory: any;
   hasNoData: boolean;
   hideSkeleton: boolean;
-  cartypes: any [];
+  cartypes: any[];
   skeletOns: {}[];
   constructor(private chatService: AvatarService, public loadingController: LoadingController, public modalCtrl: ModalController) { }
 
   ngOnInit() {
     this.skeletOns = [
-      {},{},{},{}
+      {}, {}, {}, {}
     ]
 
     this.hideSkeleton = true;
     this.triphistory = (this.chatService.getCartypes())
-    this.triphistory.subscribe((d)=>{
+    this.triphistory.subscribe((d) => {
 
       console.log(d);
 
-     this.cartypes =d;
-      if (d.length == 0){
+      this.cartypes = d;
+      if (d.length == 0) {
         this.hasNoData = true;
         this.hideSkeleton = false;
-      }else{
+      } else {
         this.hideSkeleton = false;
         this.hasNoData = false;
       }
-  })
+    })
   }
 
 
-  async EditBtn(item){
+  async EditBtn(item) {
     console.log(item);
     const options: ModalOptions = {
       component: CartypeComponent,
@@ -55,7 +59,7 @@ export class CartypesPage implements OnInit {
 
 
 
-  async AddCartype(){
+  async AddCartype() {
     const options: ModalOptions = {
       component: CartypeComponent,
       swipeToClose: true
@@ -66,7 +70,7 @@ export class CartypesPage implements OnInit {
 
   }
 
-  async Delete(item){
+  async Delete(item) {
     const loading = await this.loadingController.create();
     await loading.present();
     this.chatService.CartypeDelete(item.id)

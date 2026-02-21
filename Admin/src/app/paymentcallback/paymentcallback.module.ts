@@ -13,8 +13,8 @@ import { PaymentcallbackPage } from './paymentcallback.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    PaymentcallbackPageRoutingModule
-  ],
-  declarations: [PaymentcallbackPage]
+    PaymentcallbackPageRoutingModule,
+    PaymentcallbackPage
+  ]
 })
-export class PaymentcallbackPageModule {}
+export class PaymentcallbackPageModule { }

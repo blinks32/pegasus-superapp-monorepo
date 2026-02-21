@@ -78,7 +78,7 @@ export class LoginPage implements OnInit {
 
     // Initialize ReCaptcha verifier only for web platform
     if (typeof window !== 'undefined' && window.document && !window['Capacitor']) {
-      this.recaptchaVerifier = new RecaptchaVerifier('sign-in-button', {
+      this.recaptchaVerifier = new RecaptchaVerifier(this.authY, 'sign-in-button', {
         'size': 'invisible',
         'callback': (response) => {
           // reCAPTCHA solved - allow signIn
@@ -87,7 +87,7 @@ export class LoginPage implements OnInit {
         'expired-callback': () => {
           // Response expired - handle expired reCAPTCHA
         }
-      }, this.authY);
+      });
     }
     await this.loadLanguage();
 
@@ -250,7 +250,6 @@ export class LoginPage implements OnInit {
           confirmationResult: confirmationResult,
           isTestMode: false
         },
-        swipeToClose: true
       };
 
       const modal = await this.modalCtrl.create(options);
@@ -307,7 +306,6 @@ export class LoginPage implements OnInit {
         confirmationResult: mockConfirmationResult,
         isTestMode: true
       },
-      swipeToClose: true
     });
 
     await modal.present();

@@ -12,9 +12,9 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     HistoryPageRoutingModule,
-    TranslateModule.forChild()
+    TranslateModule.forChild(),
+    HistoryPage
   ],
-  declarations: [HistoryPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class HistoryPageModule { }

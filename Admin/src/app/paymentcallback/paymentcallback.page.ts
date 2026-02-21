@@ -1,13 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+
 @Component({
   selector: 'app-paymentcallback',
   templateUrl: './paymentcallback.page.html',
   styleUrls: ['./paymentcallback.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule]
 })
 export class PaymentcallbackPage implements OnInit {
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   statusMessage: string;
   ngOnInit() {

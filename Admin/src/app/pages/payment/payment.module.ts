@@ -13,8 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
     ReactiveFormsModule,
     IonicModule,
     PaymentPageRoutingModule,
-    TranslateModule.forChild()
-  ],
-  declarations: [PaymentPage]
+    TranslateModule.forChild(),
+    PaymentPage
+  ]
 })
-export class PaymentPageModule {}
+export class PaymentPageModule { }

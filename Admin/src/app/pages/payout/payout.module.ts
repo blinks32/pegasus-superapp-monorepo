@@ -13,9 +13,9 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     PayoutPageRoutingModule,
-    TranslateModule.forChild()
+    TranslateModule.forChild(),
+    PayoutPage
   ],
-  declarations: [PayoutPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class PayoutPageModule { }

@@ -1,16 +1,21 @@
 import { Component, Input, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgOtpInputModule } from 'ng-otp-input';
 import { Auth, PhoneAuthProvider, signInWithCredential } from '@angular/fire/auth';
 import { AuthService } from '../services/auth.service';
 import { OverlayService } from '../services/overlay.service';
 import { AvatarService } from '../services/avatar.service';
 import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-otp',
   templateUrl: './otp.component.html',
   styleUrls: ['./otp.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, TranslateModule, NgOtpInputModule]
 })
 export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() phone: string;
@@ -40,7 +45,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     private cdr: ChangeDetectorRef,  // Inject ChangeDetectorRef
     private translate: TranslateService,
     private fireAuth: Auth
-  ) {}
+  ) { }
 
   ngOnInit() {
     console.log(this.phone);
@@ -81,16 +86,16 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     } catch (e) {
       console.error('Resend OTP error:', e);
       this.overlay.hideLoader();
-      
+
       let errorMessage = await this.translate.get('RESEND_FAILED').toPromise();
-      
+
       // Handle specific error codes
       if (e.code === 'auth/too-many-requests') {
         errorMessage = await this.translate.get('PLEASE_WAIT').toPromise();
       } else if (e.code === 'auth/network-request-failed') {
         errorMessage = await this.translate.get('NETWORK_ERROR').toPromise();
       }
-      
+
       this.showToast(errorMessage);
     }
   }
@@ -99,7 +104,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       this.approve2 = true;
       this.overlay.showLoader('');
-      
+
       let response;
       if (this.confirmationResult && this.confirmationResult.verificationId) {
         // Create credential using the verification ID and OTP code
@@ -110,22 +115,22 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
         // Fallback for test mode or if verificationId is missing
         response = await this.confirmationResult.confirm(this.otp);
       }
-      
+
       // Wait briefly to ensure Firebase Auth state is updated
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       this.approve2 = false;
       this.overlay.hideLoader();
       this.modalCtrl.dismiss({ user: response.user });
-      
+
     } catch (e) {
       console.error('OTP verification error:', e);
       this.clearOtpInput();
       this.overlay.hideLoader();
       this.approve2 = false;
-      
+
       let errorMessage = await this.translate.get('INVALID_OTP').toPromise();
-      
+
       // Handle specific error codes
       if (e.code === 'auth/invalid-verification-code') {
         errorMessage = await this.translate.get('INVALID_OTP').toPromise();
@@ -136,7 +141,7 @@ export class OtpComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (e.code === 'auth/too-many-requests') {
         errorMessage = await this.translate.get('PLEASE_WAIT').toPromise();
       }
-      
+
       this.showToast(errorMessage);
     } finally {
       // Ensure loader is always hidden, even if there's an unexpected error

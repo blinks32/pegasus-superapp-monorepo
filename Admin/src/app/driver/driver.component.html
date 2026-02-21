@@ -90,7 +90,8 @@
           <ion-item *ngIf="!signedIn" class="ion-margin">
 
 
-            <ion-input formControlName="car" placeholder="Car Name" type="text" minlength="1" maxlength="200">
+            <ion-input formControlName="car" label="Car Name" labelPlacement="floating" placeholder="Car Name"
+              type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
 
@@ -143,8 +144,8 @@
           </div>
 
           <ion-item class="ion-margin">
-            <ion-input (ionChange)="chooseText(card, $event)" *ngIf="card.type == 'text'" placeholder="{{card.name}}"
-              type="text" minlength="1" maxlength="200">
+            <ion-input (ionChange)="chooseText(card, $event)" *ngIf="card.type == 'text'" [label]="card.name"
+              labelPlacement="floating" [placeholder]="card.name" type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
 
@@ -235,14 +236,14 @@
 
 
           <ion-item class="ion-margin">
-            <ion-input formControlName="fullname" placeholder="{{info.Driver_name}}" type="text" minlength="1"
-              maxlength="200">
+            <ion-input formControlName="fullname" label="Full Name" labelPlacement="floating"
+              [placeholder]="info.Driver_name" type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
 
           <ion-item class="ion-margin">
-            <ion-input formControlName="phone" placeholder="{{info.Driver_phone}}" type="number" minlength="1"
-              maxlength="200" scroll="false">
+            <ion-input formControlName="phone" label="Phone" labelPlacement="floating" [placeholder]="info.Driver_phone"
+              type="number" minlength="1" maxlength="200" scroll="false">
             </ion-input>
           </ion-item>
 
@@ -261,8 +262,8 @@
           <ion-item class="ion-margin">
 
 
-            <ion-input formControlName="car" placeholder="{{info.Driver_car}}" type="text" minlength="1"
-              maxlength="200">
+            <ion-input formControlName="car" label="Car" labelPlacement="floating" [placeholder]="info.Driver_car"
+              type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
 
@@ -274,8 +275,8 @@
 
 
           <ion-item class="ion-margin">
-            <ion-input formControlName="plate" placeholder="{{info.Driver_plate}}" type="text" minlength="1"
-              maxlength="200">
+            <ion-input formControlName="plate" label="Plate Number" labelPlacement="floating"
+              [placeholder]="info.Driver_plate" type="text" minlength="1" maxlength="200">
             </ion-input>
           </ion-item>
 

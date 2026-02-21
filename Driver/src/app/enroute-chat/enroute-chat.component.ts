@@ -1,24 +1,26 @@
-// src/app/components/enroute-chat/enroute-chat.component.ts
-
 import { Component, OnInit, ViewChild, Input, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonicModule, IonContent } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
-import { StatusBar } from '@capacitor/status-bar';
-import { IonContent } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
-import { AvatarService } from 'src/app/services/avatar.service';
-import { TranslateService } from '@ngx-translate/core';
 import { tap, finalize } from 'rxjs/operators';
+import { StatusBar } from '@capacitor/status-bar';
+import { AvatarService } from 'src/app/services/avatar.service';
 
 @Component({
   selector: 'app-enroute-chat',
   templateUrl: './enroute-chat.component.html',
   styleUrls: ['./enroute-chat.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, TranslateModule]
 })
 export class EnrouteChatComponent implements OnInit, OnDestroy {
 
   @ViewChild(IonContent, { static: false }) content: IonContent;
   @Input() chatData: any;
- 
+
   newMsg = '';
   messages: Observable<import("@angular/fire/firestore").DocumentData[]>;
   hasNoData = false;
@@ -28,13 +30,13 @@ export class EnrouteChatComponent implements OnInit, OnDestroy {
   isTyping = false;
 
   constructor(
-    private chatService: AvatarService, 
+    private chatService: AvatarService,
     private router: Router,
     private translate: TranslateService
   ) {
     this.currentLanguage = this.translate.currentLang || 'en';
   }
- 
+
   ngOnInit() {
     console.log('Chat initialized with:', this.chatData);
     this.loadMessages();
@@ -45,7 +47,7 @@ export class EnrouteChatComponent implements OnInit, OnDestroy {
       this.messageSubscription.unsubscribe();
     }
   }
-  
+
   loadMessages() {
     if (!this.chatData?.userId) {
       console.error('No userId provided to load messages');
@@ -53,10 +55,10 @@ export class EnrouteChatComponent implements OnInit, OnDestroy {
       this.isLoading = false;
       return;
     }
-    
+
     this.isLoading = true;
     this.messages = this.chatService.getChatMessage(this.chatData.userId);
-    
+
     this.messageSubscription = this.messages.pipe(
       tap(messages => {
         if (messages.length === 0) {
@@ -85,10 +87,10 @@ export class EnrouteChatComponent implements OnInit, OnDestroy {
   async Hide() {
     await StatusBar.setOverlaysWebView({ overlay: true });
   }
- 
+
   async sendMessage() {
     if (!this.newMsg.trim()) return;
-    
+
     try {
       this.isTyping = true;
       await this.chatService.addChatEnRouteMessage(this.newMsg.trim(), this.chatData.userId);
@@ -113,22 +115,22 @@ export class EnrouteChatComponent implements OnInit, OnDestroy {
   closeChat() {
     this.router.navigate(['/home']);
   }
-  
+
   formatTime(timestamp: any): string {
     if (!timestamp) return '';
-    
+
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    
+
     // Less than 24 hours, show time only
     if (diff < 24 * 60 * 60 * 1000) {
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
-    
+
     // More than 24 hours, show date and time
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) + 
-           ' ' + 
-           date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) +
+      ' ' +
+      date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 }

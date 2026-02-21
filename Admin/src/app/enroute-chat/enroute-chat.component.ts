@@ -8,16 +8,22 @@ import { IonContent } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { AvatarService } from 'src/app/services/avatar.service';
 
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-enroute-chat',
   templateUrl: './enroute-chat.component.html',
   styleUrls: ['./enroute-chat.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class EnrouteChatComponent implements OnInit {
 
   @ViewChild(IonContent) content: IonContent;
   @Input() chatData: any;  // Define an input property to receive data
- 
+
   newMsg = '';
   messages: Observable<import("@angular/fire/firestore").DocumentData[]>;
   hasNoData: any;
@@ -25,15 +31,15 @@ export class EnrouteChatComponent implements OnInit {
   hideSkeleton: boolean;
 
   constructor(private chatService: AvatarService, private router: Router) { }
- 
+
   async ionViewDidEnter() {
     this.skeletOns = [
-      {},{},{},{}
+      {}, {}, {}, {}
     ]
     this.hideSkeleton = true;
     this.messages = this.chatService.getChatMessage(this.chatData.userId);
     this.messages.subscribe((d) => {
-      if (d.length == 0){
+      if (d.length == 0) {
         this.hasNoData = true;
         this.hideSkeleton = false;
       } else {
@@ -59,7 +65,7 @@ export class EnrouteChatComponent implements OnInit {
     // Use the passed data if needed
     console.log(this.chatData);
   }
- 
+
   async sendMessage() {
     await this.chatService.addChatEnRouteMessage(this.newMsg, this.chatData.userId);
     this.newMsg = '';

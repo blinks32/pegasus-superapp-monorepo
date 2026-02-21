@@ -121,7 +121,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
   isConnected: boolean;
   private networkStatus$ = new BehaviorSubject<boolean>(true);
   private router: Router;
-  routePolyline: google.maps.Polyline;
+  routePolyline: any;
   countdownTimer: number;
   localCountdown: number;
   countdownWatcher: import("@angular/fire/firestore").Unsubscribe;
@@ -1543,7 +1543,6 @@ export class HomePage implements AfterViewInit, OnDestroy {
         userId: this.requestID,
         message: ""
       },
-      swipeToClose: true,
     };
 
     const modal = await this.modalCtrl.create(options);
@@ -2523,7 +2522,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
     try {
       const path = await this.map.getRoutePath(loc, des);
       const polylineColor = "#007bff";
-      const polylines: Polyline[] = [
+      const polylines: any[] = [
         {
           path,
           strokeColor: polylineColor,

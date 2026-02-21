@@ -15,8 +15,8 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     CartypesPageRoutingModule,
-    TranslateModule.forChild()
-  ],
-  declarations: [CartypesPage]
+    TranslateModule.forChild(),
+    CartypesPage
+  ]
 })
 export class CartypesPageModule { }

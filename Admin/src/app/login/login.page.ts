@@ -1,7 +1,9 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController, ModalController, ModalOptions, NavController, Platform } from '@ionic/angular';
+import { IonicModule, AlertController, ModalController, ModalOptions, NavController, Platform } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { OtpComponent } from '../otp/otp.component';
 import { AuthService } from '../services/auth.service';
 import { environment } from '../../environments/environment';
@@ -15,6 +17,8 @@ import { CountrySearchModalComponent } from '../country-search-modal/country-sea
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule, TranslateModule]
 })
 export class LoginPage implements OnInit, AfterViewInit {
   form: FormGroup;

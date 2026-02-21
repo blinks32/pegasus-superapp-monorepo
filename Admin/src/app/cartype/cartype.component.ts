@@ -1,13 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { IonicModule, AlertController, LoadingController, ModalController } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { AvatarService } from '../services/avatar.service';
 
 @Component({
   selector: 'app-cartype',
   templateUrl: './cartype.component.html',
   styleUrls: ['./cartype.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule]
 })
 export class CartypeComponent implements OnInit {
   approve2: boolean = true;
@@ -23,7 +26,7 @@ export class CartypeComponent implements OnInit {
       name: new FormControl(this.info?.name ?? '', {
         validators: [Validators.required, Validators.minLength(1), Validators.maxLength(50)]
       }),
-      seats : new FormControl(this.info?.seatNum ?? 0, {
+      seats: new FormControl(this.info?.seatNum ?? 0, {
         validators: [Validators.required, Validators.min(1), Validators.max(20)]
       }),
       // surcharge: new FormControl(this.info?.surcharge ?? '', {
@@ -53,40 +56,40 @@ export class CartypeComponent implements OnInit {
     }
   }
 
-  closeModal(){
+  closeModal() {
     this.modalCtrl.dismiss();
   }
 
 
-  async processNow(){
-    if (this.profileImage){
-      
-    const loading = await this.loadingController.create();
-    await loading.present();
+  async processNow() {
+    if (this.profileImage) {
 
-    const nameExists = await this.avatarService.checkCartypeNameExists(this.form.value.name);
-    if (nameExists) {
+      const loading = await this.loadingController.create();
+      await loading.present();
+
+      const nameExists = await this.avatarService.checkCartypeNameExists(this.form.value.name);
+      if (nameExists) {
+        loading.dismiss();
+        const alert = await this.alertController.create({
+          header: 'Name Taken',
+          message: 'This car type name is already taken. Please choose another one.',
+          buttons: ['OK'],
+        });
+        await alert.present();
+        return;
+      }
+
+      const fk = await this.avatarService.CartypeSave(
+        this.form.value.name,
+        this.form.value.seats,
+        // this.form.value.surcharge,
+        // this.form.value.mileage
+      );
+      console.log(fk.id);
+
+      const result = await this.avatarService.uploadCartype(this.profileImage, fk.id);
       loading.dismiss();
-      const alert = await this.alertController.create({
-        header: 'Name Taken',
-        message: 'This car type name is already taken. Please choose another one.',
-        buttons: ['OK'],
-      });
-      await alert.present();
-      return;
-    }
 
-    const fk = await this.avatarService.CartypeSave(
-      this.form.value.name,
-      this.form.value.seats,
-      // this.form.value.surcharge,
-      // this.form.value.mileage
-    );
-    console.log(fk.id);
-
-    const result = await this.avatarService.uploadCartype(this.profileImage, fk.id);
-    loading.dismiss();
-      
       this.modalCtrl.dismiss();
 
       if (!result) {
@@ -97,7 +100,7 @@ export class CartypeComponent implements OnInit {
         });
         await alert.present();
       }
-    }else{
+    } else {
       const alert = await this.alertController.create({
         header: 'Upload An Icon',
         message: 'No icon detected',
@@ -107,10 +110,10 @@ export class CartypeComponent implements OnInit {
     }
   }
 
-  
 
-  async EditNow(){
-      
+
+  async EditNow() {
+
     const loading = await this.loadingController.create();
     await loading.present();
 
@@ -134,7 +137,7 @@ export class CartypeComponent implements OnInit {
       // this.form.value.mileage
     );
 
-    if (this.profileImage){
+    if (this.profileImage) {
       const result = await this.avatarService.uploadCartype(this.profileImage, this.info.id);
       if (!result) {
         await loading.dismiss();
@@ -154,7 +157,7 @@ export class CartypeComponent implements OnInit {
       // ensure preview reflects persisted values
       this.previewImage = this.info?.image ?? null;
     }
-    
+
   }
 
 

@@ -1,23 +1,24 @@
-// src/app/components/enroute-chat/enroute-chat.component.ts
-
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController, IonContent } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { StatusBar } from '@capacitor/status-bar';
-import { IonContent } from '@ionic/angular';
 import { Observable } from 'rxjs';
+import { StatusBar } from '@capacitor/status-bar';
 import { AvatarService } from 'src/app/services/avatar.service';
-import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-enroute-chat',
   templateUrl: './enroute-chat.component.html',
   styleUrls: ['./enroute-chat.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class EnrouteChatComponent implements OnInit {
 
   @ViewChild(IonContent) content: IonContent;
   @Input() chatData: any;  // Define an input property to receive data
- 
+
   newMsg = '';
   messages: Observable<import("@angular/fire/firestore").DocumentData[]>;
   hasNoData: any;
@@ -26,16 +27,16 @@ export class EnrouteChatComponent implements OnInit {
   loading: boolean = true;
 
   constructor(private chatService: AvatarService, private router: Router, private modalCtrl: ModalController) { }
- 
+
   async ionViewDidEnter() {
     this.skeletOns = [
-      {},{},{},{}
+      {}, {}, {}, {}
     ]
     this.hideSkeleton = true;
     this.messages = this.chatService.getChatMessage(this.chatData.userId);
     this.messages.subscribe((d) => {
       this.loading = false;
-      if (d.length == 0){
+      if (d.length == 0) {
         this.hasNoData = true;
         this.hideSkeleton = false;
       } else {
@@ -58,7 +59,7 @@ export class EnrouteChatComponent implements OnInit {
     // Use the passed data if needed
     console.log(this.chatData);
   }
- 
+
   async sendMessage() {
     await this.chatService.addChatEnRouteMessage(this.newMsg, this.chatData.userId);
     this.newMsg = '';

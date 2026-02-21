@@ -13,8 +13,8 @@ import { ManagePage } from './manage.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    ManagePageRoutingModule
-  ],
-  declarations: [ManagePage]
+    ManagePageRoutingModule,
+    ManagePage
+  ]
 })
-export class ManagePageModule {}
+export class ManagePageModule { }

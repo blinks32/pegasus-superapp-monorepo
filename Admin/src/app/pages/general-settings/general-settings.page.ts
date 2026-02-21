@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { SettingsService, AppSettings } from '../../services/settings.service';
-import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-general-settings',
   templateUrl: './general-settings.page.html',
   styleUrls: ['./general-settings.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class GeneralSettingsPage implements OnInit {
   settings: AppSettings = {
@@ -48,9 +52,9 @@ export class GeneralSettingsPage implements OnInit {
       if (selectedCurrency) {
         this.settings.currencySymbol = selectedCurrency.symbol;
       }
-      
+
       await this.settingsService.updateSettings(this.settings);
-      
+
       const toast = await this.toastController.create({
         message: 'Settings saved successfully',
         duration: 2000,
@@ -66,12 +70,12 @@ export class GeneralSettingsPage implements OnInit {
       toast.present();
     }
   }
-  
+
   onCurrencyChange(event) {
-      const selectedCode = event.detail.value;
-      const selectedCurrency = this.currencies.find(c => c.code === selectedCode);
-      if (selectedCurrency) {
-          this.settings.currencySymbol = selectedCurrency.symbol;
-      }
+    const selectedCode = event.detail.value;
+    const selectedCurrency = this.currencies.find(c => c.code === selectedCode);
+    if (selectedCurrency) {
+      this.settings.currencySymbol = selectedCurrency.symbol;
+    }
   }
 }

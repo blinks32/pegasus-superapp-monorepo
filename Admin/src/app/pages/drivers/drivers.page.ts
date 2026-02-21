@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, LoadingController, ModalController, ModalOptions } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AlertController, LoadingController, ModalController, ModalOptions, IonicModule } from '@ionic/angular';
 import { DriverDocumentsComponent } from 'src/app/driver-documents/driver-documents.component';
 import { DriverComponent } from 'src/app/driver/driver.component';
 import { OnesignalService } from 'src/app/one-signal.service';
@@ -37,6 +39,8 @@ interface Driver {
   selector: 'app-drivers',
   templateUrl: './drivers.page.html',
   styleUrls: ['./drivers.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, DriverComponent, DriverDocumentsComponent]
 })
 export class DriversPage implements OnInit {
   skeletOns: {}[] = [{}, {}, {}, {}];
@@ -61,15 +65,15 @@ export class DriversPage implements OnInit {
   async ionViewDidEnter() {
     this.hideSkeleton = true;
     const drivers = this.chatService.getDrivers();
-  
+
     drivers.subscribe((d: Driver[]) => {
       this.records.data = [];
       this.records2.data = [];
       this.allRecords = [];
       this.allRecords2 = [];
-      
+
       d.forEach(element => {
-        if (element.isApproved||element.Approved) {
+        if (element.isApproved || element.Approved) {
           this.records.data.push(element);
           this.allRecords.push(element);
         } else {
@@ -85,37 +89,37 @@ export class DriversPage implements OnInit {
     });
   }
 
-    applyFilter(event: any) {
-    
-      const filterValue = event.target.value.toLowerCase();
+  applyFilter(event: any) {
 
-      if (!filterValue) {
-        this.records.data = [...this.allRecords];
-        return;
-      }
+    const filterValue = event.target.value.toLowerCase();
 
-      this.records.data = this.allRecords.filter(driver => 
-        (driver.Driver_name && driver.Driver_name.toLowerCase().includes(filterValue)) ||
-        (driver.Driver_phone && driver.Driver_phone.toLowerCase().includes(filterValue)) ||
-        (driver.Driver_email && driver.Driver_email.toLowerCase().includes(filterValue))
-      );
+    if (!filterValue) {
+      this.records.data = [...this.allRecords];
+      return;
     }
 
-    applyFilter2(event: any) {
-    
-      const filterValue = event.target.value.toLowerCase();
+    this.records.data = this.allRecords.filter(driver =>
+      (driver.Driver_name && driver.Driver_name.toLowerCase().includes(filterValue)) ||
+      (driver.Driver_phone && driver.Driver_phone.toLowerCase().includes(filterValue)) ||
+      (driver.Driver_email && driver.Driver_email.toLowerCase().includes(filterValue))
+    );
+  }
 
-      if (!filterValue) {
-        this.records2.data = [...this.allRecords2];
-        return;
-      }
+  applyFilter2(event: any) {
 
-      this.records2.data = this.allRecords2.filter(driver => 
-        (driver.Driver_name && driver.Driver_name.toLowerCase().includes(filterValue)) ||
-        (driver.Driver_phone && driver.Driver_phone.toLowerCase().includes(filterValue)) ||
-        (driver.Driver_email && driver.Driver_email.toLowerCase().includes(filterValue))
-      );
+    const filterValue = event.target.value.toLowerCase();
+
+    if (!filterValue) {
+      this.records2.data = [...this.allRecords2];
+      return;
     }
+
+    this.records2.data = this.allRecords2.filter(driver =>
+      (driver.Driver_name && driver.Driver_name.toLowerCase().includes(filterValue)) ||
+      (driver.Driver_phone && driver.Driver_phone.toLowerCase().includes(filterValue)) ||
+      (driver.Driver_email && driver.Driver_email.toLowerCase().includes(filterValue))
+    );
+  }
 
   async AddDriver() {
     const options: ModalOptions = {
@@ -170,8 +174,8 @@ export class DriversPage implements OnInit {
       driver.isApproved = nextIsApproved;
       driver.Approved = nextApprovedFlag;
 
-     // this.sendStatusNotification(driver, nextIsApproved);
-      
+      // this.sendStatusNotification(driver, nextIsApproved);
+
       const alert = await this.alertController.create({
         header: `Driver ${nextIsApproved ? 'Approved' : 'Disapproved'}`,
         message: `${driver.Driver_name} has been ${nextIsApproved ? 'approved' : 'disapproved'} successfully.`,
@@ -190,7 +194,7 @@ export class DriversPage implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   private sendStatusNotification(element: Driver, isApproved: boolean) {
     const statusText = isApproved ? 'approved' : 'disapproved';
@@ -206,7 +210,7 @@ export class DriversPage implements OnInit {
       this.fcmService
         .sendToToken(element.fcmToken, 'Driver Status Updated', body, dataPayload)
         .subscribe({
-          next: () => {},
+          next: () => { },
           error: (notificationError) => console.warn('Failed to send FCM notification', notificationError),
         });
       delivered = true;

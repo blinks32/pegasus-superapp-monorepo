@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { NavController, MenuController, Platform, AlertController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, NavController, MenuController, Platform, AlertController } from '@ionic/angular';
 import { MapService } from '../services/map.service';
 import { AvatarService } from '../services/avatar.service';
 import { SettingsService } from '../services/settings.service';
@@ -13,6 +15,8 @@ Chart.register(...registerables);
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('map') mapRef: ElementRef<HTMLElement>;

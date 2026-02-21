@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { AvatarService } from '../services/avatar.service';
@@ -13,6 +14,8 @@ import { OverlayService } from '../services/overlay.service';
   selector: 'app-rider',
   templateUrl: './rider.component.html',
   styleUrls: ['./rider.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule]
 })
 export class RiderComponent implements OnInit {
 
@@ -24,7 +27,7 @@ export class RiderComponent implements OnInit {
   cartypes: import("@angular/fire/firestore").DocumentData[];
   currentcar: any;
   imageURl: any = '';
-  licenseURl: any ='';
+  licenseURl: any = '';
   licenseImage: any = '';
   profileImage: any = '';
   images: any[];
@@ -38,30 +41,30 @@ export class RiderComponent implements OnInit {
   docus: any;
   constructor(
     private overlay: OverlayService, public modalCtrl: ModalController, private authy: Auth, private auth: AuthService, private avatar: AvatarService, private router: Router
-  ) { 
+  ) {
 
- }
+  }
 
   ngOnInit() {
     this.images = [];
     this.texts = []
 
-     this.subscription = this.avatar.getCartypes().subscribe((d)=>{
+    this.subscription = this.avatar.getCartypes().subscribe((d) => {
       console.log(d);
       this.cartypes = d
       this.subscription.unsubscribe();
-     })
+    })
 
-     this.subscription2 = this.avatar.getDocuments().subscribe((d)=>{
+    this.subscription2 = this.avatar.getDocuments().subscribe((d) => {
       console.log(d);
       this.docs = d
       this.subscription2.unsubscribe();
-     })
+    })
 
-     this.avatar.getDocs().subscribe((d)=>{
+    this.avatar.getDocs().subscribe((d) => {
       console.log(d);
       this.addDocs = d
- })
+    })
 
     this.form = new FormGroup({
       fullname: new FormControl(null, {
@@ -87,43 +90,43 @@ export class RiderComponent implements OnInit {
       }),
     });
   }
-  
-  async chooseCarType(even){
+
+  async chooseCarType(even) {
     console.log(even.detail.value);
-      this.currentcar = even.detail.value.name
+    this.currentcar = even.detail.value.name
   }
 
 
-  closeModal(){
+  closeModal() {
     this.modalCtrl.dismiss();
   }
 
   async changeImage(g) {
-    try{
-    const image = await Camera.getPhoto({
-      quality: 20,
-      allowEditing: false,
-      resultType: CameraResultType.DataUrl,
-      source: CameraSource.Photos, // Camera, Photos or Prompt!
-    });
- 
-    for (let index = 0; index < this.docs.length; index++) {
-      const element = this.docs[index];
-      console.log(element);
-      if (element.name == g.name){
-      console.log(element);
-      this.docs[index].image = image.dataUrl;
-      this.overlay.showLoader('');
-      const bol = await this.avatar.createDocument(g.name, g.type, g.id, image.dataUrl, '');
-      console.log(bol)
-      this.overlay.hideLoader()
-      } 
+    try {
+      const image = await Camera.getPhoto({
+        quality: 20,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Photos, // Camera, Photos or Prompt!
+      });
+
+      for (let index = 0; index < this.docs.length; index++) {
+        const element = this.docs[index];
+        console.log(element);
+        if (element.name == g.name) {
+          console.log(element);
+          this.docs[index].image = image.dataUrl;
+          this.overlay.showLoader('');
+          const bol = await this.avatar.createDocument(g.name, g.type, g.id, image.dataUrl, '');
+          console.log(bol)
+          this.overlay.hideLoader()
+        }
+      }
+
+    } catch (e) {
+      this.overlay.showAlert('Error', e)
     }
 
-  }catch(e){
-    this.overlay.showAlert('Error', e)
-  }
- 
   }
 
 
@@ -131,19 +134,19 @@ export class RiderComponent implements OnInit {
 
 
   async changeProfile() {
-    try{
-    const image = await Camera.getPhoto({
-      quality: 20,
-      allowEditing: false,
-      resultType: CameraResultType.DataUrl,
-      source: CameraSource.Photos, // Camera, Photos or Prompt!
-    });
-    this.imageURl = image.dataUrl
+    try {
+      const image = await Camera.getPhoto({
+        quality: 20,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Photos, // Camera, Photos or Prompt!
+      });
+      this.imageURl = image.dataUrl
 
-  }catch(e){
-    this.overlay.showAlert('Error', e)
-  }
- 
+    } catch (e) {
+      this.overlay.showAlert('Error', e)
+    }
+
   }
 
   async chooseText(e, value) {
@@ -174,21 +177,21 @@ export class RiderComponent implements OnInit {
     }
   }
 
-async EditNow(){
-  this.approve2 = true
-   this.approve2 = false;
-  this.modalCtrl.dismiss();
-}
+  async EditNow() {
+    this.approve2 = true
+    this.approve2 = false;
+    this.modalCtrl.dismiss();
+  }
 
   async signIn() {
     try {
-        this.approve2 = true
-        await this.avatar.createUser(this.form.value.fullname + '' + this.form.value.lastname, this.form.value.email, this.imageURl, this.form.value.phone, this.authy.currentUser.uid)
-        this.approve2 = false;
-        this.modalCtrl.dismiss();
-        // this.router.navigateByUrl('waiting');
-       
-    } catch(e) {
+      this.approve2 = true
+      await this.avatar.createUser(this.form.value.fullname + '' + this.form.value.lastname, this.form.value.email, this.imageURl, this.form.value.phone, this.authy.currentUser.uid)
+      this.approve2 = false;
+      this.modalCtrl.dismiss();
+      // this.router.navigateByUrl('waiting');
+
+    } catch (e) {
       this.overlay.showAlert('Error', e)
     }
   }

@@ -15,8 +15,8 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     DocumentsPageRoutingModule,
-    TranslateModule.forChild()
-  ],
-  declarations: [DocumentsPage]
+    TranslateModule.forChild(),
+    DocumentsPage
+  ]
 })
 export class DocumentsPageModule { }

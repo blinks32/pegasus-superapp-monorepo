@@ -5,9 +5,15 @@ import { PaymentService } from '../services/payment.service';
 import { AvatarService } from '../services/avatar.service';
 declare var Stripe;
 
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-add-card',
   templateUrl: './add-card.component.html',
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule]
 })
 export class AddCardComponent {
   @ViewChild('cardElement', { static: false }) cardElement: ElementRef;

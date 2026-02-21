@@ -100,7 +100,7 @@ export class MapService {
   actualLocation: any;
   exampleMapId: any;
   newMap: GoogleMap;
-  private directionsService: google.maps.DirectionsService | null = null;
+  private directionsService: any = null;
 
   constructor(private overlay: OverlayService, private geocode: GeocodeService) {
   }
@@ -121,7 +121,6 @@ export class MapService {
           },
           zoom: 8,
           styles: isDarkMode ? GOOGLE_MAPS_DARK_STYLE : [],
-          disableDefaultUI: true,
         },
       });
 
@@ -243,7 +242,7 @@ export class MapService {
     return (bearing + 360) % 360;
   }
 
-  private ensureDirectionsService(): google.maps.DirectionsService | null {
+  private ensureDirectionsService(): any {
     if (!this.directionsService && typeof google !== 'undefined' && google?.maps) {
       this.directionsService = new google.maps.DirectionsService();
     }
@@ -253,7 +252,7 @@ export class MapService {
   async getRoutePath(
     origin: { lat: number; lng: number },
     destination: { lat: number; lng: number },
-    travelMode: google.maps.TravelMode = google?.maps?.TravelMode?.DRIVING ?? 'DRIVING'
+    travelMode: any = google?.maps?.TravelMode?.DRIVING ?? 'DRIVING'
   ): Promise<{ lat: number; lng: number }[]> {
     const service = this.ensureDirectionsService();
     if (!service) {
@@ -271,7 +270,7 @@ export class MapService {
         (result, status) => {
           if (status === 'OK' && result?.routes?.length) {
             const overviewPath = result.routes[0].overview_path || [];
-            const path = overviewPath.map((latLng: google.maps.LatLng) => ({
+            const path = overviewPath.map((latLng: any) => ({
               lat: latLng.lat(),
               lng: latLng.lng()
             }));

@@ -13,8 +13,8 @@ import { DriverAppPage } from './driver-app.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    DriverAppPageRoutingModule
-  ],
-  declarations: [DriverAppPage]
+    DriverAppPageRoutingModule,
+    DriverAppPage
+  ]
 })
-export class DriverAppPageModule {}
+export class DriverAppPageModule { }

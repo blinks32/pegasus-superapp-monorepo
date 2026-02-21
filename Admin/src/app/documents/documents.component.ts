@@ -1,12 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController, LoadingController, ToastController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController, LoadingController, ToastController } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AvatarService } from 'src/app/services/avatar.service';
 
 @Component({
   selector: 'app-documents',
   templateUrl: './documents.component.html',
   styleUrls: ['./documents.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule]
 })
 export class DocumentsComponent implements OnInit {
   @Input() info: any;
@@ -21,15 +24,15 @@ export class DocumentsComponent implements OnInit {
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.isEditMode = !!this.info;
-    
+
     this.form = this.fb.group({
       name: [this.info?.name || '', Validators.required],
       type: [this.info?.type || 'text', Validators.required],
-      content: [this.info?.content || ''], 
+      content: [this.info?.content || ''],
       description: [this.info?.description || '']
     });
 
@@ -61,7 +64,7 @@ export class DocumentsComponent implements OnInit {
     }
 
     const type = this.form.get('type').value;
-    
+
     if (type !== 'text' && !this.selectedFile && !this.isEditMode) {
       this.presentToast('Please select a file');
       return;

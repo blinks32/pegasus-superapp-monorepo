@@ -1,13 +1,18 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { IonicModule, AlertController, LoadingController, ModalController, NavController } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PaymentService } from '../services/payment.service';
 import { AvatarService } from '../services/avatar.service';
-declare var Stripe;
+import { TranslateModule } from '@ngx-translate/core';
+
+declare var Stripe: any;
 
 @Component({
   selector: 'app-add-card',
   templateUrl: './add-card.component.html',
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule, TranslateModule]
 })
 export class AddCardComponent {
   @ViewChild('cardElement', { static: false }) cardElement: ElementRef;
@@ -67,7 +72,7 @@ export class AddCardComponent {
 
       try {
         const cardData = await this.processStripePayment(formValues);
-        
+
         await this.modalController.dismiss({ success: true, cardData });
       } catch (error) {
         const errorMessage = error.message || (error.error ? error.error.error : 'An unexpected error occurred.');
@@ -82,7 +87,7 @@ export class AddCardComponent {
 
   async processStripePayment(formValues) {
     console.log('Starting processStripePayment with formValues:', formValues);
-  
+
     try {
       const setupIntentResponse = await this.paymentService.createSetupIntent(formValues.email).toPromise();
       console.log('Setup Intent raw response:', setupIntentResponse);
@@ -93,11 +98,11 @@ export class AddCardComponent {
       if (!clientSecret) {
         throw new Error('No client_secret returned from server for SetupIntent.');
       }
-      
+
       if (String(clientSecret).startsWith('seti_') && !String(clientSecret).includes('_secret_')) {
         throw new Error('Invalid client_secret returned from server (looks like an ID). Ensure server returns the full client_secret.');
       }
-  
+
       const { setupIntent, error } = await this.stripe.confirmCardSetup(
         clientSecret,
         {
@@ -109,31 +114,31 @@ export class AddCardComponent {
           },
         }
       );
-  
+
       if (error) {
         console.error('Stripe confirmCardSetup returned error object:', error);
         throw new Error(error.message);
       }
-  
+
       console.log('Card setup confirmed:', setupIntent);
-  
+
       const paymentMethodId = setupIntent.payment_method;
-  
+
       // Fetch the payment method details from your server (which will call Stripe)
       const paymentMethod = await this.paymentService.retrievePaymentMethod(paymentMethodId).toPromise();
       console.log('Payment method retrieved:', paymentMethod);
-  
+
       const cardDetails = paymentMethod.card;
       const last4 = cardDetails.last4;
       const brand = cardDetails.brand; // Get card brand (visa, mastercard, etc.)
-  
+
       console.log('Checking if card exists with email:', formValues.email, ' and last4:', last4);
       const cardExists = await this.avatarService.checkCardExistsStripe(formValues.email, last4);
-      
+
       if (cardExists) {
         throw new Error('This card is already saved to your account.');
       }
-      
+
       // Save card to Firestore using the correct method
       const cardData = {
         cardId: paymentMethodId,
@@ -141,15 +146,15 @@ export class AddCardComponent {
         last4: last4,
         brand: brand || 'unknown'
       };
-      
+
       await this.avatarService.saveCard(cardData);
       console.log('Card saved to Firestore:', cardData);
-      
+
       // Also save to backend if needed
       await this.paymentService.savePaymentMethod(formValues.email, paymentMethodId).toPromise();
-  
+
       return cardData;
-  
+
     } catch (error) {
       console.error('Error in processStripePayment:', error);
       throw error;

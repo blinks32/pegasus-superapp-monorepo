@@ -13,12 +13,11 @@ import { HomePageRoutingModule } from './home-routing.module';
   imports: [
     CommonModule,
     FormsModule,
-
     IonicModule,
     HomePageRoutingModule,
-    TranslateModule.forChild()
+    TranslateModule.forChild(),
+    HomePage
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  declarations: [HomePage]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class HomePageModule { }

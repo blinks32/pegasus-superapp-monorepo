@@ -15,8 +15,8 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     GeneralSettingsPageRoutingModule,
-    TranslateModule.forChild()
-  ],
-  declarations: [GeneralSettingsPage]
+    TranslateModule.forChild(),
+    GeneralSettingsPage
+  ]
 })
 export class GeneralSettingsPageModule { }

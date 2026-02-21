@@ -1,13 +1,17 @@
 import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { NgOtpInputModule, NgOtpInputComponent } from 'ng-otp-input';
 import { AuthService } from '../services/auth.service';
 import { OverlayService } from '../services/overlay.service';
-import { NgOtpInputComponent } from 'ng-otp-input';
 
 @Component({
   selector: 'app-otp',
   templateUrl: './otp.component.html',
   styleUrls: ['./otp.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, NgOtpInputModule]
 })
 export class OtpComponent implements OnInit, OnDestroy {
   @Input() defaultOtp: string = '';
@@ -26,7 +30,7 @@ export class OtpComponent implements OnInit, OnDestroy {
     private modalCtrl: ModalController,
     private auth: AuthService,
     private overlay: OverlayService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.startCountdown();

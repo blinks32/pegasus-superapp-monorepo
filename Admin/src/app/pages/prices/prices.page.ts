@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController, ModalOptions } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, LoadingController, ModalController, ModalOptions } from '@ionic/angular';
 import { CartypeComponent } from 'src/app/cartype/cartype.component';
 import { PricesComponent } from 'src/app/prices/prices.component';
 import { AvatarService } from 'src/app/services/avatar.service';
@@ -9,6 +11,8 @@ import { SettingsService } from 'src/app/services/settings.service';
   selector: 'app-prices',
   templateUrl: './prices.page.html',
   styleUrls: ['./prices.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, PricesComponent]
 })
 export class PricesPage implements OnInit {
   skeletOns: {}[];
@@ -28,24 +32,24 @@ export class PricesPage implements OnInit {
 
   ngOnInit() {
     this.skeletOns = [
-      {},{},{},{}
+      {}, {}, {}, {}
     ]
 
     this.hideSkeleton = true;
     this.triphistory = (this.chatService.getPrices())
-    this.triphistory.subscribe((d)=>{
+    this.triphistory.subscribe((d) => {
 
       console.log(d);
 
-     this.cartypes =d;
-      if (d.length == 0){
+      this.cartypes = d;
+      if (d.length == 0) {
         this.hasNoData = true;
         this.hideSkeleton = false;
-      }else{
+      } else {
         this.hideSkeleton = false;
         this.hasNoData = false;
       }
-  })
+    })
 
     this.settingsService.getSettings().subscribe(settings => {
       if (settings && settings.currencySymbol) {
@@ -55,7 +59,7 @@ export class PricesPage implements OnInit {
   }
 
 
-  async EditBtn(item){
+  async EditBtn(item) {
     console.log(item);
     const options: ModalOptions = {
       component: PricesComponent,
@@ -71,7 +75,7 @@ export class PricesPage implements OnInit {
 
 
 
-  async AddPrice(){
+  async AddPrice() {
     const options: ModalOptions = {
       component: PricesComponent,
       swipeToClose: true
@@ -82,7 +86,7 @@ export class PricesPage implements OnInit {
 
   }
 
-  async Delete(item){
+  async Delete(item) {
     const loading = await this.loadingController.create();
     await loading.present();
     this.chatService.PriceDelete(item.id)

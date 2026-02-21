@@ -13,8 +13,8 @@ import { NetworkPage } from './network.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    NetworkPageRoutingModule
-  ],
-  declarations: [NetworkPage]
+    NetworkPageRoutingModule,
+    NetworkPage
+  ]
 })
-export class NetworkPageModule {}
+export class NetworkPageModule { }

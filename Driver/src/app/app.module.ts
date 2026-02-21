@@ -15,9 +15,6 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { Capacitor } from '@capacitor/core';
 import { indexedDBLocalPersistence, initializeAuth } from 'firebase/auth';
 import { getApp } from 'firebase/app';
-import { OtpComponent } from './otp/otp.component';
-import { NgOtpInputModule } from 'ng-otp-input';
-import { Client } from "@googlemaps/google-maps-services-js";
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { CountrySearchModalComponent } from './country-search-modal/country-search-modal.component';
@@ -26,6 +23,9 @@ import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-transla
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageService } from './services/language.service';
 import { TripSummaryComponent } from './trip-summary/trip-summary.component';
+import { Client } from "@googlemaps/google-maps-services-js";
+import { NgOtpInputModule } from 'ng-otp-input';
+import { ComponentsModule } from './components.module';
 
 // AoT requires an exported function for factories
 export function createTranslateLoader(http: HttpClient) {
@@ -33,7 +33,7 @@ export function createTranslateLoader(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [AppComponent, OtpComponent, CountrySearchModalComponent, EnrouteChatComponent, TripSummaryComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     NgOtpInputModule,
@@ -42,6 +42,23 @@ export function createTranslateLoader(http: HttpClient) {
     HttpClientModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    ComponentsModule,
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      }
+    })
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    GoogleAuthProvider,
+    FacebookAuthProvider,
+    Client,
+    LanguageService,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => {
       if (Capacitor.isNativePlatform()) {
@@ -54,17 +71,7 @@ export function createTranslateLoader(http: HttpClient) {
     }),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
-    TranslateModule.forRoot({
-      defaultLanguage: 'en',
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient]
-      }
-    })
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, GoogleAuthProvider, FacebookAuthProvider, Client, LanguageService],
   bootstrap: [AppComponent],
 })
 export class AppModule {

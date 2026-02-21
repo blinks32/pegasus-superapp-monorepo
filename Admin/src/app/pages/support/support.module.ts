@@ -13,9 +13,9 @@ import { SupportPage } from './support.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    SupportPageRoutingModule
+    SupportPageRoutingModule,
+    SupportPage
   ],
-  declarations: [SupportPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class SupportPageModule {}
+export class SupportPageModule { }

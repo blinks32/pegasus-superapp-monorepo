@@ -15,30 +15,23 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { Capacitor } from '@capacitor/core';
 import { indexedDBLocalPersistence, initializeAuth } from 'firebase/auth';
 import { getApp } from 'firebase/app';
-import { OtpComponent } from './otp/otp.component';
-import { NgOtpInputModule } from 'ng-otp-input';
 import { Client } from "@googlemaps/google-maps-services-js";
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CartypeComponent } from './cartype/cartype.component';
-import { DocumentsComponent } from './documents/documents.component';
-import { PricesComponent } from './prices/prices.component';
-import { SupportComponent } from './support/support.component';
-import { DriverComponent } from './driver/driver.component';
-import { DriverDocumentsComponent } from './driver-documents/driver-documents.component';
-import { RiderComponent } from './rider/rider.component';
-import { CountrySearchModalComponent } from './country-search-modal/country-search-modal.component';
 import { AlertController } from '@ionic/angular';
 import { GlobalErrorHandler } from './global-error-handler';
+import { ComponentsModule } from './components.module';
+
+import { NgOtpInputModule } from 'ng-otp-input';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
-  declarations: [AppComponent, CountrySearchModalComponent, OtpComponent, CartypeComponent, DocumentsComponent, PricesComponent, SupportComponent, DriverComponent, DriverDocumentsComponent, RiderComponent],
+  declarations: [],
   imports: [
     BrowserModule,
     NgOtpInputModule,
@@ -47,6 +40,25 @@ export function createTranslateLoader(http: HttpClient) {
     HttpClientModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    ComponentsModule,
+    AppComponent,
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      }
+    }),
+    BrowserAnimationsModule,
+  ],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    GoogleAuthProvider,
+    FacebookAuthProvider,
+    Client,
+    AlertController,
     provideFirebaseApp(() => {
       try {
         console.log('Initializing Firebase with config:', environment.firebase);
@@ -90,23 +102,6 @@ export function createTranslateLoader(http: HttpClient) {
         throw error;
       }
     }),
-    TranslateModule.forRoot({
-      defaultLanguage: 'en',
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient]
-      }
-    }),
-    BrowserAnimationsModule,
-  ],
-  providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: ErrorHandler, useClass: GlobalErrorHandler },
-    GoogleAuthProvider,
-    FacebookAuthProvider,
-    Client,
-    AlertController
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],

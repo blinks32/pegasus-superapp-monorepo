@@ -8,10 +8,17 @@ import { NavigationEnd } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { TranslateService } from '@ngx-translate/core';
 
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, RouterModule, TranslateModule]
 })
 export class AppComponent implements OnInit {
   public appPages = [

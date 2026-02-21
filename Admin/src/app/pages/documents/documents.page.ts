@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { LoadingController, AlertController, ModalController, ModalOptions } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { IonicModule, LoadingController, AlertController, ModalController, ModalOptions } from '@ionic/angular';
 import { DocumentsComponent } from 'src/app/documents/documents.component';
 import { AvatarService } from 'src/app/services/avatar.service';
 
@@ -8,6 +9,8 @@ import { AvatarService } from 'src/app/services/avatar.service';
   selector: 'app-documents',
   templateUrl: './documents.page.html',
   styleUrls: ['./documents.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, DocumentsComponent]
 })
 export class DocumentsPage implements OnInit {
 
@@ -21,7 +24,7 @@ export class DocumentsPage implements OnInit {
 
   ngOnInit() {
     this.skeletOns = [
-      {},{},{},{}
+      {}, {}, {}, {}
     ]
 
     this.loadDocuments();
@@ -50,7 +53,7 @@ export class DocumentsPage implements OnInit {
   }
 
 
-  async EditBtn(item){
+  async EditBtn(item) {
     console.log(item);
     const options: ModalOptions = {
       component: DocumentsComponent,
@@ -65,7 +68,7 @@ export class DocumentsPage implements OnInit {
   }
 
 
-  async AddDoc(){
+  async AddDoc() {
     const options: ModalOptions = {
       component: DocumentsComponent,
       swipeToClose: true
@@ -75,7 +78,7 @@ export class DocumentsPage implements OnInit {
     const data: any = (await modal).onWillDismiss();
   }
 
-  async Delete(item){
+  async Delete(item) {
     const loading = await this.loadingController.create();
     await loading.present();
     this.chatService.DocumentDelete(item.id)

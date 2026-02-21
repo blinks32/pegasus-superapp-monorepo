@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, LoadingController, AlertController, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { StatusBar } from '@capacitor/status-bar';
-import { Capacitor } from '@capacitor/core';
-import { LoadingController, AlertController, NavController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { AvatarService } from 'src/app/services/avatar.service';
 
@@ -11,6 +11,8 @@ import { AvatarService } from 'src/app/services/avatar.service';
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class ProfilePage implements OnInit {
 
@@ -25,7 +27,7 @@ export class ProfilePage implements OnInit {
     private nav: NavController
   ) {
 
-  
+
   }
 
   async logout() {
@@ -33,7 +35,7 @@ export class ProfilePage implements OnInit {
     this.router.navigateByUrl('/', { replaceUrl: true });
   }
 
-  goBack(){
+  goBack() {
     this.nav.pop();
   }
 

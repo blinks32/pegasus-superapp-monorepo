@@ -70,7 +70,7 @@ export class AuthService {
       }
 
       console.log('🛡️ Re-initializing reCAPTCHA on fresh element');
-      this.appVerifier = new RecaptchaVerifier(container, {
+      this.appVerifier = new RecaptchaVerifier(this.auth, container, {
         size: 'invisible',
         callback: (response) => {
           console.log(response);
@@ -78,7 +78,7 @@ export class AuthService {
         'expired-callback': () => {
           console.log('Recaptcha expired');
         }
-      }, this.auth);
+      });
 
       // Only render on web platform
       if (typeof window !== 'undefined' && window.document && !window['Capacitor']) {

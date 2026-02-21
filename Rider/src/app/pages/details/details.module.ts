@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -16,10 +16,13 @@ import { TranslateModule } from '@ngx-translate/core';
     IonicModule,
     DetailsPageRoutingModule,
     ReactiveFormsModule,
+    TranslateModule.forChild(),
+    DetailsPage
+  ],
+  providers: [
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    TranslateModule.forChild()
   ],
-  declarations: [DetailsPage]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class DetailsPageModule {}
+export class DetailsPageModule { }

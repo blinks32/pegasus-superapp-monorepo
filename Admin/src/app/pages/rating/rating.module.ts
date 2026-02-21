@@ -13,8 +13,8 @@ import { RatingPage } from './rating.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    RatingPageRoutingModule
-  ],
-  declarations: [RatingPage]
+    RatingPageRoutingModule,
+    RatingPage
+  ]
 })
-export class RatingPageModule {}
+export class RatingPageModule { }

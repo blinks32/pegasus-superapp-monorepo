@@ -10,10 +10,16 @@ declare let google;
 
 
 
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-autocomplete',
   templateUrl: './autocomplete.component.html',
   styleUrls: ['./autocomplete.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class AutocompleteComponent implements OnInit {
   @Input() LatLng;
@@ -30,21 +36,21 @@ export class AutocompleteComponent implements OnInit {
   constructor(private modalCtrl: ModalController, private http: HttpClient, private avatar: AvatarService, private viewCtrl: ModalController, private client: Client) {
     this.autocompleteItems = [];
     this.autocompleteItems2 = [];
-   }
-  
+  }
+
   ngOnInit() {
-    
-     this.http.get("https://ipinfo.io").subscribe((res: any) => {
-          
-        console.log('res ', res);
+
+    this.http.get("https://ipinfo.io").subscribe((res: any) => {
+
+      console.log('res ', res);
 
 
-        this.countryCode = res.country || 'NG';
-     
-     })
-    
+      this.countryCode = res.country || 'NG';
+
+    })
+
     this.skeletOns = [
-      {},{},{},{}
+      {}, {}, {}, {}
     ]
     this.autocomplete = {
       query2: this.locationAddress,
@@ -53,26 +59,26 @@ export class AutocompleteComponent implements OnInit {
     console.log(this.locationAddress);
   }
 
-  closeModal(){
+  closeModal() {
     let data = {
       home: true
     }
     this.modalCtrl.dismiss(data)
   }
 
-  closeSearch(){
-    
+  closeSearch() {
+
   }
 
 
-  async Show(){
+  async Show() {
     if (Capacitor.isNativePlatform()) {
       await StatusBar.setOverlaysWebView({ overlay: false });
     }
     this.hideImage = true;
   }
 
-  async Hide(){
+  async Hide() {
     if (Capacitor.isNativePlatform()) {
       await StatusBar.setOverlaysWebView({ overlay: true });
     }
@@ -80,7 +86,7 @@ export class AutocompleteComponent implements OnInit {
   }
 
   async updateSearch2() {
-   
+
     if (this.autocomplete.query2 == "") {
       this.autocompleteItems2 = [];
       return;
@@ -106,23 +112,23 @@ export class AutocompleteComponent implements OnInit {
         console.log(predictions, status);
 
         this.skeleton = true;
-        
-          if (predictions != null)
-            predictions.forEach((prediction) => {
-              this.autocompleteItems2.push({
-                whole: prediction,
-                full: prediction.description,
-                place: prediction.structured_formatting.main_text,
-                city: prediction.structured_formatting.secondary_text,
-                searching: true
-              });
+
+        if (predictions != null)
+          predictions.forEach((prediction) => {
+            this.autocompleteItems2.push({
+              whole: prediction,
+              full: prediction.description,
+              place: prediction.structured_formatting.main_text,
+              city: prediction.structured_formatting.secondary_text,
+              searching: true
             });
-        });
-      }
+          });
+      });
+  }
 
 
   async updateSearch() {
-   
+
     if (this.autocomplete.query == "") {
       this.autocompleteItems = [];
       return;
@@ -148,59 +154,59 @@ export class AutocompleteComponent implements OnInit {
         console.log(predictions, status);
 
         this.skeleton = true;
-        
-          if (predictions != null)
-            predictions.forEach((prediction) => {
-              this.autocompleteItems.push({
-                whole: prediction,
-                full: prediction.description,
-                place: prediction.structured_formatting.main_text,
-                city: prediction.structured_formatting.secondary_text,
-                searching: true
-              });
+
+        if (predictions != null)
+          predictions.forEach((prediction) => {
+            this.autocompleteItems.push({
+              whole: prediction,
+              full: prediction.description,
+              place: prediction.structured_formatting.main_text,
+              city: prediction.structured_formatting.secondary_text,
+              searching: true
             });
-        });
-      }
-
-
-
-async chooseItem(item: any) {
-   
-  await this.viewCtrl.dismiss(item);
-  console.log(item);
-}
-
-
-async chooseOnMap() {
-  let data = {
-    pinOnMap: true
+          });
+      });
   }
-  await this.viewCtrl.dismiss(data);
-}
 
-async chooseItem2 (item: any){
-  this.autocomplete.query2 = item.full;
-  const results = await this.client
-    .geocode({
-    params: {
-      address: item.full,
-      key: environment.apiKey,
-    },
-    timeout: 5000, // milliseconds
-  })
-  console.log(results);
-  var position = results[0].geometry.location;
-  this.data = [
-    {
-      location: item.full,
-      lat: position.lat(),
-      lng: position.lng(),
-      edited: true,
-    },
-  ];
-  
 
- }
+
+  async chooseItem(item: any) {
+
+    await this.viewCtrl.dismiss(item);
+    console.log(item);
+  }
+
+
+  async chooseOnMap() {
+    let data = {
+      pinOnMap: true
+    }
+    await this.viewCtrl.dismiss(data);
+  }
+
+  async chooseItem2(item: any) {
+    this.autocomplete.query2 = item.full;
+    const results = await this.client
+      .geocode({
+        params: {
+          address: item.full,
+          key: environment.apiKey,
+        },
+        timeout: 5000, // milliseconds
+      })
+    console.log(results);
+    var position = results[0].geometry.location;
+    this.data = [
+      {
+        location: item.full,
+        lat: position.lat(),
+        lng: position.lng(),
+        edited: true,
+      },
+    ];
+
+
+  }
 
 }
 

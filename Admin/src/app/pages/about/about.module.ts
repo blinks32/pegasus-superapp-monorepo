@@ -12,8 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     AboutPageRoutingModule,
-    TranslateModule.forChild()
-  ],
-  declarations: [AboutPage]
+    TranslateModule.forChild(),
+    AboutPage
+  ]
 })
-export class AboutPageModule {}
+export class AboutPageModule { }

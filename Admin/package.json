@@ -50,6 +50,7 @@
     "onesignal-cordova-plugin": "^5.2.1",
     "rxfire": "^6.0.3",
     "rxjs": "^7.8.0",
+    "swiper": "^11.0.0",
     "tslib": "^2.6.0",
     "zone.js": "~0.14.0"
   },

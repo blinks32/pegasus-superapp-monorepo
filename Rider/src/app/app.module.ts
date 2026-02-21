@@ -14,18 +14,13 @@ import { GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { getApp } from 'firebase/app';
-import { OtpComponent } from './otp/otp.component';
-import { NgOtpInputModule } from 'ng-otp-input';
-import { Client } from "@googlemaps/google-maps-services-js";
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { CountrySearchModalComponent } from './country-search-modal/country-search-modal.component';
-import { AddCardComponent } from './add-card/add-card.component';
-import { AutocompleteComponent } from './autocomplete/autocomplete.component';
-import { EnrouteChatComponent } from './enroute-chat/enroute-chat.component';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { TripSummaryComponent } from './trip-summary/trip-summary.component';
+import { NgOtpInputModule } from 'ng-otp-input';
+import { Client } from "@googlemaps/google-maps-services-js";
+import { ComponentsModule } from './components.module';
 
 // AoT requires an exported function for factories
 export function createTranslateLoader(http: HttpClient) {
@@ -33,7 +28,7 @@ export function createTranslateLoader(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [AppComponent, OtpComponent, CountrySearchModalComponent, AddCardComponent, AutocompleteComponent, EnrouteChatComponent, TripSummaryComponent],
+  declarations: [AppComponent],
   imports: [
 
     BrowserModule,
@@ -44,10 +39,7 @@ export function createTranslateLoader(http: HttpClient) {
     ReactiveFormsModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()),
-    provideStorage(() => getStorage()),
+    ComponentsModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
@@ -58,7 +50,16 @@ export function createTranslateLoader(http: HttpClient) {
     })
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, GoogleAuthProvider, FacebookAuthProvider, Client],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    GoogleAuthProvider,
+    FacebookAuthProvider,
+    Client,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage()),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

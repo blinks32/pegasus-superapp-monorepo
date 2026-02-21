@@ -1,11 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, LoadingController, AlertController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController, LoadingController, AlertController } from '@ionic/angular';
 import { AvatarService } from '../services/avatar.service';
 
 @Component({
   selector: 'app-driver-documents',
   templateUrl: './driver-documents.component.html',
   styleUrls: ['./driver-documents.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule]
 })
 export class DriverDocumentsComponent implements OnInit {
   @Input() info: any;

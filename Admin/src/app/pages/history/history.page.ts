@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, InfiniteScrollCustomEvent } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NavController, InfiniteScrollCustomEvent, IonicModule } from '@ionic/angular';
 import { AvatarService } from 'src/app/services/avatar.service';
 import { SettingsService } from 'src/app/services/settings.service';
 
@@ -24,6 +26,8 @@ interface Trip {
   selector: 'app-history',
   templateUrl: './history.page.html',
   styleUrls: ['./history.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class HistoryPage implements OnInit {
   isLoading = false;
@@ -33,7 +37,7 @@ export class HistoryPage implements OnInit {
 
   tripHistory: Trip[] = [];
   cancelledHistory: Trip[] = [];
-  
+
   displayedTripHistory: Trip[] = [];
   displayedCancelledHistory: Trip[] = [];
 
@@ -49,7 +53,7 @@ export class HistoryPage implements OnInit {
     private nav: NavController,
     private chatService: AvatarService,
     private settingsService: SettingsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadTripHistory();

@@ -65,7 +65,7 @@ export class AuthService {
       }
 
       console.log('🛡️ Re-initializing reCAPTCHA on fresh element');
-      this.appVerifier = new RecaptchaVerifier(container, {
+      this.appVerifier = new RecaptchaVerifier(this.auth, container, {
         size: 'invisible',
         callback: (response) => {
           console.log('reCAPTCHA verified:', response);
@@ -75,7 +75,7 @@ export class AuthService {
           this.isRecaptchaInitialized = false;
           this.recaptcha();
         }
-      }, this.auth);
+      });
 
       try {
         await this.appVerifier.render();

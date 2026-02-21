@@ -12,8 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     PromotionPageRoutingModule,
-    TranslateModule.forChild()
-  ],
-  declarations: [PromotionPage]
+    TranslateModule.forChild(),
+    PromotionPage
+  ]
 })
-export class PromotionPageModule {}
+export class PromotionPageModule { }

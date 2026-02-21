@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { IonicModule, AlertController } from '@ionic/angular';
+import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/services/auth.service';
 import { AvatarService } from 'src/app/services/avatar.service';
 import { OverlayService } from 'src/app/services/overlay.service';
 import { Geolocation } from '@capacitor/geolocation';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { AlertController } from '@ionic/angular';
 import { take } from 'rxjs/operators';
 
 export interface RoleType {
@@ -20,6 +21,8 @@ export interface RoleType {
   selector: 'app-details',
   templateUrl: './details.page.html',
   styleUrls: ['./details.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule]
 })
 export class DetailsPage implements OnInit {
 

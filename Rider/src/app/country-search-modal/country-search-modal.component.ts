@@ -1,17 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
-//llZ1NBxrJnSEkUZG
+
 @Component({
   selector: 'app-country-search-modal',
   templateUrl: './country-search-modal.component.html',
   styleUrls: ['./country-search-modal.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class CountrySearchModalComponent implements OnInit {
   CountryJson = environment.CountryJson;
   filteredCountries = [];
 
-  constructor(private modalCtrl: ModalController) {}
+  constructor(private modalCtrl: ModalController) { }
 
   ngOnInit() {
     this.filteredCountries = this.CountryJson;

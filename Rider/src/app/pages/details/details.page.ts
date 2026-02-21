@@ -1,20 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { Auth, updateProfile, User, signInWithPopup, reauthenticateWithCredential, signInWithPhoneNumber } from '@angular/fire/auth';
-import { GoogleAuthProvider, RecaptchaVerifier, PhoneAuthProvider, EmailAuthProvider } from 'firebase/auth';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ActionSheetController, AlertController, LoadingController, Platform } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Auth, updateProfile, User, signInWithPhoneNumber, signInWithPopup } from '@angular/fire/auth';
+import { GoogleAuthProvider, RecaptchaVerifier } from 'firebase/auth';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { AvatarService } from 'src/app/services/avatar.service';
 import { OverlayService } from 'src/app/services/overlay.service';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { ActionSheetController, AlertController, LoadingController, Platform } from '@ionic/angular';
-import { ImageUploadService } from 'src/app/services/image-upload.service'; // Import the service
-import { TranslateService } from '@ngx-translate/core'; // Add this import
+import { ImageUploadService } from 'src/app/services/image-upload.service';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.page.html',
   styleUrls: ['./details.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule, TranslateModule]
 })
 export class DetailsPage implements OnInit {
 

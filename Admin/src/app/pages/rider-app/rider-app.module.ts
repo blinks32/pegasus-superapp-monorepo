@@ -13,8 +13,8 @@ import { RiderAppPage } from './rider-app.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    RiderAppPageRoutingModule
-  ],
-  declarations: [RiderAppPage]
+    RiderAppPageRoutingModule,
+    RiderAppPage
+  ]
 })
-export class RiderAppPageModule {}
+export class RiderAppPageModule { }

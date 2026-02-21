@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ModalController, ModalOptions, InfiniteScrollCustomEvent } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, LoadingController, ModalController, ModalOptions, InfiniteScrollCustomEvent } from '@ionic/angular';
 import { RiderComponent } from 'src/app/rider/rider.component';
 import { AvatarService } from 'src/app/services/avatar.service';
 
@@ -19,28 +21,30 @@ interface Rider {
   selector: 'app-customers',
   templateUrl: './customers.page.html',
   styleUrls: ['./customers.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, RiderComponent]
 })
 export class CustomersPage implements OnInit {
   skeletOns: {}[];
   hideSkeleton: boolean;
   hasNoData: boolean;
   segmentModel = "default";
-  
+
   records = { data: [] as Rider[] };
   allRecords = [] as Rider[]; // Store original data
   currentPage = 0;
   pageSize = 10;
-  
+
   constructor(
-    private chatService: AvatarService, 
-    public modalCtrl: ModalController, 
+    private chatService: AvatarService,
+    public modalCtrl: ModalController,
     private loadingController: LoadingController
   ) { }
 
   async ionViewDidEnter() {
     this.skeletOns = [{}, {}, {}, {}];
     this.hideSkeleton = true;
-    
+
     this.chatService.getRiders().subscribe((d: Rider[]) => {
       const normalized = d.map((rider: Rider) => ({
         ...rider,
@@ -129,7 +133,7 @@ export class CustomersPage implements OnInit {
     await modal.onWillDismiss();
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   private logRiderPhotoUrls(riders: Rider[]): void {
     riders.forEach(rider => {

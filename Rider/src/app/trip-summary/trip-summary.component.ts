@@ -1,5 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Firestore, doc, updateDoc, getDoc } from '@angular/fire/firestore';
 import { AvatarService } from '../services/avatar.service';
 import { SettingsService } from '../services/settings.service';
@@ -8,20 +11,22 @@ import { SettingsService } from '../services/settings.service';
   selector: 'app-trip-summary',
   templateUrl: './trip-summary.component.html',
   styleUrls: ['./trip-summary.component.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule, TranslateModule]
 })
 export class TripSummaryComponent implements OnInit {
   @Input() tripId: string;
   @Input() driverId: string;
   @Input() rideData: any; // Accept pre-populated ride data
-  
+
   tripData: any = {};
   rating: number = 0;
   comment: string = '';
   isSubmitting: boolean = false;
-  
+
   // Animation states
   animateIn: boolean = false;
-  
+
   constructor(
     private modalCtrl: ModalController,
     private firestore: Firestore,
@@ -47,7 +52,7 @@ export class TripSummaryComponent implements OnInit {
     } else {
       this.loadTripData();
     }
-    
+
     // Trigger animation after a short delay
     setTimeout(() => {
       this.animateIn = true;
@@ -62,22 +67,22 @@ export class TripSummaryComponent implements OnInit {
 
     try {
       const tripDoc = await getDoc(doc(this.firestore, 'Request', this.tripId));
-      
+
       if (tripDoc.exists()) {
         this.tripData = tripDoc.data();
-        
+
         // Format distance from meters to kilometers
         if (this.tripData.distance) {
           this.tripData.distanceInKm = (this.tripData.distance / 1000).toFixed(1);
         }
-        
+
         // Format duration if needed
         if (this.tripData.duration && typeof this.tripData.duration === 'number') {
           this.tripData.durationFormatted = this.formatDuration(this.tripData.duration);
         } else {
           this.tripData.durationFormatted = this.tripData.duration;
         }
-        
+
         // Format price if needed
         if (this.tripData.price) {
           this.tripData.formattedPrice = this.formatPrice(this.tripData.price);
@@ -95,14 +100,14 @@ export class TripSummaryComponent implements OnInit {
     if (this.tripData.distance) {
       this.tripData.distanceInKm = (this.tripData.distance / 1000).toFixed(1);
     }
-    
+
     // Format duration if needed
     if (this.tripData.duration && typeof this.tripData.duration === 'number') {
       this.tripData.durationFormatted = this.formatDuration(this.tripData.duration);
     } else {
       this.tripData.durationFormatted = this.tripData.duration;
     }
-    
+
     // Format price if needed
     if (this.tripData.price) {
       this.tripData.formattedPrice = this.formatPrice(this.tripData.price);
@@ -112,7 +117,7 @@ export class TripSummaryComponent implements OnInit {
   formatDuration(durationInSeconds: number): string {
     const minutes = Math.floor(durationInSeconds / 60);
     const hours = Math.floor(minutes / 60);
-    
+
     if (hours > 0) {
       const remainingMinutes = minutes % 60;
       return `${hours}h ${remainingMinutes}m`;
@@ -169,7 +174,7 @@ export class TripSummaryComponent implements OnInit {
         color: 'success'
       });
       await toast.present();
-      
+
       // Close the modal after a short delay
       setTimeout(() => {
         this.dismiss();
@@ -191,15 +196,15 @@ export class TripSummaryComponent implements OnInit {
   async updateDriverRating(driverId: string, newRating: number) {
     const driverRef = doc(this.firestore, 'Drivers', driverId);
     const driverDoc = await getDoc(driverRef);
-    
+
     if (driverDoc.exists()) {
       const driverData = driverDoc.data();
       const currentRating = driverData.rating || 0;
       const ratingCount = driverData.ratingCount || 0;
-      
+
       // Calculate new average rating
       const newAvgRating = ((currentRating * ratingCount) + newRating) / (ratingCount + 1);
-      
+
       await updateDoc(driverRef, {
         rating: newAvgRating,
         ratingCount: ratingCount + 1
@@ -212,7 +217,7 @@ export class TripSummaryComponent implements OnInit {
     if (this.tripData && !this.tripData.historySaved) {
       // Mark as saved to prevent duplicate saves
       this.tripData.historySaved = true;
-      
+
       // Prepare complete ride data for history
       const finalRideData = {
         tripId: this.tripId || this.tripData.tripId || '',
@@ -245,7 +250,7 @@ export class TripSummaryComponent implements OnInit {
         completedAt: this.tripData.completedAt || new Date(),
         timestamp: new Date()
       };
-      
+
 
       console.log("Pinpointed ride data to saved distance:", finalRideData.distance);
       // Save to history (don't await to avoid blocking dismiss)
@@ -253,7 +258,7 @@ export class TripSummaryComponent implements OnInit {
         console.error('Error saving ride history on dismiss:', err);
       });
     }
-    
+
     this.modalCtrl.dismiss({
       rated: this.rating > 0,
       rating: this.rating

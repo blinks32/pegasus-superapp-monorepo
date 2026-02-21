@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, AlertController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LoadingController, AlertController, IonicModule } from '@ionic/angular';
 import { AvatarService } from 'src/app/services/avatar.service';
 import { SettingsService } from 'src/app/services/settings.service';
 
@@ -7,6 +9,8 @@ import { SettingsService } from 'src/app/services/settings.service';
   selector: 'app-payout',
   templateUrl: './payout.page.html',
   styleUrls: ['./payout.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class PayoutPage implements OnInit {
   skeletOns: {}[];
@@ -17,7 +21,7 @@ export class PayoutPage implements OnInit {
   currentPage = 0;
   pageSize = 5;
   currencySymbol: string = '$';
-  
+
   constructor(
     private chatService: AvatarService,
     public loadingController: LoadingController,
@@ -37,7 +41,7 @@ export class PayoutPage implements OnInit {
           this.filteredRecords.push(element);
         }
       });
-      
+
       if (d.length === 0) {
         this.hasNoData = true;
         this.hideSkeleton = false;
