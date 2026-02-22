@@ -59,8 +59,7 @@ export class DocumentsPage implements OnInit {
       component: DocumentsComponent,
       componentProps: {
         info: item,
-      },
-      swipeToClose: true
+      }
     };
     const modal = this.modalCtrl.create(options);
     (await modal).present();
@@ -70,8 +69,7 @@ export class DocumentsPage implements OnInit {
 
   async AddDoc() {
     const options: ModalOptions = {
-      component: DocumentsComponent,
-      swipeToClose: true
+      component: DocumentsComponent
     };
     const modal = this.modalCtrl.create(options);
     (await modal).present();

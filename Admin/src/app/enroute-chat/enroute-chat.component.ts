@@ -37,7 +37,7 @@ export class EnrouteChatComponent implements OnInit {
       {}, {}, {}, {}
     ]
     this.hideSkeleton = true;
-    this.messages = this.chatService.getChatMessage(this.chatData.userId);
+    this.messages = this.chatService.getMessage(this.chatData.userId);
     this.messages.subscribe((d) => {
       if (d.length == 0) {
         this.hasNoData = true;
@@ -67,9 +67,9 @@ export class EnrouteChatComponent implements OnInit {
   }
 
   async sendMessage() {
-    await this.chatService.addChatEnRouteMessage(this.newMsg, this.chatData.userId);
+    await this.chatService.addChatMessage(this.newMsg, this.chatData.userId);
     this.newMsg = '';
     this.content.scrollToBottom();
-    this.chatService.updatChatMessageInfo(this.chatData.userId);
+    this.chatService.updateMessageInfo(this.chatData.userId);
   }
 }

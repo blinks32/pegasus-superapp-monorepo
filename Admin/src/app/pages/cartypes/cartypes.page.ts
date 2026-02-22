@@ -49,8 +49,7 @@ export class CartypesPage implements OnInit {
       component: CartypeComponent,
       componentProps: {
         info: item,
-      },
-      swipeToClose: true
+      }
     };
     const modal = this.modalCtrl.create(options);
     (await modal).present();
@@ -61,8 +60,7 @@ export class CartypesPage implements OnInit {
 
   async AddCartype() {
     const options: ModalOptions = {
-      component: CartypeComponent,
-      swipeToClose: true
+      component: CartypeComponent
     };
     const modal = this.modalCtrl.create(options);
     (await modal).present();

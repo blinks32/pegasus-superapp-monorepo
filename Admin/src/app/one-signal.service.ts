@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-import OneSignal, { OSNotificationPermission } from 'onesignal-cordova-plugin';
+// import OneSignal, { OSNotificationPermission } from 'onesignal-cordova-plugin';
+declare var OneSignal: any;
+const OSNotificationPermission = {
+  Authorized: 2,
+  Denied: 1,
+  NotDetermined: 0
+};
 import { environment } from 'src/environments/environment';
 import { AlertController } from '@ionic/angular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -12,7 +18,7 @@ import { of } from 'rxjs';
 })
 export class OnesignalService {
   public playerID: any;
-  constructor(private alertCtrl: AlertController, private http: HttpClient) {}
+  constructor(private alertCtrl: AlertController, private http: HttpClient) { }
 
   async OneSignalInit() {
     // Uncomment to set OneSignal device logging to VERBOSE
@@ -27,7 +33,7 @@ export class OnesignalService {
     this.playerID = await OneSignal.User.getExternalId();
 
     alert(this.playerID);
-  
+
     let myClickListener = async (event: any) => {
       let notificationData = JSON.stringify(event);
       console.log('notification data: ', notificationData);
@@ -143,7 +149,7 @@ export class OnesignalService {
       // included_segments: ['Active Subscriptions', 'Total Subscriptions'],
     };
 
-    if(external_id) {
+    if (external_id) {
       // specific device or deives
       body = {
         ...body,
@@ -175,5 +181,5 @@ export class OnesignalService {
     );
   }
 
-  
+
 }

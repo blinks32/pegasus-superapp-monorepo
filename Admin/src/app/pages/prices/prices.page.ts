@@ -65,8 +65,7 @@ export class PricesPage implements OnInit {
       component: PricesComponent,
       componentProps: {
         info: item,
-      },
-      swipeToClose: true
+      }
     };
     const modal = this.modalCtrl.create(options);
     (await modal).present();
@@ -77,8 +76,7 @@ export class PricesPage implements OnInit {
 
   async AddPrice() {
     const options: ModalOptions = {
-      component: PricesComponent,
-      swipeToClose: true
+      component: PricesComponent
     };
     const modal = this.modalCtrl.create(options);
     (await modal).present();

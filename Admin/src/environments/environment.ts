@@ -12,14 +12,14 @@ export const environment = {
         'messagingSenderId': '711315471580',
         'appId': '1:711315471580:web:f7586fa4c9e44d5176c819',
         'measurementId': 'G-DDQH0VJ7GR'
-},
+    },
     apiKey: 'AIzaSyCTYjoPhLcshZVuEdr-amopUuVMy8lyEmA',
     mapApiKey: 'AIzaSyBo7-gJUXqt25TEz7G-Gn6Ctdf7YsG54RY',
     onesignal: {
         'appId': 'ba7d77ed-1525-416c-9ac5-7b5d36e68740',
         'restApiKey': 'YTM3ODgyMzQtNjg1ZC00YTQwLWJmNjItNTA4M2VkMmY3MDdl',
         'android_channel_id': ''
-},
+    },
     serverUrl: 'https://payment-mono.vercel.app/',
     stripePublishableKey: 'pk_test_0t85o0Llo0MbBfC9imSzznam',
     defaultLogin: {
@@ -27,7 +27,10 @@ export const environment = {
         'countryCode': '+234',
         'phoneNumber': '1234567892',
         'otp': '123456'
-},
+    },
+    fcm: {
+        serverKey: 'YOUR_FCM_SERVER_KEY'
+    },
     CountryJson: [
         {
             "name": "Afghanistan",
