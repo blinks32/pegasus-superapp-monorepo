@@ -17,7 +17,7 @@ interface FcmPayload {
 export class FcmService {
   private readonly legacyEndpoint = 'https://fcm.googleapis.com/fcm/send';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   sendToToken(
     token: string,
@@ -25,7 +25,7 @@ export class FcmService {
     body: string,
     data: Record<string, unknown> = {}
   ): Observable<unknown> {
-    if (!environment.fcm?.serverKey) {
+    if (!(environment as any).fcm?.serverKey) {
       console.warn('FCM server key is not configured. Unable to send push notification.');
       return of(null);
     }
@@ -42,7 +42,7 @@ export class FcmService {
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: `key=${environment.fcm.serverKey}`,
+      Authorization: `key=${(environment as any).fcm.serverKey}`,
     });
 
     return this.http.post(this.legacyEndpoint, payload, { headers });

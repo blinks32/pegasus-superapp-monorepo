@@ -479,6 +479,10 @@ export class AvatarService {
     );
   }
 
+  getChatMessage(uid) {
+    return this.getMessage(uid);
+  }
+
   getDocument(uid) {
     const userDocRef = collection(this.firestore, `Drivers/${uid}/Documents`);
     return collectionData(userDocRef);
@@ -709,6 +713,10 @@ export class AvatarService {
     });
   }
 
+  async addChatEnRouteMessage(msg, uid) {
+    return await this.addChatMessage(msg, uid);
+  }
+
   async createDocument(name, type, id, image, text, targetUid?) {
     try {
       const uid = targetUid || this.auth.currentUser.uid;
@@ -770,6 +778,10 @@ export class AvatarService {
         new: false
       }
     )
+  }
+
+  async updatChatMessageInfo(uid) {
+    return await this.updateMessageInfo(uid);
   }
 
   async PriceSave(name, amt) {

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-// import OneSignal, { OSNotificationPermission } from 'onesignal-cordova-plugin';
 declare var OneSignal: any;
 const OSNotificationPermission = {
   Authorized: 2,
