@@ -4,7 +4,8 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "types": [
-      "node"
+      "node",
+      "google.maps"
     ]
   },
   "files": [
@@ -12,7 +13,6 @@
     "src/polyfills.ts"
   ],
   "include": [
-    "src/**/*.ts",
     "src/**/*.d.ts"
   ]
 }

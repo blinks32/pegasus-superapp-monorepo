@@ -81,7 +81,7 @@ export class LoginPage implements OnInit, AfterViewInit {
     // await this.detectCountry();
 
     // Initialize ReCaptcha verifier
-    this.recaptchaVerifier = new RecaptchaVerifier('sign-in-button', {
+    this.recaptchaVerifier = new RecaptchaVerifier(this.authY, 'sign-in-button', {
       'size': 'invisible',
       'callback': (response) => {
         this.signIn();
@@ -89,7 +89,7 @@ export class LoginPage implements OnInit, AfterViewInit {
       'expired-callback': () => {
         // Response expired - handle expired reCAPTCHA
       }
-    }, this.authY);
+    });
 
     this.initializeBackButtonCustomHandler();
   }
@@ -231,8 +231,7 @@ export class LoginPage implements OnInit, AfterViewInit {
           countryCode: this.numberT,
           confirmationResult: confirmationResult,
           isTestMode: false
-        },
-        swipeToClose: true
+        }
       };
 
       const modal = await this.modalCtrl.create(options);
@@ -321,8 +320,7 @@ export class LoginPage implements OnInit, AfterViewInit {
         countryCode: this.numberT,
         confirmationResult: mockConfirmationResult,
         isTestMode: true
-      },
-      swipeToClose: true
+      }
     });
 
     await modal.present();
